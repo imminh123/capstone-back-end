@@ -33,7 +33,7 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
-
+const courseAdminController = require('./controllers/courseAdminController');
 /**
  * API keys and Passport configuration.
  */
@@ -51,12 +51,15 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err); 
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
-});
+//mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect('mongodb://localhost/test');
+mongoose.connection.once('open', function () {
+    console.log('Connection to mongo has been made')
+    }).on('error', (err) => {
+      console.error(err); 
+      console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
+      process.exit();
+    });
 
 /**
  * Express configuration.
@@ -145,6 +148,12 @@ app.post('/account/profile', passportConfig.isAuthenticated, userController.post
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
+
+/**
+ * Admin manages course
+ */
+app.get('/getAllCourse', courseAdminController.getAllCourse);
+app.get('/createCourse', courseAdminController.createCourse);
 
 /**
  * API examples routes.

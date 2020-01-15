@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\config",
+    "\\controllers",
+    "\\models",
+    "\\public",
+    "\\public\\css",
+    "\\test"
+  ],
+  "SelectedNode": "\\test\\models.js",
+  "PreviewInSolutionExplorer": false
+}
