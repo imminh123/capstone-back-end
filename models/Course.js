@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const admin = require('../models/Admin');
 
 const courseSchema = new Schema({
     courseName: String,
@@ -15,14 +14,6 @@ const courseSchema = new Schema({
 const Course = mongoose.model('Courses', courseSchema);
 module.exports = Course;
 
-function getAllCourse() {
-    var courses = mongoose.Collection("Courses");
-    courses.find({}).toArray(function (err, data) {
-        if (err) throw err;
-        console.log(data);
-    });
-    return courses;
-};
 
 /**
  * courseName

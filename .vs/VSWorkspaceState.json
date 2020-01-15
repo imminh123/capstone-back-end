@@ -3,11 +3,13 @@
     "",
     "\\config",
     "\\controllers",
+    "\\dao",
     "\\models",
     "\\public",
     "\\public\\css",
-    "\\test"
+    "\\public\\js",
+    "\\public\\js\\lib"
   ],
-  "SelectedNode": "\\test\\models.js",
+  "SelectedNode": "\\dao\\CourseDAO.js",
   "PreviewInSolutionExplorer": false
 }

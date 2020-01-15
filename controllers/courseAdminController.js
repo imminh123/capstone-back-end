@@ -1,8 +1,8 @@
-const Course = require('../models/Course');
+const CourseDAO = require('../dao/CourseDAO');
 
-exports.getAllCourse = (req, res) => {
+exports.getAllCourse = async (req, res) => {
     console.log('get all course called');
-    res.send(Course.getAllCourse());
+    res.send(await CourseDAO.getAllCourse());
 };
 
 exports.createCourse = (req, res, next) => {
