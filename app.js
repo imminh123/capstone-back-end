@@ -152,9 +152,11 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 /**
  * Admin manages course
  */
-app.get('/getAllCourse', courseAdminController.getAllCourse);
-app.get('/course/:code', courseAdminController.getCourseByCode);
-app.get('/createCourse', courseAdminController.createCourse);
+app.get('/allcourses', courseAdminController.getAllCourse);
+app.get('/course/:courseCode', courseAdminController.getCourseByCode);
+// app.post('/course/createCourse', courseAdminController.createCourse);
+// app.put('course/updateCourse',courseAdminController.updateCourse);
+app.delete('/course/:courseCode',courseAdminController.deleteCourse);
 
 /**
  * API examples routes.
