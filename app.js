@@ -153,6 +153,7 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
  * Admin manages course
  */
 app.get('/getAllCourse', courseAdminController.getAllCourse);
+app.get('/course/:code', courseAdminController.getCourseByCode);
 app.get('/createCourse', courseAdminController.createCourse);
 
 /**

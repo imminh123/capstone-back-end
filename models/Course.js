@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
     courseName: String,
-    courseCode: String,
+    courseCode: {type: String, unique: true},
     category: String,
     shortDes: String,
     fullDes: String,
@@ -11,7 +11,7 @@ const courseSchema = new Schema({
     dateCreated: String
 });
 
-const Course = mongoose.model('Courses', courseSchema);
+const Course = mongoose.model('courses', courseSchema);
 module.exports = Course;
 
 
