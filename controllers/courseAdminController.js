@@ -1,11 +1,13 @@
 const CourseDAO = require('../dao/CourseDAO');
 
 exports.getAllCourse = async (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     console.log('get all course called');
     res.send(await CourseDAO.getAllCourse());
 };
 
 exports.getCourseByCode = async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
     var code=req.params['courseCode'];
     console.log('get course by code '+code);
     const course=await CourseDAO.getCourseByCode(code)
@@ -16,9 +18,24 @@ exports.getCourseByCode = async (req,res) => {
         res.send(course);
 };
 
-exports.createCourse = (req, res, next) => {
+exports.createCourse = async (req, res, next) => {
     console.log('create course called');
-    res.send("Hello");
+    var courseName=req.body.courseName;
+    var courseCode=req.body.courseCode;
+    var category=req.body.category;
+    var shortDes=req.body.shortDes;
+    var fullDes=req.body.fullDes;
+    var skill=req.body.skill;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+skill);
+    if ([courseName,courseCode,category,shortDes,fullDes,skill].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,skill].includes(null))
+                res.status(200).send("All field must be filled"); 
+        else {
+            if (await CourseDAO.createCourse(courseName,courseCode,category,shortDes,fullDes,skill)==0)
+            res.status(200).send("There's already an course with the same code");
+            else
+                res.status(201).send("Course created");                    
+        }
 };
 
 exports.updateCourse = (req,res,next) => {
@@ -27,6 +44,7 @@ exports.updateCourse = (req,res,next) => {
 };
 
 exports.deleteCourse =async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
     console.log('delete course called');
     var code=req.params['courseCode'];
     console.log('delete course by code '+code);

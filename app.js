@@ -124,10 +124,7 @@ app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/d
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist'), { maxAge: 31557600000 }));
 app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'), { maxAge: 31557600000 }));
-app.use(function(req, res, next) {
-  res.setHeader("Content-Type", "application/json");
-  next();
-});
+
 /**
  * Primary app routes.
  */
@@ -155,10 +152,10 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
  * Admin manages course
  */
 app.get('/allcourses', courseAdminController.getAllCourse);
-app.get('/course/:courseCode', courseAdminController.getCourseByCode);
-// app.post('/course/createCourse', courseAdminController.createCourse);
-// app.put('course/updateCourse',courseAdminController.updateCourse);
-app.delete('/course/:courseCode',courseAdminController.deleteCourse);
+app.get('/getcourse/:courseCode', courseAdminController.getCourseByCode);
+app.post('/createcourse/', courseAdminController.createCourse);
+// app.put('/course/updateCourse',courseAdminController.updateCourse);
+app.delete('/deletecourse/:courseCode',courseAdminController.deleteCourse);
 
 /**
  * API examples routes.
