@@ -38,9 +38,28 @@ exports.createCourse = async (req, res, next) => {
         }
 };
 
-exports.updateCourse = (req,res,next) => {
+exports.updateCourse = async (req,res,next) => {
     console.log('update course called');
-    res.send("Hello");
+    var currentCode=req.params['currentCode'];
+    console.log("current code is "+currentCode);
+    var courseName=req.body.courseName;
+    var courseCode=req.body.courseCode;
+    var category=req.body.category;
+    var shortDes=req.body.shortDes;
+    var fullDes=req.body.fullDes;
+    var skill=req.body.skill;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+skill);
+    if ([courseName,courseCode,category,shortDes,fullDes,skill].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,skill].includes(null))
+                res.status(200).send("All field must be filled"); 
+        else {
+            var check =await CourseDAO.updateCourse(currentCode,courseName,courseCode,category,shortDes,fullDes,skill);
+            if (check==0) res.status(200).send("Current code not found");
+            else
+            if (check==1) res.status(200).send("New code already existed");
+            else
+                res.status(200).send("Update successfully");              
+        }
 };
 
 exports.deleteCourse =async (req,res) => {

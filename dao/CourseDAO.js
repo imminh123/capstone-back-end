@@ -10,10 +10,10 @@ async function existed(code){
     });
     console.log("Course tim duoc la: "+course);
     if (course==null) {
-        console.log("exsited code return 0");
+        console.log("course return null");
         return 0;
     }
-    console.log("exsited code return 1");
+    console.log("course found");
     return 1;
 }
 
@@ -42,7 +42,7 @@ exports.deleteCourse = async function(code){
 
 exports.createCourse = async function(name,code,cate,short,full,skill){
     if (await existed(code)) {
-        console.log("create course return 0");
+        console.log("create course return 0 mean course already existed");
         return 0;
     }
         var today = new Date();
@@ -62,4 +62,29 @@ exports.createCourse = async function(name,code,cate,short,full,skill){
         console.log("Course moi la: "+course);
         await course.save();
         return 1;
+}
+
+exports.updateCourse = async function(currentcode,name,code,cate,short,full,skill){
+    if (await !existed(currentcode)) {
+        console.log("current code doesn't exist");
+        return 0;
+    }
+    if (await existed(code)) {
+        console.log("new course existed");
+        return 1;
+    }
+    var oldCourse=await Course.findOne({courseCode:currentcode});
+    // var date=oldCourse.dateCreated;
+    // var newCouse = new Course({
+    //     courseName: name,
+    //     courseCode: code,
+    //     category: cate,
+    //     shortDes: short,
+    //     fullDes: full,
+    //     skill : skill,
+    //     dateCreated: date
+    // });
+    var id=oldCourse._id;
+    await Course.updateOne({_id:id},{courseName:name,courseCode:code,category:cate,shortDes:short,fullDes:full,skill:skill});
+    return 2;
 }

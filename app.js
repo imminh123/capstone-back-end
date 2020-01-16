@@ -154,7 +154,7 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 app.get('/allcourses', courseAdminController.getAllCourse);
 app.get('/getcourse/:courseCode', courseAdminController.getCourseByCode);
 app.post('/createcourse/', courseAdminController.createCourse);
-// app.put('/course/updateCourse',courseAdminController.updateCourse);
+app.put('/updatecourse/:currentCode',courseAdminController.updateCourse);
 app.delete('/deletecourse/:courseCode',courseAdminController.deleteCourse);
 
 /**
