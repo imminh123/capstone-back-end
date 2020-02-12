@@ -89,23 +89,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
-//formiddable
-// app.use(formidable());
-// app.use(expressValidator());
-// app.use((req,res,next) => {
-//   //formidable outputs to req.fields and req.files / req.file so we can get dirty here
-//     if(Object.keys(req.body).length == 0 && req.fields){
-//       //Object.assign(req.body,req.fields);
-//       req.body = req.fields;
-//      }
-//      //tada req.body is here (and so would be our csrf token)
-//     next();
-//   });
 app.use((req, res, next) => {
   if (req.path === '/api/upload') {
     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-    // lusca.csrf()(req, res, next);
     next();
   } else {
     lusca.csrf()(req, res, next);
@@ -174,8 +160,7 @@ app.delete('/deletecourse/:courseCode',courseAdminController.deleteCourse);
 /**
  * API examples routes.
  */
-// app.get('/api', apiController.getApi);
-app.get('/api', courseAdminController.getAllCourse);
+app.get('/api', apiController.getApi);
 app.get('/api/lastfm', apiController.getLastfm);
 app.get('/api/nyt', apiController.getNewYorkTimes);
 app.get('/api/steam', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getSteam);
