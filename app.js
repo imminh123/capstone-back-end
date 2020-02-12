@@ -50,8 +50,8 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
-//mongoose.connect(process.env.MONGODB_URI);
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect(process.env.MONGODB_URI);
+// mongoose.connect('mongodb://localhost/test');
 mongoose.connection.once('open', function () {
     console.log('Connection to mongo has been made')
     }).on('error', (err) => {
