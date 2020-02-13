@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Course = require('../models/Course');
+
 exports.getAllCourse = async function () {
     const courselist = await Course.find({});
     console.log(courselist);
