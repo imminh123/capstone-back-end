@@ -59,6 +59,8 @@ async function addCourseToTeacher(courseid,teacher){
 //delete course by id
 exports.deleteCourse = async function(id){
     id=Objectid(id);
+    var course=await Course.findById(id);
+    if (course==null) return 0;
     await Course.deleteOne({_id:id},function(err){
         if (err) {
             console.log(err);

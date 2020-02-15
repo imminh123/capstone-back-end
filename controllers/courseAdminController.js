@@ -72,6 +72,8 @@ exports.deleteCourse =async (req,res) => {
     var id=req.params['id'];
     console.log('delete course by id '+id);
     var check=await CourseDAO.deleteCourse(id);
-    res.status(200).send('Delete course with id '+id+' successfully');
+    if (check==0) res.status(404).send('No course with that id '+id);
+    else
+        res.status(200).send('Delete course with id '+id+' successfully');
 };
 
