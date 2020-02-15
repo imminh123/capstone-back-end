@@ -24,13 +24,15 @@ exports.updateTeacher = async (req,res,next) => {
     var id=req.params['id'];
     console.log("teacher id is "+id);
     var teacherName=req.body.teacherName;
-    console.log("request return "+teacherName);
+    var email=req.body.email;
+    var course=req.body.course;
+    console.log("request return "+teacherName+" "+email+" "+course);
     //check if all fields are filled
-    if ([teacherName].includes(undefined)
-            || [teacherName].includes(null))
+    if ([teacherName,email,course].includes(undefined)
+            || [teacherName,email,course].includes(null))
                 res.status(200).send("All field must be filled"); 
         else {
-                await TeacherDAO.updateTeacher(id,teacherName);
+                await TeacherDAO.updateTeacher(id,teacherName,email,course);
                 res.status(200).send("Update successfully");              
         }
 };

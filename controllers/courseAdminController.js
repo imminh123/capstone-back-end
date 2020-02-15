@@ -27,15 +27,15 @@ exports.createCourse = async (req, res, next) => {
     var shortDes=req.body.shortDes;
     var fullDes=req.body.fullDes;
     var courseURL=req.body.courseURL;
-    var teacherID=req.body.teacherID;
-    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacherID);
+    var teacher=req.body.teacher;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
     //check if all fields are filled
-    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacherID].includes(undefined)
-            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacherID].includes(null))
+    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
                 res.status(200).send("All field must be filled"); 
         else {
             //if new code existed in database
-            if (await CourseDAO.createCourse(courseName,courseCode,category,shortDes,fullDes,courseURL,teacherID)==0)
+            if (await CourseDAO.createCourse(courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0)
             res.status(200).send("There's already an course with the same code");
             else
                 res.status(201).send("Course created");                    
@@ -52,15 +52,15 @@ exports.updateCourse = async (req,res,next) => {
     var shortDes=req.body.shortDes;
     var fullDes=req.body.fullDes;
     var courseURL=req.body.courseURL;
-    var teacherid=req.body.teacherID;
-    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacherid);
+    var teacher=req.body.teacher;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
     //check all fields are filled
-    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacherid].includes(undefined)
-            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacherid].includes(null))
+    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
                 res.status(200).send("All field must be filled"); 
         else {
             //if new code existed in database
-            if (await CourseDAO.updateCourse(id,courseName,courseCode,category,shortDes,fullDes,courseURL,teacherid)==0) res.status(200).send("New course code already existed");
+            if (await CourseDAO.updateCourse(id,courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0) res.status(200).send("New course code already existed");
             else
                 res.status(200).send("Update successfully");              
         }

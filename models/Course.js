@@ -12,7 +12,9 @@ const courseSchema = new Schema({
     fullDes: {type: String, required:true},
     courseURL: {type: String, required:true},
     dateCreated: {type: String, required:true},
-    teacherID: {type: String}
+    teacher: [{
+        teacherID: {type:String,unique:true}
+        }]
 });
 
 const Course = mongoose.model('courses', courseSchema);
