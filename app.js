@@ -32,6 +32,7 @@ const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const courseAdminController = require('./controllers/courseAdminController');
+const teacherAdminController = require('./controllers/teacherAdminController');
 /**
  * API keys and Passport configuration.
  */
@@ -148,15 +149,6 @@ app.post('/account/delete', passportConfig.isAuthenticated, userController.postD
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 /**
- * Admin manages course
- */
-app.get('/allcourses', courseAdminController.getAllCourse);
-app.get('/getcourse/:courseCode', courseAdminController.getCourseByCode);
-app.post('/createcourse/', courseAdminController.createCourse);
-app.put('/updatecourse/:currentCode',courseAdminController.updateCourse);
-app.delete('/deletecourse/:courseCode',courseAdminController.deleteCourse);
-
-/**
  * API examples routes.
  */
 app.get('/api', apiController.getApi);
@@ -246,4 +238,15 @@ app.listen(app.get('port'), () => {
   console.log('  Press CTRL-C to stop\n');
 });
 
+/**
+ * Admin manages course
+ */
+app.get('/allcourses', courseAdminController.getAllCourse);
+app.get('/getcourse/:id', courseAdminController.getCourseByID);
+app.post('/createcourse/', courseAdminController.createCourse);
+app.put('/updatecourse/:id',courseAdminController.updateCourse);
+app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
+app.get('/allteachers', teacherAdminController.getAllTeacher);
+app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
+app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
 module.exports = app;
