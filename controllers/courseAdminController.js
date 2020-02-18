@@ -1,39 +1,79 @@
 const CourseDAO = require('../dao/CourseDAO');
 
 exports.getAllCourse = async (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     console.log('get all course called');
     res.send(await CourseDAO.getAllCourse());
 };
 
-exports.getCourseByCode = async (req,res) => {
-    var code=req.params['courseCode'];
-    console.log('get course by code '+code);
-    const course=await CourseDAO.getCourseByCode(code)
+exports.getCourseByID = async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
+    var id=req.params['id'];
+    console.log('get course by id '+id);
+    const course=await CourseDAO.getCourseByID(id);
     console.log(Object.keys(course).length);
-    if (Object.keys(course).length==2)
-        res.status(404).send("There's no course with code "+code);
+    //means DAO return a null course or course = [] which means nothing
+    if (Object.keys(course).length==2||course==null)
+        res.status(404).send("There's no course with id "+id);
     else
         res.send(course);
 };
 
-exports.createCourse = (req, res, next) => {
+exports.createCourse = async (req, res, next) => {
     console.log('create course called');
-    res.send("Hello");
+    var courseName=req.body.courseName;
+    var courseCode=req.body.courseCode;
+    var category=req.body.category;
+    var shortDes=req.body.shortDes;
+    var fullDes=req.body.fullDes;
+    var courseURL=req.body.courseURL;
+    var teacher=req.body.teacher;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
+    //check if all fields are filled
+    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
+                res.status(200).send("All field must be filled"); 
+        else {
+            //if new code existed in database
+            if (await CourseDAO.createCourse(courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0)
+            res.status(200).send("There's already an course with the same code");
+            else
+                res.status(201).send("Course created");                    
+        }
 };
 
-exports.updateCourse = (req,res,next) => {
+exports.updateCourse = async (req,res,next) => {
     console.log('update course called');
-    res.send("Hello");
+    var id=req.params['id'];
+    console.log("current id is "+id);
+    var courseName=req.body.courseName;
+    var courseCode=req.body.courseCode;
+    var category=req.body.category;
+    var shortDes=req.body.shortDes;
+    var fullDes=req.body.fullDes;
+    var courseURL=req.body.courseURL;
+    var teacher=req.body.teacher;
+    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
+    //check all fields are filled
+    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
+            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
+                res.status(200).send("All field must be filled"); 
+        else {
+            //if new code existed in database
+            if (await CourseDAO.updateCourse(id,courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0) res.status(200).send("New course code already existed");
+            else
+                res.status(200).send("Update successfully");              
+        }
 };
 
 exports.deleteCourse =async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
     console.log('delete course called');
-    var code=req.params['courseCode'];
-    console.log('delete course by code '+code);
-    var check=await CourseDAO.deleteCourse(code);
-    if (check==0)
-        res.status(404).send("There's no course with code "+code);
+    var id=req.params['id'];
+    console.log('delete course by id '+id);
+    var check=await CourseDAO.deleteCourse(id);
+    if (check==0) res.status(404).send('No course with that id '+id);
     else
-        res.status(200).send('Delete course with code '+code+' successfully');
+        res.status(200).send('Delete course with id '+id+' successfully');
 };
 

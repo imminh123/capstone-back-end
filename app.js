@@ -19,7 +19,6 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
-
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -33,6 +32,7 @@ const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const courseAdminController = require('./controllers/courseAdminController');
+const teacherAdminController = require('./controllers/teacherAdminController');
 /**
  * API keys and Passport configuration.
  */
@@ -50,8 +50,8 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
-//mongoose.connect(process.env.MONGODB_URI);
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect(process.env.MONGODB_URI);
+// mongoose.connect('mongodb://localhost/test');
 mongoose.connection.once('open', function () {
     console.log('Connection to mongo has been made')
     }).on('error', (err) => {
@@ -124,10 +124,7 @@ app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/d
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist'), { maxAge: 31557600000 }));
 app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'), { maxAge: 31557600000 }));
-app.use(function(req, res, next) {
-  res.setHeader("Content-Type", "application/json");
-  next();
-});
+
 /**
  * Primary app routes.
  */
@@ -150,15 +147,6 @@ app.post('/account/profile', passportConfig.isAuthenticated, userController.post
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
-
-/**
- * Admin manages course
- */
-app.get('/allcourses', courseAdminController.getAllCourse);
-app.get('/course/:courseCode', courseAdminController.getCourseByCode);
-// app.post('/course/createCourse', courseAdminController.createCourse);
-// app.put('course/updateCourse',courseAdminController.updateCourse);
-app.delete('/course/:courseCode',courseAdminController.deleteCourse);
 
 /**
  * API examples routes.
@@ -250,4 +238,15 @@ app.listen(app.get('port'), () => {
   console.log('  Press CTRL-C to stop\n');
 });
 
+/**
+ * Admin manages course
+ */
+app.get('/allcourses', courseAdminController.getAllCourse);
+app.get('/getcourse/:id', courseAdminController.getCourseByID);
+app.post('/createcourse/', courseAdminController.createCourse);
+app.put('/updatecourse/:id',courseAdminController.updateCourse);
+app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
+app.get('/allteachers', teacherAdminController.getAllTeacher);
+app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
+app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
 module.exports = app;
