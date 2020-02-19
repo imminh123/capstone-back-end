@@ -4,15 +4,15 @@ const Teacher = require('../models/Teacher');
 const Course = require('../models/Course');
 
 exports.getAllTeacher = async function () {
-    const teacherlist = await Teacher.find({});
-    console.log(teacherlist);
+    const teacherlist = await Teacher.find({}).populate('course.courseID');
+    console.log("teacher list: "+teacherlist);
     return JSON.stringify(teacherlist);
 };
 
 exports.getTeacherByID = async function(id){
     id = Objectid(id);
-    const teacher = await Teacher.find({_id:id});
-    console.log(teacher);
+    const teacher = await Teacher.findOne({_id:id}).populate('course.courseID');
+    console.log("teacher: "+teacher);
     return JSON.stringify(teacher);
 };
 

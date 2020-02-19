@@ -13,7 +13,7 @@ const courseSchema = new Schema({
     courseURL: {type: String, required:true},
     dateCreated: {type: String, required:true},
     teacher: [{
-        teacherID: {type:String,unique:true}
+        teacherID: {type:Schema.Types.ObjectId,unique:true,ref: 'teachers'}
         }]
 });
 

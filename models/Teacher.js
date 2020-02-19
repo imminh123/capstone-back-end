@@ -6,7 +6,7 @@ const teacherSchema = new Schema({
     email:{type:String,require:true},
     rating:{type:Number},
     course:[{
-        courseID:{type:String,unique:true}
+        courseID:{type:Schema.Types.ObjectId,unique:true,ref:'courses'}
     }]
 });
 
