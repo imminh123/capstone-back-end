@@ -1,5 +1,14 @@
 const CourseDAO = require('../dao/CourseDAO');
 
+async function isEmpty(courseName,courseCode,shortDes,fullDes,courseURL){
+    if ([courseName,courseCode,shortDes,fullDes,courseURL].includes(undefined)
+        || [courseName,courseCode,shortDes,fullDes,courseURL].includes(null)
+            || (courseName=="") || (courseCode=="")
+            || (shortDes=="") || (fullDes=="") || (courseURL==""))
+                return 1;
+    return 0;
+}
+
 exports.getAllCourse = async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('get all course called');
@@ -23,19 +32,18 @@ exports.createCourse = async (req, res, next) => {
     console.log('create course called');
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
-    var category=req.body.category;
+    var departments=req.body.departments;
     var shortDes=req.body.shortDes;
     var fullDes=req.body.fullDes;
     var courseURL=req.body.courseURL;
-    var teacher=req.body.teacher;
-    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
+    var teachers=req.body.teachers;
+    console.log("request return "+courseName+" "+courseCode+" "+departments+" "+shortDes+" "+fullDes+" "+courseURL+" "+teachers);
     //check if all fields are filled
-    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
-            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
+    if (await isEmpty(courseName,courseCode,shortDes,fullDes,courseURL))
                 res.status(200).send("All field must be filled"); 
         else {
             //if new code existed in database
-            if (await CourseDAO.createCourse(courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0)
+            if (await CourseDAO.createCourse(courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers)==0)
             res.status(200).send("There's already an course with the same code");
             else
                 res.status(201).send("Course created");                    
@@ -48,19 +56,19 @@ exports.updateCourse = async (req,res,next) => {
     console.log("current id is "+id);
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
-    var category=req.body.category;
+    var departments=req.body.departments;
     var shortDes=req.body.shortDes;
     var fullDes=req.body.fullDes;
     var courseURL=req.body.courseURL;
-    var teacher=req.body.teacher;
-    console.log("request return "+courseName+" "+courseCode+" "+category+" "+shortDes+" "+fullDes+" "+courseURL+" "+teacher);
+    var teachers=req.body.teachers;
+    console.log(teachers);
+    console.log("request return "+courseName+" "+courseCode+" "+departments+" "+shortDes+" "+fullDes+" "+courseURL+" "+teachers);
     //check all fields are filled
-    if ([courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(undefined)
-            || [courseName,courseCode,category,shortDes,fullDes,courseURL,teacher].includes(null))
+    if (await isEmpty(courseName,courseCode,departments,shortDes,fullDes,courseURL))
                 res.status(200).send("All field must be filled"); 
         else {
             //if new code existed in database
-            if (await CourseDAO.updateCourse(id,courseName,courseCode,category,shortDes,fullDes,courseURL,teacher)==0) res.status(200).send("New course code already existed");
+            if (await CourseDAO.updateCourse(id,courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers)==0) res.status(200).send("New course code already existed");
             else
                 res.status(200).send("Update successfully");              
         }

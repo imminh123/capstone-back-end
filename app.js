@@ -33,6 +33,7 @@ const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const courseAdminController = require('./controllers/courseAdminController');
 const teacherAdminController = require('./controllers/teacherAdminController');
+const highlightController = require('./controllers/highlightController');
 /**
  * API keys and Passport configuration.
  */
@@ -61,12 +62,12 @@ mongoose.connection.once('open', function () {
     });
 
 //solution for cors error
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
 
 /**
  * Express configuration.
@@ -257,4 +258,5 @@ app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
 app.get('/allteachers', teacherAdminController.getAllTeacher);
 app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
 app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
+app.post('/createhighlight/', highlightController.createHighlight);
 module.exports = app;

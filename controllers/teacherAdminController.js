@@ -1,5 +1,13 @@
 const TeacherDAO = require('../dao/TeacherDAO');
 
+async function isEmpty(teacherName,email){
+    if ([teacherName,email].includes(undefined)
+            || [teacherName,email].includes(null)
+                || (teacherName=="")||(email==""))
+                return 1;
+    return 0;
+}
+
 exports.getAllTeacher = async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('get all teacher called');
@@ -28,8 +36,7 @@ exports.updateTeacher = async (req,res,next) => {
     var course=req.body.course;
     console.log("request return "+teacherName+" "+email+" "+course);
     //check if all fields are filled
-    if ([teacherName,email,course].includes(undefined)
-            || [teacherName,email,course].includes(null))
+    if (await isEmpty(teacherName,email))
                 res.status(200).send("All field must be filled"); 
         else {
                 await TeacherDAO.updateTeacher(id,teacherName,email,course);

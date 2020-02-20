@@ -25,7 +25,7 @@ async function removeCourseFromTeacher(id){
     console.log("start removing course");
     await Teacher.updateMany(
         {},
-        {$pull: {course: {courseID:id}}},
+        {$pull: {courses: {courseID:id}}},
         {safe: true, upsert: true},
         function(err, doc) {
             if(err){
@@ -37,15 +37,15 @@ async function removeCourseFromTeacher(id){
     );
 }
 
-async function addCourseToTeacher(courseid,teacher){
+async function addCourseToTeacher(courseid,teachers){
     
     //add this course to new teacher
     console.log("start adding course");
-    teacher.forEach(async function(data){
+    teachers.forEach(async function(data){
         var teacherid=Objectid(data.teacherID);
         console.log(teacherid);
         await Teacher.updateOne({_id:teacherid},
-            {$addToSet: {course: {courseID:courseid}}},
+            {$addToSet: {courses: {courseID:courseid}}},
             {safe: true, upsert: true},
             function(err, doc) {
                 if(err){
@@ -60,7 +60,7 @@ async function addCourseToTeacher(courseid,teacher){
 
 //return all courses list
 exports.getAllCourse = async function () {
-    const courselist = await Course.find({}).populate('teacher.teacherID');
+    const courselist = await Course.find({}).populate('teachers.teacherID');
     console.log(courselist);
     return JSON.stringify(courselist);
 };
@@ -68,7 +68,7 @@ exports.getAllCourse = async function () {
 //return course by id
 exports.getCourseByID = async function(id){
     id=Objectid(id);
-    const course = await Course.find({_id:id}).populate('teacher.teacherID');
+    const course = await Course.find({_id:id}).populate('teachers.teacherID');
     console.log(course);
     return JSON.stringify(course);
 };
@@ -89,7 +89,7 @@ exports.deleteCourse = async function(id){
 };
 
 //create course
-exports.createCourse = async function(name,code,cate,short,full,url,teacher){
+exports.createCourse = async function(name,code,departments,short,full,url,teachers){
     if (await existed(0,code)) {
         console.log("create course return 0 mean course code already existed");
         return 0;
@@ -102,30 +102,30 @@ exports.createCourse = async function(name,code,cate,short,full,url,teacher){
         var course = new Course({
             courseName: name,
             courseCode: code,
-            category: cate,
+            departments: departments,
             shortDes: short,
             fullDes: full,
             courseURL : url,
             dateCreated: today,
-            teacher: teacher
+            teachers: teachers
         });
         console.log("new course is: "+course);
         await course.save();
         //create successfully
-        addCourseToTeacher(course._id,teacher);
+        addCourseToTeacher(course._id,teachers);
         return 1;
 }
 
 //update course
-exports.updateCourse = async function(id,name,code,cate,short,full,url,teacher){
+exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
     if (await existed(id,code)) {
         console.log("new course code existed");
         return 0;
     }
     id=Objectid(id);
-    await Course.updateOne({_id:id},{courseName:name,courseCode:code,category:cate,shortDes:short,fullDes:full,courseURL:url,teacher:teacher});
+    await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
     //update successfully
     removeCourseFromTeacher(id);
-    addCourseToTeacher(id,teacher);
+    addCourseToTeacher(id,teachers);
     return 1;
 }
