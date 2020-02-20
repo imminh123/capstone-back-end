@@ -23,7 +23,7 @@ exports.updateTeacher = async function(id,name,email,courses){
     if (teacher==null) return 0;
     await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses});
     //remove this teacher from every course
-    console.log("start removing teacher");
+    console.log("start removing teacher from course");
     await Course.updateMany(
         {},
         {$pull: {teachers: {teacherID:id}}},
@@ -42,7 +42,7 @@ exports.updateTeacher = async function(id,name,email,courses){
         var courseid=Objectid(data.courseID);
         console.log(courseid);
         await Course.updateOne({_id:courseid},
-            {$push: {teachers: {teacherID:id}}},
+            {$addToSet: {teachers: {teacherID:id}}},
             {safe: true, upsert: true},
             function(err, doc) {
                 if(err){
