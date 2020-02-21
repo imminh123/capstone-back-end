@@ -6,7 +6,7 @@ async function isEmpty(teacherName,email){
                 || (teacherName=="")||(email==""))
                 return 1;
     return 0;
-}
+};
 
 exports.getAllTeacher = async (req, res) => {
     res.setHeader("Content-Type", "application/json");
@@ -27,7 +27,7 @@ exports.getTeacherByID = async (req,res) => {
         res.send(teacher);
 };
 
-exports.updateTeacher = async (req,res,next) => {
+exports.updateTeacher = async (req,res) => {
     console.log('update teacher called');
     var id=req.params['id'];
     console.log("teacher id is "+id);
@@ -42,4 +42,13 @@ exports.updateTeacher = async (req,res,next) => {
                 await TeacherDAO.updateTeacher(id,teacherName,email,course);
                 res.status(200).send("Update successfully");              
         }
+};
+
+exports.searchTeacher = async(req,res) => {
+    res.setHeader("Content-Type", "application/json");
+    console.log('search teacher called');
+    var page=req.query.page;
+    var detail=req.query.detail;
+    console.log('request return '+page+' '+detail);
+    res.send(await TeacherDAO.searchTeacher(page,detail));
 };

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 var Objectid = require('mongodb').ObjectID;
+const perPage = 10;
 
 //check if code has already existed
 async function existed(id,code){
@@ -18,7 +19,7 @@ async function existed(id,code){
         return 0;
     }
     return 1;
-}
+};
 
 async function removeCourseFromTeacher(id){
     //remove this course from every teacher
@@ -35,7 +36,7 @@ async function removeCourseFromTeacher(id){
             }
         }
     );
-}
+};
 
 async function addCourseToTeacher(courseid,teachers){
     
@@ -56,7 +57,7 @@ async function addCourseToTeacher(courseid,teachers){
             }
         );
     });
-}
+};
 
 //return all courses list
 exports.getAllCourse = async function () {
@@ -114,7 +115,7 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
         //create successfully
         addCourseToTeacher(course._id,teachers);
         return 1;
-}
+};
 
 //update course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
@@ -128,4 +129,16 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     removeCourseFromTeacher(id);
     addCourseToTeacher(id,teachers);
     return 1;
+};
+
+exports.searchCourse = async function(page,detail){
+    var result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
+                {"courseName":1,"courseCode":1,"departments":1,"shortDes":1,"fullDes":1},
+                function(err, docs) {
+                    console.log("search "+docs);
+                    if (err) handleError(err);
+                    })
+        .skip(perPage*(page-1))
+        .limit(perPage);
+    return result;
 }

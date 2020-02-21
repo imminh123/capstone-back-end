@@ -28,7 +28,7 @@ exports.getCourseByID = async (req,res) => {
         res.send(course);
 };
 
-exports.createCourse = async (req, res, next) => {
+exports.createCourse = async (req, res) => {
     console.log('create course called');
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
@@ -50,7 +50,7 @@ exports.createCourse = async (req, res, next) => {
         }
 };
 
-exports.updateCourse = async (req,res,next) => {
+exports.updateCourse = async (req,res) => {
     console.log('update course called');
     var id=req.params['id'];
     console.log("current id is "+id);
@@ -75,7 +75,7 @@ exports.updateCourse = async (req,res,next) => {
 };
 
 exports.deleteCourse =async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     console.log('delete course called');
     var id=req.params['id'];
     console.log('delete course by id '+id);
@@ -85,3 +85,11 @@ exports.deleteCourse =async (req,res) => {
         res.status(200).send('Delete course with id '+id+' successfully');
 };
 
+exports.searchCourse = async(req,res) => {
+    res.setHeader("Content-Type", "application/json");
+    console.log('search course called');
+    var page=req.query.page;
+    var detail=req.query.detail;
+    console.log('request return '+page+' '+detail);
+    res.send(await CourseDAO.searchCourse(page,detail));
+};

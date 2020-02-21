@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 var Objectid = require('mongodb').ObjectID;
 const Teacher = require('../models/Teacher');
 const Course = require('../models/Course');
+const perPage = 10;
 
 exports.getAllTeacher = async function () {
     const teacherlist = await Teacher.find({}).populate('courses.courseID');
@@ -53,4 +54,16 @@ exports.updateTeacher = async function(id,name,email,courses){
             }
         );
     });
+};
+
+exports.searchTeacher = async function(page,detail){
+    var result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+                {"teacherName":1,"email":1,"rating":1},
+                function(err, docs) {
+                    console.log("search "+docs);
+                    if (err) handleError(err);
+                    })
+        .skip(perPage*(page-1))
+        .limit(perPage);
+    return result;
 }

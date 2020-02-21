@@ -255,8 +255,19 @@ app.get('/getcourse/:id', courseAdminController.getCourseByID);
 app.post('/createcourse/', courseAdminController.createCourse);
 app.put('/updatecourse/:id',courseAdminController.updateCourse);
 app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
+app.get('/searchcourse', courseAdminController.searchCourse);
+
+/**
+ * Admin manages teacher
+ */
 app.get('/allteachers', teacherAdminController.getAllTeacher);
 app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
 app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
+app.get('/searchteacher', teacherAdminController.searchTeacher);
+
+/**
+ * Student highlight
+ */
 app.post('/createhighlight/', highlightController.createHighlight);
+
 module.exports = app;
