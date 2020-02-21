@@ -48,7 +48,8 @@ exports.searchTeacher = async(req,res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('search teacher called');
     var page=req.query.page;
+    var perPage=req.query.limit;
     var detail=req.query.detail;
-    console.log('request return '+page+' '+detail);
-    res.send(await TeacherDAO.searchTeacher(page,detail));
+    console.log('request return '+page+' '+perPage+' '+detail);
+    res.send(await TeacherDAO.searchTeacher(page,perPage,detail));
 };

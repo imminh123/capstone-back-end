@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 var Objectid = require('mongodb').ObjectID;
-const perPage = 10;
 
 //check if code has already existed
 async function existed(id,code){
@@ -131,14 +130,24 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     return 1;
 };
 
-exports.searchCourse = async function(page,detail){
-    var result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
-                {"courseName":1,"courseCode":1,"departments":1,"shortDes":1,"fullDes":1},
-                function(err, docs) {
-                    console.log("search "+docs);
-                    if (err) handleError(err);
-                    })
-        .skip(perPage*(page-1))
-        .limit(perPage);
+exports.searchCourse = async function(page,perPage,detail){
+    // var result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
+    //             {"courseName":1,"courseCode":1,"departments":1,"shortDes":1,"fullDes":1},
+    //                 function(err, docs) {
+    //                     console.log("search "+docs);
+    //                     if (err) handleError(err);
+    //                     })
+    //             .skip(perPage*(page-1))
+    //             .limit(perPage);
+
+    var result = await Course.aggregate()
+                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
+                .project({
+                    courseName: 1,
+                    courseCode: 1,
+                    teachers: {$size:"$teachers"}
+                })
+                .skip(perPage*(page-1))
+                .limit(Number(perPage));
     return result;
 }

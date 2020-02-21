@@ -89,7 +89,8 @@ exports.searchCourse = async(req,res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('search course called');
     var page=req.query.page;
+    var perPage=req.query.limit;
     var detail=req.query.detail;
-    console.log('request return '+page+' '+detail);
-    res.send(await CourseDAO.searchCourse(page,detail));
+    console.log('request return '+page+' '+perPage+' '+detail);
+    res.send(await CourseDAO.searchCourse(page,perPage,detail));
 };
