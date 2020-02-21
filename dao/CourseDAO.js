@@ -145,6 +145,7 @@ exports.searchCourse = async function(page,perPage,detail){
                 .project({
                     courseName: 1,
                     courseCode: 1,
+                    departments: 1,
                     teachers: {$size:"$teachers"}
                 })
                 .skip(perPage*(page-1))
