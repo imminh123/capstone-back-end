@@ -64,12 +64,16 @@ exports.updateTeacher = async function(id,name,email,courses){
 };
 
 exports.searchTeacher = async function(page,perPage,detail){
-    console.log('DAO '+page+perPage+detail);
-    var result;
-    if (page==0){
-        result = await Teacher.find({});
-    }
-    else {
+    var result,size;
+    result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+                            {"teacherName":1,"email":1,"rating":1},
+                            function(err, docs) {
+                                console.log("search "+docs);
+                                if (err) handleError(err);
+                                });
+    // console.log(result);
+    if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    if (page!=0){
         result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             {"teacherName":1,"email":1,"rating":1},
                             function(err, docs) {
@@ -79,6 +83,7 @@ exports.searchTeacher = async function(page,perPage,detail){
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
-    console.log(result);
-    return result;
+    // console.log(result);
+    size=JSON.parse('{"size":'+size+'}');
+    return Object.assign(size,result);
 }

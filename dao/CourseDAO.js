@@ -151,8 +151,19 @@ exports.searchCourse = async function(page,perPage,detail){
     //                     })
     //             .skip(perPage*(page-1))
     //             .limit(perPage);
-
-    var result = await Course.aggregate()
+    var result,size;
+    result = await Course.aggregate()
+                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
+                .project({
+                    courseName: 1,
+                    courseCode: 1,
+                    departments: 1,
+                    teachers: {$size:"$teachers"}
+                })
+    // console.log(result);
+    if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    if (page!=0){
+        result = await Course.aggregate()
                 .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
                 .project({
                     courseName: 1,
@@ -161,6 +172,9 @@ exports.searchCourse = async function(page,perPage,detail){
                     teachers: {$size:"$teachers"}
                 })
                 .skip(perPage*(page-1))
-                .limit(Number(perPage));
-    return result;
+                .limit(Number(perPage));        
+    }
+    // console.log(result);
+    size=JSON.parse('{"size":'+size+'}');
+    return Object.assign(size,result);
 }
