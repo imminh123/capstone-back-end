@@ -60,32 +60,40 @@ async function addCourseToTeacher(courseid,teachers){
 
 //return all courses list
 exports.getAllCourse = async function () {
-    const courselist = await Course.find({}).populate('teachers.teacherID');
+    var courselist = await Course.find({},'-teachers._id').populate('teachers.teacherID');
     console.log(courselist);
     return JSON.stringify(courselist);
 };
 
 //return course by id
 exports.getCourseByID = async function(id){
-    id=Objectid(id);
-    const course = await Course.find({_id:id}).populate('teachers.teacherID');
-    console.log(course);
-    return JSON.stringify(course);
+    try{
+        id=Objectid(id);
+        var course = await Course.find({_id:id},'-teachers._id').populate('teachers.teacherID');
+        console.log(course);
+        return course=JSON.stringify(course);
+    }catch{
+        return null;
+    }
 };
 
 //delete course by id
 exports.deleteCourse = async function(id){
-    id=Objectid(id);
-    var course=await Course.findById(id);
-    if (course==null) return 0;
-    await Course.deleteOne({_id:id},function(err){
-        if (err) {
-            console.log(err);
-            return 0;
-        }
-    });
-    removeCourseFromTeacher(id);
-    return 1;
+    try{
+        id=Objectid(id);
+        var course=await Course.findById(id);
+        if (course==null) return 0;
+        await Course.deleteOne({_id:id},function(err){
+            if (err) {
+                console.log(err);
+                return 0;
+            }
+        });
+        removeCourseFromTeacher(id);
+        return 1;
+    }catch{
+        return 0;
+    }
 };
 
 //create course
@@ -122,12 +130,16 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         console.log("new course code existed");
         return 0;
     }
-    id=Objectid(id);
-    await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
-    //update successfully
-    removeCourseFromTeacher(id);
-    addCourseToTeacher(id,teachers);
-    return 1;
+    try{
+        id=Objectid(id);
+        await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
+        //update successfully
+        removeCourseFromTeacher(id);
+        addCourseToTeacher(id,teachers);
+        return 1;
+    }catch{
+        return 0;
+    }
 };
 
 exports.searchCourse = async function(page,perPage,detail){
@@ -150,5 +162,5 @@ exports.searchCourse = async function(page,perPage,detail){
                 })
                 .skip(perPage*(page-1))
                 .limit(Number(perPage));
-    return result;
+    return JSON.stringify(result);
 }

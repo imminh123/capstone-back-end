@@ -9,6 +9,12 @@ async function isEmpty(courseName,courseCode,shortDes,fullDes,courseURL){
     return 0;
 }
 
+function makeJson(msg){
+    var newObject = '{"message":"'+msg+'"}';
+    console.log(newObject);
+    return JSON.parse(newObject);
+}
+
 exports.getAllCourse = async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('get all course called');
@@ -20,10 +26,8 @@ exports.getCourseByID = async (req,res) => {
     var id=req.params['id'];
     console.log('get course by id '+id);
     const course=await CourseDAO.getCourseByID(id);
-    console.log(Object.keys(course).length);
-    //means DAO return a null course or course = [] which means nothing
-    if (Object.keys(course).length==2||course==null)
-        res.status(404).send("There's no course with id "+id);
+    if (course==null||course=='[]')
+        res.status(404).send(makeJson("There is no course with id "+id));
     else
         res.send(course);
 };
@@ -40,13 +44,13 @@ exports.createCourse = async (req, res) => {
     console.log("request return "+courseName+" "+courseCode+" "+departments+" "+shortDes+" "+fullDes+" "+courseURL+" "+teachers);
     //check if all fields are filled
     if (await isEmpty(courseName,courseCode,shortDes,fullDes,courseURL))
-                res.status(200).send("All field must be filled"); 
+                res.status(200).send(makeJson("All field must be filled")); 
         else {
             //if new code existed in database
             if (await CourseDAO.createCourse(courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers)==0)
-            res.status(200).send("There's already an course with the same code");
+            res.status(200).send(makeJson("There's already an course with the same code"));
             else
-                res.status(201).send("Course created");                    
+                res.status(201).send(makeJson("Course created"));                    
         }
 };
 
@@ -65,12 +69,12 @@ exports.updateCourse = async (req,res) => {
     console.log("request return "+courseName+" "+courseCode+" "+departments+" "+shortDes+" "+fullDes+" "+courseURL+" "+teachers);
     //check all fields are filled
     if (await isEmpty(courseName,courseCode,departments,shortDes,fullDes,courseURL))
-                res.status(200).send("All field must be filled"); 
+                res.status(200).send(makeJson("All field must be filled")); 
         else {
             //if new code existed in database
             if (await CourseDAO.updateCourse(id,courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers)==0) res.status(200).send("New course code already existed");
             else
-                res.status(200).send("Update successfully");              
+                res.status(200).send(makeJson("Update successfully"));              
         }
 };
 
@@ -80,9 +84,9 @@ exports.deleteCourse =async (req,res) => {
     var id=req.params['id'];
     console.log('delete course by id '+id);
     var check=await CourseDAO.deleteCourse(id);
-    if (check==0) res.status(404).send('No course with that id '+id);
+    if (check==0) res.status(404).send(makeJson('No course with that id '+id));
     else
-        res.status(200).send('Delete course with id '+id+' successfully');
+        res.status(200).send(makeJson('Delete course with id '+id+' successfully'));
 };
 
 exports.searchCourse = async(req,res) => {

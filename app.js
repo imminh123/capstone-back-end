@@ -31,8 +31,9 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
-const courseAdminController = require('./controllers/courseAdminController');
-const teacherAdminController = require('./controllers/teacherAdminController');
+const adminController = require('./controllers/adminController');
+const courseAdminController = require('./controllers/adminCourseController');
+const teacherAdminController = require('./controllers/adminTeacherController');
 const highlightController = require('./controllers/highlightController');
 /**
  * API keys and Passport configuration.
@@ -246,6 +247,11 @@ app.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Press CTRL-C to stop\n');
 });
+
+/**
+ * Admin statics page
+ */
+app.get('/getStatisticNumber', adminController.getAllNumber);
 
 /**
  * Admin manages course

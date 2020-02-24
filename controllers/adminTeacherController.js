@@ -8,6 +8,12 @@ async function isEmpty(teacherName,email){
     return 0;
 };
 
+function makeJson(msg){
+    var newObject = '{"message":"'+msg+'"}';
+    console.log(newObject);
+    return JSON.parse(newObject);
+}
+
 exports.getAllTeacher = async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     console.log('get all teacher called');
@@ -19,10 +25,9 @@ exports.getTeacherByID = async (req,res) => {
     var id=req.params['id'];
     console.log('get teacher by id '+id);
     const teacher=await TeacherDAO.getTeacherByID(id);
-    console.log(Object.keys(teacher).length);
-    //if returned teacher is null or teacher==[] means nothing
-    if (Object.keys(teacher).length==2||teacher==null)
-        res.status(404).send("There's no teacher with id "+id);
+    //if returned teacher is null
+    if (teacher==null||teacher=='[]')
+        res.status(404).send(makeJson("There's no teacher with id "+id));
     else
         res.send(teacher);
 };
@@ -37,10 +42,10 @@ exports.updateTeacher = async (req,res) => {
     console.log("request return "+teacherName+" "+email+" "+course);
     //check if all fields are filled
     if (await isEmpty(teacherName,email))
-                res.status(200).send("All field must be filled"); 
+                res.status(200).send(makeJson("All field must be filled")); 
         else {
                 await TeacherDAO.updateTeacher(id,teacherName,email,course);
-                res.status(200).send("Update successfully");              
+                res.status(200).send(makeJson("Update successfully"));              
         }
 };
 
