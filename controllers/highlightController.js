@@ -9,13 +9,13 @@ async function isEmpty(studentid,text,index,color,url){
 }
 
 exports.createHighlight = async (req, res, next) => {
-    console.log('create highlight called');
+    // console.log('create highlight called');
     var studentid=req.body.studentID;
     var text=req.body.text;
     var index=req.body.index;
     var color=req.body.color;
     var url=req.body.url;
-    console.log("request return "+studentid+" "+text+" "+index+" "+color+" "+url);
+    // console.log("request return "+studentid+" "+text+" "+index+" "+color+" "+url);
     //check if all fields are filled
     if (await isEmpty(studentid,text,index,color,url))
                 res.status(200).send("All field must be filled");

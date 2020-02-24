@@ -11,9 +11,7 @@ const teacherSchema = new Schema({
         star_4:{type:Number},
         star_5:{type:Number}
     },
-    courses:[{
-        courseID:{type:Schema.Types.ObjectId,ref:'courses'}
-    }],
+    courses:[{type:Schema.Types.ObjectId,ref:'courses'}],
     isActive:Boolean
 });
 

@@ -18,7 +18,7 @@ exports.createHighlight = async function(studentid,text,index,color,url){
         date: today,
         url : url
     });
-    console.log("new highlight is: "+highlight);
+    // console.log("new highlight is: "+highlight);
     await highlight.save();
     //create successfully
     // return 1;
