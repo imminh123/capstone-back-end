@@ -68,7 +68,7 @@ exports.searchTeacher = async function(page,perPage,detail){
     result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             {"teacherName":1,"email":1,"rating":1},
                             function(err, docs) {
-                                console.log("search "+docs);
+                                // console.log("search "+docs);
                                 if (err) handleError(err);
                                 });
     // console.log(result);
@@ -77,13 +77,16 @@ exports.searchTeacher = async function(page,perPage,detail){
         result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             {"teacherName":1,"email":1,"rating":1},
                             function(err, docs) {
-                                console.log("search "+docs);
+                                // console.log("search "+docs);
                                 if (err) handleError(err);
                                 })
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
     // console.log(result);
-    size=JSON.parse('{"size":'+size+'}');
-    return Object.assign(size,result);
+    // size=JSON.parse('{"size":'+size+'}');
+    result=JSON.stringify(result);
+    result=result.slice(1,result.length-1);
+    result='{"totalPage":'+size+',"result":'+result+'}';
+    return result;
 }

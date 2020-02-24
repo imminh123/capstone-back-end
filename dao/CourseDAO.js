@@ -175,6 +175,9 @@ exports.searchCourse = async function(page,perPage,detail){
                 .limit(Number(perPage));        
     }
     // console.log(result);
-    size=JSON.parse('{"size":'+size+'}');
+    // size=JSON.parse('{"size":'+size+'}');
+    result=JSON.stringify(result);
+    result=result.slice(1,result.length-1);
+    result='{"totalPage":'+size+',"result":'+result+'}';
     return Object.assign(size,result);
 }
