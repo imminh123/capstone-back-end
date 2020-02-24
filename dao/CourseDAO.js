@@ -62,7 +62,7 @@ async function addCourseToTeacher(courseid,teachers){
 exports.getAllCourse = async function () {
     var courselist = await Course.find({},'-teachers._id').populate('teachers.teacherID');
     console.log(courselist);
-    return JSON.stringify(courselist);
+    return courselist;
 };
 
 //return course by id
@@ -71,7 +71,7 @@ exports.getCourseByID = async function(id){
         id=Objectid(id);
         var course = await Course.find({_id:id},'-teachers._id').populate('teachers.teacherID');
         console.log(course);
-        return course=JSON.stringify(course);
+        return course=course;
     }catch{
         return null;
     }
@@ -162,5 +162,5 @@ exports.searchCourse = async function(page,perPage,detail){
                 })
                 .skip(perPage*(page-1))
                 .limit(Number(perPage));
-    return JSON.stringify(result);
+    return result;
 }

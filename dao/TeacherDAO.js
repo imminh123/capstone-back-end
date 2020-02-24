@@ -6,7 +6,7 @@ const Course = require('../models/Course');
 exports.getAllTeacher = async function () {
     var teacherlist = await Teacher.find({}).populate('courses.courseID');
     console.log("teacher list: "+teacherlist);
-    return JSON.stringify(teacherlist);
+    return teacherlist;
 };
 
 exports.getTeacherByID = async function(id){
@@ -14,7 +14,7 @@ exports.getTeacherByID = async function(id){
         id = Objectid(id);
         var teacher = await Teacher.findOne({_id:id}).populate('courses.courseID');
         console.log("teacher: "+teacher);
-        return JSON.stringify(teacher);
+        return teacher;
     }catch{
         return null;
     }
@@ -79,6 +79,6 @@ exports.searchTeacher = async function(page,perPage,detail){
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
-    
-    return JSON.stringify(result);
+    console.log(result);
+    return result;
 }
