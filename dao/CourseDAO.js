@@ -163,7 +163,8 @@ exports.searchCourse = async function(page,perPage,detail){
                 .limit(Number(perPage));        
     }
     // console.log(result);
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-    return Object.assign(size,result);
+    return Object.assign({
+        "totalPage":size,
+        "result": result
+    }, size);
 }
