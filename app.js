@@ -31,8 +31,10 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
-const courseAdminController = require('./controllers/courseAdminController');
-const teacherAdminController = require('./controllers/teacherAdminController');
+const adminController = require('./controllers/adminController');
+const courseAdminController = require('./controllers/adminCourseController');
+const teacherAdminController = require('./controllers/adminTeacherController');
+const highlightController = require('./controllers/highlightController');
 /**
  * API keys and Passport configuration.
  */
@@ -60,11 +62,19 @@ mongoose.connection.once('open', function () {
       process.exit();
     });
 
+//solution for cors error
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
+});
+
 /**
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(expressStatusMonitor());
@@ -89,14 +99,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
-    // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path === '/api/upload') {
+//     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
+//     next();
+//   } else {
+//     lusca.csrf()(req, res, next);
+//   }
+// });
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
@@ -239,6 +249,11 @@ app.listen(app.get('port'), () => {
 });
 
 /**
+ * Admin statics page
+ */
+app.get('/getStatisticNumber', adminController.getAllNumber);
+
+/**
  * Admin manages course
  */
 app.get('/allcourses', courseAdminController.getAllCourse);
@@ -246,7 +261,19 @@ app.get('/getcourse/:id', courseAdminController.getCourseByID);
 app.post('/createcourse/', courseAdminController.createCourse);
 app.put('/updatecourse/:id',courseAdminController.updateCourse);
 app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
+app.get('/searchcourse', courseAdminController.searchCourse);
+
+/**
+ * Admin manages teacher
+ */
 app.get('/allteachers', teacherAdminController.getAllTeacher);
 app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
 app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
+app.get('/searchteacher', teacherAdminController.searchTeacher);
+
+/**
+ * Student highlight
+ */
+app.post('/createhighlight/', highlightController.createHighlight);
+
 module.exports = app;
