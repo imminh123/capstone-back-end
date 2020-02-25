@@ -165,5 +165,5 @@ exports.searchCourse = async function(page,perPage,detail){
     // console.log(result);
     result=JSON.stringify(result);
     result='{"totalPage":'+size+',"result":'+result+'}';
-    return Object.assign(size,result);
+    return result;
 }
