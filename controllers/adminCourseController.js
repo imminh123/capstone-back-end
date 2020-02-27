@@ -55,6 +55,7 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.updateCourse = async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
     // console.log('update course called');
     var id=req.params['id'];
     // console.log("current id is "+id);

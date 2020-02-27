@@ -34,6 +34,7 @@ exports.getTeacherByID = async (req,res) => {
 
 exports.updateTeacher = async (req,res) => {
     // console.log('update teacher called');
+    res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     // console.log("teacher id is "+id);
     var teacherName=req.body.teacherName;
