@@ -140,8 +140,13 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
 
 exports.searchCourse = async function(page,perPage,detail){
     var result,size;
-    result = await Course.aggregate()
-                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]});
+    result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
+    function(err, docs) {
+        // console.log("search "+docs);
+        if (err) handleError(err);
+        }).populate('teachers');
+    // result = await Course.aggregate()
+    //             .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]});
                 // .project({
                 //     courseName: 1,
                 //     courseCode: 1,
@@ -155,8 +160,16 @@ exports.searchCourse = async function(page,perPage,detail){
     // console.log(result);
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     if (page!=0){
-        result = await Course.aggregate()
-                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
+        result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
+                            // {"teacherName":1,"email":1,"rating":1},
+                            function(err, docs) {
+                                // console.log("search "+docs);
+                                if (err) handleError(err);
+                                }).populate('teachers')
+                                .skip(perPage*(page-1))
+                                .limit(Number(perPage));
+        // result = await Course.aggregate()
+        //         .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
                 // .project({
                 //     courseName: 1,
                 //     courseCode: 1,
@@ -167,8 +180,8 @@ exports.searchCourse = async function(page,perPage,detail){
                 //     dateCreated: 1,
                 //     teachers: {$size:"$teachers"}
                 // })
-                .skip(perPage*(page-1))
-                .limit(Number(perPage));        
+                // .skip(perPage*(page-1))
+                // .limit(Number(perPage));        
     }
     // console.log(result);
     result=JSON.stringify(result);
