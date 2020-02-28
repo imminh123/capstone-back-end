@@ -74,3 +74,11 @@ exports.searchCourse = async(req,res) => {
     var detail=req.query.detail;
     res.send(await CourseDAO.searchCourse(page,perPage,detail));
 };
+
+exports.searchDepartments = async(req,res) => {
+    res.setHeader("Content-Type", "application/json");
+    var page=req.query.page;
+    var perPage=req.query.limit;
+    var detail=req.query.detail;
+    res.send(await CourseDAO.searchDepartments(page,perPage,detail));
+}

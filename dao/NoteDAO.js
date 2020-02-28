@@ -8,6 +8,6 @@ function makeJson(msg){
     return JSON.parse(newObject);
 }
 
-exports.insertNote = async function(){
+exports.createNote = async function(){
     
 }

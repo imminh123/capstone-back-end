@@ -12,6 +12,6 @@ exports.getFolderByStudentID = async function(id) {
 
 }
 
-exports.insertFolder = async function() {
+exports.createFolder = async function() {
 
 }

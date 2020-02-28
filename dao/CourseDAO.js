@@ -63,7 +63,8 @@ exports.getCourseByID = async function(id){
     try{
         id=Objectid(id);
         var course = await Course.find({_id:id}).populate('teachers');
-         return course;
+        if (course==null||course=='') return makeJson('ID not found');
+        return course;
     }catch{
         return makeJson('ID not correct');
     }
@@ -73,7 +74,7 @@ exports.deleteCourse = async function(id){
     try{
         id=Objectid(id);
         var course=await Course.findById(id);
-        if (course==null) return makeJson('Course not found');
+        if (course==null||course=='') return makeJson('Course not found');
         await Course.deleteOne({_id:id},function(err){
             if (err) {
                 return makeJson('Error');
@@ -88,7 +89,7 @@ exports.deleteCourse = async function(id){
 
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
     if (await existed(0,code)) {
-        return makeJson('Course existed');
+        return makeJson('Course code existed');
     }
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -116,6 +117,8 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     }
     try{
         id=Objectid(id);
+        var course=await Course.find({_id:id});
+        if (course==null||course=='') return makeJson('ID not found');
         await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
         await removeCourseFromTeacher(id);
         await addCourseToTeacher(id,teachers);
@@ -134,6 +137,26 @@ exports.searchCourse = async function(page,perPage,detail){
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     if (page!=0){
         result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]},
+                            function(err, docs) {
+                                if (err) handleError(err);
+                                }).populate('teachers')
+                                .skip(perPage*(page-1))
+                                .limit(Number(perPage));
+    }
+    result=JSON.stringify(result);
+    result='{"totalPage":'+size+',"result":'+result+'}';
+    return result;
+}
+
+exports.searchDepartments = async function(page,perPage,detail){
+    var result,size;
+    result = await Course.find({departments:{$regex:detail,$options:"i"}}, 
+    function(err, docs) {
+        if (err) handleError(err);
+        }).populate('teachers');
+    if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    if (page!=0){
+        result = await Course.find({departments:{$regex:detail,$options:"i"}},
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('teachers')

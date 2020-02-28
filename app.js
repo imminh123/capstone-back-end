@@ -262,6 +262,7 @@ app.post('/createcourse/', courseAdminController.createCourse);
 app.put('/updatecourse/:id',courseAdminController.updateCourse);
 app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
 app.get('/searchcourse', courseAdminController.searchCourse);
+app.get('/searchdepartment', courseAdminController.searchDepartments);
 
 /**
  * Admin manages teacher

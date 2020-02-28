@@ -17,7 +17,7 @@ exports.getTeacherByID = async function(id){
     try{
         id = Objectid(id);
         var teacher = await Teacher.findOne({_id:id}).populate('courses');
-        if (teacher==null) return makeJson('ID not found')
+        if (teacher==null||teacher=='') return makeJson('ID not found')
         else
             return teacher;
     }catch{
@@ -29,7 +29,8 @@ exports.updateTeacher = async function(id,name,email,courses,isActive){
     try{
         id=Objectid(id);
         var teacher = await Teacher.find({_id:id});
-        if (teacher==null) return makeJson('ID not found');
+        console.log(teacher=='');
+        if (teacher==null||teacher=='') return makeJson('ID not found');
         await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses,isActive:isActive});
         //remove this teacher from every course
         await Course.updateMany(
@@ -39,7 +40,7 @@ exports.updateTeacher = async function(id,name,email,courses,isActive){
             function(err, doc) {
                 if(err){
                     // console.log(err);
-                    return makeJson('There was an error');
+                    return makeJson('There was an error with courses');
                 }else{
                 //do stuff
                 }
@@ -54,7 +55,7 @@ exports.updateTeacher = async function(id,name,email,courses,isActive){
                 function(err, doc) {
                     if(err){
                         // console.log(err);
-                        return makeJson('There was an error');
+                        return makeJson('There was an error with courses');
                     }else{
                     //do stuff
                     }
@@ -71,7 +72,7 @@ exports.changeteacherisactive = async function(id,isActive){
     try{
         id=Objectid(id);
         var teacher=await Teacher.find({_id:id});
-        if (teacher==null) return makeJson('ID not found');
+        if (teacher==null||teacher=='') return makeJson('ID not found');
         await Teacher.updateOne({_id:id},{isActive:isActive});
         return makeJson('Update successfully');
     }
