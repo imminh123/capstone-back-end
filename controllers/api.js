@@ -231,6 +231,7 @@ exports.getLastfm = async (req, res, next) => {
   } catch (err) {
     if (err.error !== undefined) {
       console.error(err);
+      //random comment
       // see error code list: https://www.last.fm/api/errorcodes
       switch (err.error) {
       // potentially handle each code uniquely
