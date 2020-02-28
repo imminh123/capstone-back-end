@@ -20,13 +20,13 @@ exports.getTeacherByID = async function(id){
     }
 };
 
-exports.updateTeacher = async function(id,name,email,courses){
+exports.updateTeacher = async function(id,name,email,courses,isActive){
     try{
         id=Objectid(id);
         // console.log("teacherid "+id);
         var teacher = await Teacher.find({_id:id});
         if (teacher==null) return 0;
-        await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses});
+        await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses,isActive:isActive});
         //remove this teacher from every course
         // console.log("start removing teacher from course");
         await Course.updateMany(
@@ -36,7 +36,7 @@ exports.updateTeacher = async function(id,name,email,courses){
             function(err, doc) {
                 if(err){
                     // console.log(err);
-                    return 0;
+                    return -1;
                 }else{
                 //do stuff
                 }
@@ -53,7 +53,7 @@ exports.updateTeacher = async function(id,name,email,courses){
                 function(err, doc) {
                     if(err){
                         // console.log(err);
-                        return 0;
+                        return -1;
                     }else{
                     //do stuff
                     }
@@ -62,14 +62,27 @@ exports.updateTeacher = async function(id,name,email,courses){
         });
         return 1;
     }catch{
-        return 0;
+        return -1;
     }
 };
+
+exports.changeteacherisactive = async function(id,isActive){
+    try{
+        id=Objectid(id);
+        var teacher=await Teacher.find({_id:id});
+        if (teacher==null) return 0;
+        await Teacher.updateOne({_id:id},{isActive:isActive});
+        return 1;
+    }
+    catch{
+        return -1;
+    }
+}
 
 exports.searchTeacher = async function(page,perPage,detail){
     var result,size;
     result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
-                            {"teacherName":1,"email":1,"rating":1},
+                            // {"teacherName":1,"email":1,"rating":1},
                             function(err, docs) {
                                 // console.log("search "+docs);
                                 if (err) handleError(err);
@@ -78,7 +91,7 @@ exports.searchTeacher = async function(page,perPage,detail){
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     if (page!=0){
         result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
-                            {"teacherName":1,"email":1,"rating":1},
+                            // {"teacherName":1,"email":1,"rating":1},
                             function(err, docs) {
                                 // console.log("search "+docs);
                                 if (err) handleError(err);

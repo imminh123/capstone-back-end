@@ -146,6 +146,10 @@ exports.searchCourse = async function(page,perPage,detail){
                     courseName: 1,
                     courseCode: 1,
                     departments: 1,
+                    shortDes: 1,
+                    fullDes: 1,
+                    courseURL: 1,
+                    dateCreated: 1,
                     teachers: {$size:"$teachers"}
                 })
     // console.log(result);
@@ -157,6 +161,10 @@ exports.searchCourse = async function(page,perPage,detail){
                     courseName: 1,
                     courseCode: 1,
                     departments: 1,
+                    shortDes: 1,
+                    fullDes: 1,
+                    courseURL: 1,
+                    dateCreated: 1,
                     teachers: {$size:"$teachers"}
                 })
                 .skip(perPage*(page-1))

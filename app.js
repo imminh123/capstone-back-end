@@ -270,7 +270,7 @@ app.get('/allteachers', teacherAdminController.getAllTeacher);
 app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
 app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
 app.get('/searchteacher', teacherAdminController.searchTeacher);
-
+app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisactive);
 /**
  * Student highlight
  */

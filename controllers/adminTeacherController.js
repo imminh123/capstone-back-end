@@ -40,16 +40,29 @@ exports.updateTeacher = async (req,res) => {
     var teacherName=req.body.teacherName;
     var email=req.body.email;
     var courses=req.body.courses;
+    var isActive=req.body.isActive;
     // console.log("request return "+teacherName+" "+email+" "+courses);
     //check if all fields are filled
     if (await isEmpty(teacherName,email))
                 res.send(makeJson("All field must be filled")); 
         else {
-                if (await TeacherDAO.updateTeacher(id,teacherName,email,courses)==1)
+                
+            if (await TeacherDAO.updateTeacher(id,teacherName,email,courses,isActive)==1)
                     res.status(200).send(makeJson("Update successfully"));  
-                else res.send(makeJson("Update fail"));            
+                else res.send(makeJson("Update failed"));            
         }
 };
+
+exports.changeteacherisactive = async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
+    var id=req.params['id'];
+    var isActive=req.body.isActive;
+    console.log("req return "+id+" "+isActive);
+    if (await TeacherDAO.changeteacherisactive(id,isActive)==0)
+        res.status(400).send(makeJson("Update failed"));
+        else
+            res.send(makeJson("Update successfully"));
+}
 
 exports.searchTeacher = async(req,res) => {
     res.setHeader("Content-Type", "application/json");
