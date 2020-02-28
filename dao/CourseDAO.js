@@ -141,32 +141,32 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
 exports.searchCourse = async function(page,perPage,detail){
     var result,size;
     result = await Course.aggregate()
-                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
-                .project({
-                    courseName: 1,
-                    courseCode: 1,
-                    departments: 1,
-                    shortDes: 1,
-                    fullDes: 1,
-                    courseURL: 1,
-                    dateCreated: 1,
-                    teachers: {$size:"$teachers"}
-                })
+                .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]});
+                // .project({
+                //     courseName: 1,
+                //     courseCode: 1,
+                //     departments: 1,
+                //     shortDes: 1,
+                //     fullDes: 1,
+                //     courseURL: 1,
+                //     dateCreated: 1,
+                //     teachers: {$size:"$teachers"}
+                // })
     // console.log(result);
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     if (page!=0){
         result = await Course.aggregate()
                 .match({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]})
-                .project({
-                    courseName: 1,
-                    courseCode: 1,
-                    departments: 1,
-                    shortDes: 1,
-                    fullDes: 1,
-                    courseURL: 1,
-                    dateCreated: 1,
-                    teachers: {$size:"$teachers"}
-                })
+                // .project({
+                //     courseName: 1,
+                //     courseCode: 1,
+                //     departments: 1,
+                //     shortDes: 1,
+                //     fullDes: 1,
+                //     courseURL: 1,
+                //     dateCreated: 1,
+                //     teachers: {$size:"$teachers"}
+                // })
                 .skip(perPage*(page-1))
                 .limit(Number(perPage));        
     }

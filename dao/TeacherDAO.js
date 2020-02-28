@@ -86,7 +86,7 @@ exports.searchTeacher = async function(page,perPage,detail){
                             function(err, docs) {
                                 // console.log("search "+docs);
                                 if (err) handleError(err);
-                                });
+                                }).populate('courses');
     // console.log(result);
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     if (page!=0){
@@ -95,7 +95,7 @@ exports.searchTeacher = async function(page,perPage,detail){
                             function(err, docs) {
                                 // console.log("search "+docs);
                                 if (err) handleError(err);
-                                })
+                                }).populate('courses')
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
