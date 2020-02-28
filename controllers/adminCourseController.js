@@ -63,8 +63,7 @@ exports.updateCourse = async (req,res) => {
 exports.deleteCourse =async (req,res) => {
     res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
-    var check=await CourseDAO.deleteCourse(id);
-    res.send(check);
+    res.send(await CourseDAO.deleteCourse(id));
 };
 
 exports.searchCourse = async(req,res) => {

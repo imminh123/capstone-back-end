@@ -17,11 +17,11 @@ exports.getTeacherByID = async function(id){
     try{
         id = Objectid(id);
         var teacher = await Teacher.findOne({_id:id}).populate('courses');
-        if (teacher==null||teacher=='') return makeJson('ID not found')
+        if (teacher==null||teacher=='') return makeJson('Teacher ID not found')
         else
             return teacher;
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Teacher ID not correct');
     }
 };
 
@@ -30,7 +30,7 @@ exports.updateTeacher = async function(id,name,email,courses,isActive){
         id=Objectid(id);
         var teacher = await Teacher.find({_id:id});
         console.log(teacher=='');
-        if (teacher==null||teacher=='') return makeJson('ID not found');
+        if (teacher==null||teacher=='') return makeJson('Teacher ID not found');
         await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses,isActive:isActive});
         //remove this teacher from every course
         await Course.updateMany(
@@ -64,7 +64,7 @@ exports.updateTeacher = async function(id,name,email,courses,isActive){
         });
         return makeJson('Update successfully');
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Teacher ID not correct');
     }
 };
 
@@ -72,12 +72,12 @@ exports.changeteacherisactive = async function(id,isActive){
     try{
         id=Objectid(id);
         var teacher=await Teacher.find({_id:id});
-        if (teacher==null||teacher=='') return makeJson('ID not found');
+        if (teacher==null||teacher=='') return makeJson('Teacher ID not found');
         await Teacher.updateOne({_id:id},{isActive:isActive});
         return makeJson('Update successfully');
     }
     catch{
-        return makeJson('ID not correct');
+        return makeJson('Teacher ID not correct');
     }
 }
 

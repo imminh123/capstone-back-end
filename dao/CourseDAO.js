@@ -63,10 +63,10 @@ exports.getCourseByID = async function(id){
     try{
         id=Objectid(id);
         var course = await Course.find({_id:id}).populate('teachers');
-        if (course==null||course=='') return makeJson('ID not found');
+        if (course==null||course=='') return makeJson('Course ID not found');
         return course;
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Course ID not correct');
     }
 };
 
@@ -74,7 +74,7 @@ exports.deleteCourse = async function(id){
     try{
         id=Objectid(id);
         var course=await Course.findById(id);
-        if (course==null||course=='') return makeJson('Course not found');
+        if (course==null||course=='') return makeJson('ID not found');
         await Course.deleteOne({_id:id},function(err){
             if (err) {
                 return makeJson('Error');
@@ -83,7 +83,7 @@ exports.deleteCourse = async function(id){
         await removeCourseFromTeacher(id);
         return makeJson('Delete successfully');
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Course ID not correct');
     }
 };
 
@@ -91,29 +91,29 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     if (await existed(0,code)) {
         return makeJson('Course code existed');
     }
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
-        today = dd + '/' + mm + '/' + yyyy;
-        var course = new Course({
-            courseName: name,
-            courseCode: code,
-            departments: departments,
-            shortDes: short,
-            fullDes: full,
-            courseURL : url,
-            dateCreated: today,
-            teachers: teachers
-        });
-        await course.save();
-        await addCourseToTeacher(course._id,teachers);
-        return makeJson('Create successfully');
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    today = dd + '/' + mm + '/' + yyyy;
+    var course = new Course({
+        courseName: name,
+        courseCode: code,
+        departments: departments,
+        shortDes: short,
+        fullDes: full,
+        courseURL : url,
+        dateCreated: today,
+        teachers: teachers
+    });
+    await course.save();
+    await addCourseToTeacher(course._id,teachers);
+    return makeJson('Create successfully');
 };
 
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
     if (await existed(id,code)) {
-        return makeJson('Code already existed');
+        return makeJson('Course code existed');
     }
     try{
         id=Objectid(id);
@@ -124,7 +124,7 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         await addCourseToTeacher(id,teachers);
         return makeJson('Update successfully');
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Course ID not correct');
     }
 };
 
