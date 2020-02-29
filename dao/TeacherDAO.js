@@ -3,8 +3,8 @@ var Objectid = require('mongodb').ObjectID;
 const Teacher = require('../models/Teacher');
 const Course = require('../models/Course');
 
-function makeJson(msg){
-    var newObject = '{"message":"'+msg+'"}';
+function makeJson(type,msg){
+    var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
 }
 
@@ -17,54 +17,54 @@ exports.getTeacherByID = async function(id){
     try{
         id = Objectid(id);
         var teacher = await Teacher.findOne({_id:id}).populate('courses');
-        if (teacher==null||teacher=='') return makeJson('Teacher ID not found')
+        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found')
         else
             return teacher;
     }catch{
-        return makeJson('Teacher ID not correct');
+        return makeJson('Error','Teacher ID not correct');
     }
 };
 
-exports.updateTeacher = async function(id,name,email,courses,isActive){
+exports.updateTeacher = async function(id,name,email,isActive){
     try{
         id=Objectid(id);
         var teacher = await Teacher.find({_id:id});
         console.log(teacher=='');
-        if (teacher==null||teacher=='') return makeJson('Teacher ID not found');
-        await Teacher.updateOne({_id:id},{teacherName:name,email:email,courses:courses,isActive:isActive});
+        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found');
+        await Teacher.updateOne({_id:id},{teacherName:name,email:email,isActive:isActive});
         //remove this teacher from every course
-        await Course.updateMany(
-            {},
-            {$pull: {teachers: id}},
-            {safe: true, upsert: true},
-            function(err, doc) {
-                if(err){
-                    // console.log(err);
-                    return makeJson('There was an error with courses');
-                }else{
-                //do stuff
-                }
-            }
-        );
-        //add this teacher to new course
-        courses.forEach(async function(data){
-            var courseid=Objectid(data);
-            await Course.updateOne({_id:courseid},
-                {$addToSet: {teachers:id}},
-                {safe: true, upsert: true},
-                function(err, doc) {
-                    if(err){
-                        // console.log(err);
-                        return makeJson('There was an error with courses');
-                    }else{
-                    //do stuff
-                    }
-                }
-            );
-        });
-        return makeJson('Update successfully');
+        // await Course.updateMany(
+        //     {},
+        //     {$pull: {teachers: id}},
+        //     {safe: true, upsert: true},
+        //     function(err, doc) {
+        //         if(err){
+        //             // console.log(err);
+        //             return makeJson('There was an error with courses');
+        //         }else{
+        //         //do stuff
+        //         }
+        //     }
+        // );
+        // //add this teacher to new course
+        // courses.forEach(async function(data){
+        //     var courseid=Objectid(data);
+        //     await Course.updateOne({_id:courseid},
+        //         {$addToSet: {teachers:id}},
+        //         {safe: true, upsert: true},
+        //         function(err, doc) {
+        //             if(err){
+        //                 // console.log(err);
+        //                 return makeJson('There was an error with courses');
+        //             }else{
+        //             //do stuff
+        //             }
+        //         }
+        //     );
+        // });
+        return makeJson('Success','Update successfully');
     }catch{
-        return makeJson('Teacher ID not correct');
+        return makeJson('Error','Teacher ID not correct');
     }
 };
 
@@ -72,12 +72,12 @@ exports.changeteacherisactive = async function(id,isActive){
     try{
         id=Objectid(id);
         var teacher=await Teacher.find({_id:id});
-        if (teacher==null||teacher=='') return makeJson('Teacher ID not found');
+        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found');
         await Teacher.updateOne({_id:id},{isActive:isActive});
-        return makeJson('Update successfully');
+        return makeJson('Sucess','Update successfully');
     }
     catch{
-        return makeJson('Teacher ID not correct');
+        return makeJson('Error','Teacher ID not correct');
     }
 }
 

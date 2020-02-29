@@ -30,12 +30,12 @@ exports.updateTeacher = async (req,res) => {
     var id=req.params['id'];
     var teacherName=req.body.teacherName;
     var email=req.body.email;
-    var courses=req.body.courses;
+    // var courses=req.body.courses;
     var isActive=req.body.isActive;
     if (await isEmpty(teacherName,email))
                 res.send(msgEmpty()); 
         else {
-            res.send(await TeacherDAO.updateTeacher(id,teacherName,email,courses,isActive));            
+            res.send(await TeacherDAO.updateTeacher(id,teacherName,email,isActive));            
         }
 };
 

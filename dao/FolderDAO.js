@@ -4,8 +4,8 @@ const Note = require('../models/Note');
 const Student = require('../models/Student');
 var Objectid = require('mongodb').ObjectID;
 
-function makeJson(msg){
-    var newObject = '{"message":"'+msg+'"}';
+function makeJson(type,msg){
+    var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
 }
 
@@ -13,11 +13,11 @@ exports.getFolderByStudentID = async function(id) {
     try{
         id=Objectid(id);
         var student=await Student.findById(id);
-        if (student==null||student=='') return makeJson('StudentID not found');
+        if (student==null||student=='') return makeJson('Error','StudentID not found');
         var folders=Folder.find({studentID:id}).populate('notes');
         return folders;
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Error','ID not correct');
     }
 }
 
@@ -25,7 +25,7 @@ exports.createFolder = async function(folderName,studentID) {
     try{
         studentID=Objectid(studentID);
         var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('StudentID not found');
+        if (student==null||student=='') return makeJson('Error','StudentID not found');
 
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -41,9 +41,9 @@ exports.createFolder = async function(folderName,studentID) {
         });
 
         await folder.save();
-        return makeJson('Create successfully');
+        return makeJson('Sucess','Create successfully');
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Error','ID not correct');
     }
 }
 

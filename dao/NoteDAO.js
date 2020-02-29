@@ -4,8 +4,8 @@ const Note = require('../models/Note');
 const Student = require('../models/Student');
 var Objectid = require('mongodb').ObjectID;
 
-function makeJson(msg){
-    var newObject = '{"message":"'+msg+'"}';
+function makeJson(type,msg){
+    var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
 }
 
@@ -13,17 +13,17 @@ exports.createNote = async function(studentID,folderID,note,description,url,inde
     try{
         studentID=Objectid(studentID);
         var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('studentID not found');
+        if (student==null||student=='') return makeJson('Error','studentID not found');
     }catch{
-        return makeJson('studentID not correct');
+        return makeJson('Error','studentID not correct');
     }
 
     try{
         folderID=Objectid(folderID);
         var folder=await Folder.findById(folderID);
-        if (folder==null||folder=='') return makeJson('folderID not found');
+        if (folder==null||folder=='') return makeJson('Error','folderID not found');
     }catch{
-        return makeJson('folderID not correct');
+        return makeJson('Error','folderID not correct');
     }
 
     var note = new Note({
@@ -45,5 +45,5 @@ exports.createNote = async function(studentID,folderID,note,description,url,inde
             //do stuff
         }
     });
-    return makeJson('Create successfully');
+    return makeJson('Sucess','Create successfully');
 }
