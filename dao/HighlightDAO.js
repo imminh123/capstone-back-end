@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const Highlight = require('../models/Highlight');
 var Objectid = require('mongodb').ObjectID;
 
-//insert highlight
+function makeJson(type,msg){
+    var newObject = '{"'+type+'":"'+msg+'"}';
+    return JSON.parse(newObject);
+}
+
 exports.createHighlight = async function(studentid,text,index,color,url){
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -18,8 +22,6 @@ exports.createHighlight = async function(studentid,text,index,color,url){
         date: today,
         url : url
     });
-    // console.log("new highlight is: "+highlight);
     await highlight.save();
-    //create successfully
-    // return 1;
+    return makeJson('Sucess','Create successfully');
 }

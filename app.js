@@ -35,6 +35,8 @@ const adminController = require('./controllers/adminController');
 const courseAdminController = require('./controllers/adminCourseController');
 const teacherAdminController = require('./controllers/adminTeacherController');
 const highlightController = require('./controllers/highlightController');
+const folderController = require('./controllers/folderController');
+const noteController = require('./controllers/noteController');
 /**
  * API keys and Passport configuration.
  */
@@ -262,6 +264,7 @@ app.post('/createcourse/', courseAdminController.createCourse);
 app.put('/updatecourse/:id',courseAdminController.updateCourse);
 app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
 app.get('/searchcourse', courseAdminController.searchCourse);
+app.get('/searchdepartment', courseAdminController.searchDepartments);
 
 /**
  * Admin manages teacher
@@ -271,9 +274,18 @@ app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
 app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
 app.get('/searchteacher', teacherAdminController.searchTeacher);
 app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisactive);
+
 /**
  * Student highlight
  */
-app.post('/createhighlight/', highlightController.createHighlight);
+app.post('/createhighlight', highlightController.createHighlight);
 
+/**
+ * Student Note
+ */
+app.post('/createfolder', folderController.createFolder);
+app.get('/getfolderbystudentid/:id', folderController.getFolderByStudentID);
+// app.delete('/deletefolder/:id', folderController.deleteFolder);
+app.put('/changefoldername/:id', folderController.changeFolderName)
+app.post('/createnote', noteController.createNote);
 module.exports = app;
