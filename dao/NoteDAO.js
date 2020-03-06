@@ -33,7 +33,7 @@ exports.createNote = async function(studentID,folderID,note,description,url,inde
         description:description,
         url:url,
         index:index,
-        noteModified: getTime.today()
+        dateModified: getTime.today()
     });
 
     await note.save();
