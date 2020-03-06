@@ -279,13 +279,22 @@ app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisacti
  * Student highlight
  */
 app.post('/createhighlight', highlightController.createHighlight);
-
+app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
+app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
+app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
+app.put('/updatehighlight/:id', highlightController.updateHighlight);
 /**
  * Student Note
  */
 app.post('/createfolder', folderController.createFolder);
-app.get('/getfolderbystudentid/:id', folderController.getFolderByStudentID);
-// app.delete('/deletefolder/:id', folderController.deleteFolder);
+app.get('/allfolderbystudentid/:id', folderController.getFolderByStudentID);
+app.delete('/deletefolder/:id', folderController.deleteFolder);
 app.put('/changefoldername/:id', folderController.changeFolderName)
 app.post('/createnote', noteController.createNote);
+app.put('/updatenotebyid/:id', noteController.updateNoteByID);
+app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
+app.get('/getnotebyid/:id', noteController.getNoteByID);
+app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
+app.get('/allnotebyfolderid/:id', noteController.allNoteOfFolder);
+
 module.exports = app;

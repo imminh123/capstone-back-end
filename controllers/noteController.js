@@ -10,7 +10,7 @@ async function isEmpty(studentID,folderID,note,description,url,index){
 }
 
 function msgEmpty(){
-    var newObject = '{"message":"All field must be filled"}';
+    var newObject = '{"Error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
@@ -27,4 +27,39 @@ exports.createNote = async (req,res) => {
         else {
             res.send(await NoteDAO.createNote(studentID,folderID,note,description,url,index));                    
         }
+}
+
+exports.updateNoteByID = async (req,res) => {
+    var noteID=req.params['id'];
+    var folderID=req.body.folderID;
+    var note=req.body.note;
+    var description=req.body.description;
+    var url=req.body.url;
+    var index=req.body.index;
+    //check if all fields are filled
+    if (await isEmpty("1",folderID,note,description,url,index))
+                res.send(msgEmpty()); 
+        else {
+            res.send(await NoteDAO.updateNote(noteID,folderID,note,description,url,index));                    
+        }
+}
+
+exports.deleteNoteByID = async (req,res) => {
+    var noteID=req.params['id'];
+    res.send(await NoteDAO.deleteNote(noteID));
+}
+
+exports.getNoteByID = async (req,res) => {
+    var noteID=req.params['id'];
+    res.send(await NoteDAO.getNote(noteID));
+}
+
+exports.allNoteOfStudent = async (req,res) => {
+    var studentID=req.params['id'];
+    res.send(await NoteDAO.getAllNoteByStudentID(studentID));
+}
+
+exports.allNoteOfFolder = async (req,res) => {
+    var folderID=req.params['id'];
+    res.send(await NoteDAO.getAllNoteByFolderID(folderID));
 }

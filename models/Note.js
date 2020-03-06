@@ -7,7 +7,8 @@ const noteSchema = new Schema({
     note: {type:String},
     description: {type: String},
     url: {type:String, required:true},
-    index: {type:Number, required:true}
+    index: {type:Number, required:true},
+    dateModified: {type:String}
 });
 
 const Note = mongoose.model('notes', noteSchema);

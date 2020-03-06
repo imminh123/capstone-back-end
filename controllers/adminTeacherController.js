@@ -9,7 +9,7 @@ async function isEmpty(teacherName,email){
 };
 
 function msgEmpty(){
-    var newObject = '{"message":"All field must be filled"}';
+    var newObject = '{"Error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
