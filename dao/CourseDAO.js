@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const getTime = require('../dao/getTime');

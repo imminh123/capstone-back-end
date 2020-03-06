@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Highlight = require('../models/Highlight');
 const Student = require('../models/Student');
 const getTime = require('../dao/getTime');
