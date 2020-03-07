@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
 const Folder = require('../models/Folder');
 const Note = require('../models/Note');
 const Student = require('../models/Student');
+const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -26,18 +26,11 @@ exports.createFolder = async function(folderName,studentID) {
         studentID=Objectid(studentID);
         var student=await Student.findById(studentID);
         if (student==null||student=='') return makeJson('Error','StudentID not found');
-
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
-        today = dd + '/' + mm + '/' + yyyy;
-
         var folder = new Folder({
             studentID:studentID,
             folderName:folderName,
             notes:[],
-            dateCreated: today
+            dateCreated: getTime.today()
         });
 
         await folder.save();
@@ -68,15 +61,29 @@ exports.deleteFolder = async function(id){
     try{
         id=Objectid(id);
         var folder=await Folder.findById(id);
-        if (folder==null||folder=='') return makeJson('ID not found');
+        if (folder==null||folder=='') return makeJson('Error','ID not found');
         await deleteNoteFromFolder(id);
         await Folder.deleteOne({_id:id},function(err){
             if (err) {
-                return makeJson('Error');
+                return makeJson('Error','Error when delete');
             }
         });
-        return makeJson('Delete successfully');
+        folder.notes.forEach(async function (data) {
+            var noteid = Objectid(data);
+            await Note.deleteOne({_id:noteid});
+            });
+        return makeJson('Success','Delete successfully');
     }catch{
-        return makeJson('ID not correct');
+        return makeJson('Error','ID not correct');
+    }
+}
+
+exports.getAllFolder = async function(id) {
+    try{
+        id=Objectid(id);
+        var folders=await Folder.find({studentID:id}).populate('notes');
+        return folders;
+    }catch{
+        return makeJson('Error','Student ID not correct');
     }
 }

@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 var Objectid = require('mongodb').ObjectID;
 const Teacher = require('../models/Teacher');
 const Course = require('../models/Course');

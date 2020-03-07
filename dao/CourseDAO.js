@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
+const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -91,11 +91,6 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     if (await existed(0,code)) {
         return makeJson('Error','Course code existed');
     }
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
-    today = dd + '/' + mm + '/' + yyyy;
     var course = new Course({
         courseName: name,
         courseCode: code,
@@ -103,7 +98,7 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
         shortDes: short,
         fullDes: full,
         courseURL : url,
-        dateCreated: today,
+        dateCreated: getTime.today(),
         teachers: teachers
     });
     await course.save();
