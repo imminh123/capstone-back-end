@@ -14,7 +14,6 @@ function msgEmpty(){
     return JSON.parse(newObject);
 }
 
-//create ask
 exports.createAsk = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var askContent=req.body.askContent;
@@ -29,33 +28,32 @@ exports.createAsk = async (req,res) => {
         }
 }
 
-//get ask
 exports.getAskByID = async (req,res) => {
     var noteID=req.params['id'];
     res.send(await AskDAO.getAskByID(noteID));
 }
-//all ask of student
+
 exports.allAskOfStudent = async (req,res) => {
     var studentID=req.params['id'];
     res.send(await AskDAO.allAskOfStudent(studentID));
 }
-//all ask of teacher
+
 exports.allAskOfTeacher = async (req,res) => {
     var teacherID=req.params['id'];
     res.send(await AskDAO.allAskOfTeacher(teacherID));
 }
-//all ask
+
 exports.allAsk = async (req,res) => {
     res.send(await AskDAO.allAsk());
 }
-//add comment
+
 exports.addComment = async (req,res) => {
     var askID=req.params['id'];
     var userID=req.body.userID;
     var message=req.body.message;
     res.send(await AskDAO.addComment(askID,userID,message));
 }
-//delete ask
+
 exports.deleteAskByID = async (req,res) => {
     var askID=req.params['id'];
     res.send(await AskDAO.deleteAsk(askID));
