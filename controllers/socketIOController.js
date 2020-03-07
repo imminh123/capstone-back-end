@@ -11,12 +11,12 @@ module.exports = function(io) {
             callback(); 
         });
     
-        // socket.on('sendMessage', (message, callback) => {
-        //     const user = getUser(socket.id);
-        //     io.to(user.room).emit('message', {user: user.name, text: message});
+        socket.on('send message', (message, callback) => {
+            // const user = getUser(socket.id); 
+            io.to(user.room).emit('message', {user: user.name, text: message});
        
-        //     callback();  
-        // }) 
+            callback();  
+        }) 
         
         socket.on('disconect', () => {
             // const user= removeUser(socket.id);
