@@ -38,6 +38,7 @@ const teacherAdminController = require('./controllers/adminTeacherController');
 const highlightController = require('./controllers/highlightController');
 const folderController = require('./controllers/folderController');
 const noteController = require('./controllers/noteController');
+const askController = require('./controllers/askController');
 /**
  * API keys and Passport configuration.
  */
@@ -260,13 +261,34 @@ app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisacti
  * Student highlight
  */
 app.post('/createhighlight', highlightController.createHighlight);
+app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
+app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
+app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
+app.put('/updatehighlight/:id', highlightController.updateHighlight);
 
 /**
  * Student Note
  */
 app.post('/createfolder', folderController.createFolder);
-app.get('/getfolderbystudentid/:id', folderController.getFolderByStudentID);
-// app.delete('/deletefolder/:id', folderController.deleteFolder);
+app.get('/allfolderbystudentid/:id', folderController.getFolderByStudentID);
+app.delete('/deletefolder/:id', folderController.deleteFolder);
 app.put('/changefoldername/:id', folderController.changeFolderName)
 app.post('/createnote', noteController.createNote);
+app.put('/updatenotebyid/:id', noteController.updateNoteByID);
+app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
+app.get('/getnotebyid/:id', noteController.getNoteByID);
+app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
+app.get('/allnotebyfolderid/:id', noteController.allNoteOfFolder);
+
+/**
+ * Ask and comment
+ */
+app.post('/createask', askController.createAsk);
+app.get('/allask', askController.allAsk);
+app.get('/getaskbyid/:id', askController.getAskByID);
+app.get('/allaskofstudent/:id', askController.allAskOfStudent);
+app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
+app.delete('/deleteask/:id', askController.deleteAskByID);
+app.post('/addcomment/:id', askController.addComment);
+
 module.exports = app;
