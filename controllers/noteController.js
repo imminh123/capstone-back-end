@@ -32,7 +32,8 @@ exports.updateNoteByID = async (req,res) => {
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
-    var isPinned=req.body.inPinned;
+    var isPinned=req.body.isPinned;
+    console.log(isPinned);
     //check if all fields are filled
     if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isEmpty(isPinned))
                 res.send(msgEmpty()); 
