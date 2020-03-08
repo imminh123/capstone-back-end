@@ -7,12 +7,15 @@ function makeJson(type,msg){
     return JSON.parse(newObject);
 }
 
+//get all teacher
 exports.getAllTeacher = async function () {
     var teacherlist = await Teacher.find({}).populate('courses');
     return teacherlist;
 };
 
+//get a teacher by id
 exports.getTeacherByID = async function(id){
+    //check teacherID
     try{
         id = Objectid(id);
         var teacher = await Teacher.findOne({_id:id}).populate('courses');
@@ -24,11 +27,13 @@ exports.getTeacherByID = async function(id){
     }
 };
 
+//update a teacher
 exports.updateTeacher = async function(id,name,email,isActive){
+    //check teacherID
     try{
         id=Objectid(id);
         var teacher = await Teacher.find({_id:id});
-        console.log(teacher=='');
+        // console.log(teacher=='');
         if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found');
         await Teacher.updateOne({_id:id},{teacherName:name,email:email,isActive:isActive});
         //remove this teacher from every course
@@ -67,7 +72,9 @@ exports.updateTeacher = async function(id,name,email,isActive){
     }
 };
 
+//change active of teacher
 exports.changeteacherisactive = async function(id,isActive){
+    //check teacherID
     try{
         id=Objectid(id);
         var teacher=await Teacher.find({_id:id});
@@ -80,13 +87,16 @@ exports.changeteacherisactive = async function(id,isActive){
     }
 }
 
+//search teacher name and email
 exports.searchTeacher = async function(page,perPage,detail){
     var result,size;
+    //all result. may need a better solution
     result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('courses');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    //result of a page
     if (page!=0){
         result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
