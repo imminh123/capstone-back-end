@@ -1,11 +1,7 @@
 const CourseDAO = require('../dao/CourseDAO');
 
-async function isEmpty(courseName,courseCode,shortDes,fullDes,courseURL){
-    if ([courseName,courseCode,shortDes,fullDes,courseURL].includes(undefined)
-        || [courseName,courseCode,shortDes,fullDes,courseURL].includes(null)
-            || (courseName=="") || (courseCode=="")
-            || (shortDes=="") || (fullDes=="") || (courseURL==""))
-                return 1;
+function isEmpty(str){
+    if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
 
@@ -35,7 +31,7 @@ exports.createCourse = async (req, res) => {
     var courseURL=req.body.courseURL;
     var teachers=req.body.teachers;
     //check if all fields are filled
-    if (await isEmpty(courseName,courseCode,shortDes,fullDes,courseURL))
+    if (isEmpty(courseName)||isEmpty(courseCode)||isEmpty(shortDes)||isEmpty(fullDes)||isEmpty(courseURL))
                 res.send(msgEmpty()); 
         else {
             res.send(await CourseDAO.createCourse(courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers));                    
@@ -53,7 +49,7 @@ exports.updateCourse = async (req,res) => {
     var courseURL=req.body.courseURL;
     var teachers=req.body.teachers;
     //check all fields are filled
-    if (await isEmpty(courseName,courseCode,departments,shortDes,fullDes,courseURL))
+    if (isEmpty(courseName)||isEmpty(courseCode)||isEmpty(shortDes)||isEmpty(fullDes)||isEmpty(courseURL))
                 res.send(msgEmpty()); 
         else {
             res.send(await CourseDAO.updateCourse(id,courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers));                       

@@ -1,10 +1,7 @@
 const FolderDAO = require('../dao/FolderDAO');
 
-async function isEmpty(folderName,StudentID){
-    if ([folderName,StudentID].includes(undefined)
-        || [folderName,StudentID].includes(null)
-            || (folderName=="") || (StudentID==""))
-                return 1;
+function isEmpty(str){
+    if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
 
@@ -23,7 +20,7 @@ exports.createFolder = async (req, res) => {
     var folderName=req.body.folderName;
     var studentID=req.body.studentID;
     //check if all fields are filled
-    if (await isEmpty(folderName,studentID))
+    if (isEmpty(folderName)||isEmpty(studentID))
                 res.send(msgEmpty()); 
         else {
             res.send(await FolderDAO.createFolder(folderName,studentID));                    

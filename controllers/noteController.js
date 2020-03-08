@@ -1,11 +1,7 @@
 const NoteDAO = require('../dao/NoteDAO');
 
-async function isEmpty(studentID,folderID,note,description,url,index){
-    if ([studentID,folderID,note,description,url,index].includes(undefined)
-        || [studentID,folderID,note,description,url,index].includes(null)
-            || (studentID=="") || (folderID=="") || (note=="")
-                || (description=="") || (url=="") || (index==""))
-                return 1;
+function isEmpty(str){
+    if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
 
@@ -22,7 +18,7 @@ exports.createNote = async (req,res) => {
     var url=req.body.url;
     var index=req.body.index;
     //check if all fields are filled
-    if (await isEmpty(studentID,folderID,note,description,url,index))
+    if (isEmpty(studentID)||isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index))
                 res.send(msgEmpty()); 
         else {
             res.send(await NoteDAO.createNote(studentID,folderID,note,description,url,index));                    
@@ -37,7 +33,7 @@ exports.updateNoteByID = async (req,res) => {
     var url=req.body.url;
     var index=req.body.index;
     //check if all fields are filled
-    if (await isEmpty("1",folderID,note,description,url,index))
+    if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index))
                 res.send(msgEmpty()); 
         else {
             res.send(await NoteDAO.updateNote(noteID,folderID,note,description,url,index));                    
