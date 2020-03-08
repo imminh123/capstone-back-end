@@ -301,6 +301,7 @@ app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.get('/allnotebyfolderid/:id', noteController.allNoteOfFolder);
+app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
 
 /**
  * Ask and comment

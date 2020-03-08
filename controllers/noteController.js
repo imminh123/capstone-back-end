@@ -42,7 +42,6 @@ exports.updateNoteByID = async (req,res) => {
         }
 }
 
-//note used yet
 exports.changeNoteIsPinned = async (req,res) => {
     var noteID=req.params['id'];
     var isPinned=req.body.isPinned;
