@@ -75,7 +75,8 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
         {$pull: {notes:noteID}});
     await Folder.updateOne({_id:folderID},{$addToSet:{notes:noteID}});
     await Note.updateOne({_id:noteID},{folderID:folderID,note:note,description:description,url:url,index:index,isPinned:isPinned,dateModified:getTime.today()});
-    return makeJson('Success','Update successfully');
+    return await Note.findById(noteID);
+    // return makeJson('Success','Update successfully');
 }
 
 //deletenote
