@@ -35,11 +35,19 @@ exports.updateNoteByID = async (req,res) => {
     var isPinned=req.body.isPinned;
     // console.log(isPinned);
     //check if all fields are filled
-    if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isEmpty(isPinned))
+    if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned=='')
                 res.send(msgEmpty()); 
         else {
             res.send(await NoteDAO.updateNote(noteID,folderID,note,description,url,index,isPinned));                    
         }
+}
+
+//note used yet
+exports.changeNoteIsPinned = async (req,res) => {
+    var noteID=req.params['id'];
+    var isPinned=req.body.isPinned;
+    if (isPinned=='') res.send(msgEmpty());
+        else res.send(await NoteDAO.changeNoteIsPinned(id,isPinned));
 }
 
 exports.deleteNoteByID = async (req,res) => {

@@ -94,6 +94,21 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
     // return makeJson('Success','Update successfully');
 }
 
+//change active of teacher
+exports.changeIsPinned = async function(id,isPinned){
+    //check teacherID
+    try{
+        id=Objectid(id);
+        var note=await Note.find({_id:id});
+        if (note==null||note=='') return makeJson('Error','NoteID not found');
+        await Note.updateOne({_id:id},{isPinned:isPinned});
+        return makeJson('Sucess','Update successfully');
+    }
+    catch{
+        return makeJson('Error','NoteID not correct');
+    }
+}
+
 //deletenote
 exports.deleteNote = async function(noteID){
     //check noteID
