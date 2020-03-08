@@ -79,7 +79,7 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
     var result = '{'
         +'"Sucess":"Update sucessfully",'
         +'"note":{'
-        +'"isPinned": false,'
+        +'"isPinned": '+noteentity.isPinned+','
         +'"_id": "'+noteentity._id+'",'
         +'"studentID": "'+noteentity.studentID+'",'
         +'"folderID": "'+noteentity.folderID+'",'
