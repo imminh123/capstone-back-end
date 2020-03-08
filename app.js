@@ -38,6 +38,7 @@ const highlightController = require('./controllers/highlightController');
 const folderController = require('./controllers/folderController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
+const studentController = require('./controllers/studentController');
 /**
  * API keys and Passport configuration.
  */
@@ -309,5 +310,11 @@ app.get('/allaskofstudent/:id', askController.allAskOfStudent);
 app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
+
+/**
+ * Student
+ */
+app.get('/getstudentbyid/:id', studentController.getStudentByID);
+app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
 
 module.exports = app;
