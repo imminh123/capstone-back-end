@@ -32,11 +32,12 @@ exports.updateNoteByID = async (req,res) => {
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
+    var isPinned=req.body.inPinned;
     //check if all fields are filled
     if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index))
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.updateNote(noteID,folderID,note,description,url,index));                    
+            res.send(await NoteDAO.updateNote(noteID,folderID,note,description,url,index,isPinned));                    
         }
 }
 

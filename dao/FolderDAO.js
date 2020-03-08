@@ -23,6 +23,7 @@ async function folderNameExisted(id,name){
 
 //all folder of a student by id
 exports.getFolderByStudentID = async function(id) {
+    //check studentID
     try{
         id=Objectid(id);
         var student=await Student.findById(id);
