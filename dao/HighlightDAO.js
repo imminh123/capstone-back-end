@@ -88,6 +88,8 @@ exports.updateHighlight = async function(hlID,text,index,color,tags){
 exports.getHighlightOfUrl = async function(id,url){
     try{
         id=Objectid(id);
+        var student=await Student.findById(id);
+        if (student==null||student=='') return makeJson('Error','studentID not found');
         var highlights=await Highlight.find({studentID:id,url:url});
         return highlights;
     }catch{
