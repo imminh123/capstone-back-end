@@ -29,7 +29,7 @@ exports.updateNoteByID = async (req,res) => {
     // res.setHeader("Content-Type", "application/json");
     var noteID=req.params['id'];
     var folderID=req.body.folderID;
-    var note=req.body.note;
+    var note=req.body.note.toString();
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
