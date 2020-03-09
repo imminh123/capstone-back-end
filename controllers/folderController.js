@@ -11,7 +11,7 @@ function msgEmpty(){
 }
 
 exports.getFolderByStudentID = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await FolderDAO.getFolderByStudentID(id));
 };
@@ -28,7 +28,7 @@ exports.createFolder = async (req, res) => {
 };
 
 exports.changeFolderName = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var folderName=req.body.folderName;
     //check all fields are filled
@@ -40,7 +40,7 @@ exports.changeFolderName = async (req,res) => {
 };
 
 exports.deleteFolder =async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await FolderDAO.deleteFolder(id));
 };
