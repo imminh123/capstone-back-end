@@ -27,7 +27,7 @@ exports.createNote = async function(studentID,folderID,note,description,url,inde
     }catch{
         return makeJson('Error','folderID not correct');
     }
-    
+    if (studentID.toString()!=folder.studentID.toString()) return makeJson('Error','StudentID of folder and note not match');
     var note = new Note({
         studentID:studentID,
         folderID:folderID,
@@ -70,6 +70,7 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
     }catch{
         return makeJson('Error','folderID not correct');
     }
+    if (studentID.toString()!=folder.studentID.toString()) return makeJson('Error','StudentID of folder and note not match');
     await Folder.updateOne(
         {},
         {$pull: {notes:noteID}});
