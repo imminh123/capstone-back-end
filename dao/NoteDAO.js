@@ -90,7 +90,7 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
         +'"dateModified": "'+noteentity.dateModified+'"'
     +'}}';
     // console.log(result);
-    return 'hello';
+    return result;
     // return makeJson('Success','Update successfully');
 }
 
