@@ -18,8 +18,7 @@ exports.getAllCourse = async (req, res) => {
 exports.getCourseByID = async (req,res) => {
     res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
-    const course=await CourseDAO.getCourseByID(id);
-    res.send(course);
+    res.send(await CourseDAO.getCourseByID(id));
 };
 
 exports.createCourse = async (req, res) => {
@@ -75,5 +74,6 @@ exports.searchDepartments = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
+    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
 }

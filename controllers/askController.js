@@ -47,6 +47,7 @@ exports.addComment = async (req,res) => {
     var askID=req.params['id'];
     var userID=req.body.userID;
     var message=req.body.message;
+    if (isEmpty(message)) res.send(msgEmpty());
     res.send(await AskDAO.addComment(askID,userID,message));
 }
 

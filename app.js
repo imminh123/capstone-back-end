@@ -287,6 +287,7 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
+app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
 
 /**
  * Student Note

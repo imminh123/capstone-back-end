@@ -1,7 +1,6 @@
 const NoteDAO = require('../dao/NoteDAO');
 
 function isEmpty(str){
-    // console.log(str+' '+str==null||str==undefined||str=='');
     if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
@@ -34,8 +33,6 @@ exports.updateNoteByID = async (req,res) => {
     var url=req.body.url;
     var index=req.body.index;
     var isPinned=req.body.isPinned;
-    // console.log(noteID+' '+folderID+' '+note+' '+description+' '+url+' '+index+' '+isPinned);
-    // console.log(isPinned);
     //check if all fields are filled
     if (isEmpty(folderID)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned.toString()=='')
                 res.send(msgEmpty()); 

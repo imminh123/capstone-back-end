@@ -32,7 +32,7 @@ exports.changeFolderName = async (req,res) => {
     var id=req.params['id'];
     var folderName=req.body.folderName;
     //check all fields are filled
-    if (folderName==undefined||folderName==null||folderName=='')
+    if (isEmpty(folderName))
                 res.send(msgEmpty()); 
         else {
             res.send(await FolderDAO.changeFolderName(id,folderName));                       

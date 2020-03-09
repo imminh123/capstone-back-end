@@ -18,8 +18,7 @@ exports.getAllTeacher = async (req, res) => {
 exports.getTeacherByID = async (req,res) => {
     res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
-    const teacher=await TeacherDAO.getTeacherByID(id);
-    res.send(teacher);
+    res.send(await TeacherDAO.getTeacherByID(id));
 };
 
 exports.updateTeacher = async (req,res) => {
@@ -27,7 +26,6 @@ exports.updateTeacher = async (req,res) => {
     var id=req.params['id'];
     var teacherName=req.body.teacherName;
     var email=req.body.email;
-    // var courses=req.body.courses;
     var isActive=req.body.isActive;
     if (isEmpty(teacherName)||isEmpty(email))
                 res.send(msgEmpty()); 
@@ -40,6 +38,7 @@ exports.changeteacherisactive = async (req,res) => {
     res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var isActive=req.body.isActive;
+    if (isActive.toString()=='') res.send(msgEmpty());
     res.send(await TeacherDAO.changeteacherisactive(id,isActive));
 }
 
@@ -48,5 +47,6 @@ exports.searchTeacher = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
+    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
     res.send(await TeacherDAO.searchTeacher(page,perPage,detail));
 };

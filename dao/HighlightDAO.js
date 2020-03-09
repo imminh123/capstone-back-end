@@ -83,3 +83,14 @@ exports.updateHighlight = async function(hlID,text,index,color,tags){
     await Highlight.updateOne({_id:hlID},{text:text,index:index,color:color,tags:tags,date:getTime.today()});
     return makeJson('Success','Update successfully');
 }
+
+//get highlight in an url
+exports.getHighlightOfUrl = async function(id,url){
+    try{
+        id=Objectid(id);
+        var highlights=await Highlight.find({studentID:id,url:url});
+        return highlights;
+    }catch{
+        return makeJson('Error','highlightID not correct');
+    }
+}
