@@ -26,6 +26,7 @@ exports.createNote = async (req,res) => {
 }
 
 exports.updateNoteByID = async (req,res) => {
+    res.setHeader("Content-Type", "application/json");
     var noteID=req.params['id'];
     var folderID=req.body.folderID;
     var note=req.body.note;
