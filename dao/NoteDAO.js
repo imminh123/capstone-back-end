@@ -70,7 +70,6 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
     }catch{
         return makeJson('Error','folderID not correct');
     }
-    if (studentID.toString()!=folder.studentID.toString()) return makeJson('Error','StudentID of folder and note not match');
     await Folder.updateOne(
         {},
         {$pull: {notes:noteID}});
