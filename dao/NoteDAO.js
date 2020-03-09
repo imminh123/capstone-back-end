@@ -76,20 +76,22 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
     await Folder.updateOne({_id:folderID},{$addToSet:{notes:noteID}});
     await Note.updateOne({_id:noteID},{folderID:folderID,note:note,description:description,url:url,index:index,isPinned:isPinned,dateModified:getTime.today()});
     noteentity=await Note.findById(noteID);
-    var result = '{'
-        +'"Sucess":"Update sucessfully",'
-        +'"note":{'
-        +'"isPinned": '+noteentity.isPinned+','
-        +'"_id": "'+noteentity._id+'",'
-        +'"studentID": "'+noteentity.studentID+'",'
-        +'"folderID": "'+noteentity.folderID+'",'
-        +'"note": "'+noteentity.note+'",'
-        +'"description": "'+noteentity.description+'",'
-        +'"url": "'+noteentity.url+'",'
-        +'"index": '+noteentity.index+','
-        +'"dateModified": "'+noteentity.dateModified+'"'
-    +'}}';
-    return JSON.parse(result);
+    var result = {
+        Success:'Update successfully',
+        note:{
+            isPinned:noteentity.isPinned,
+            _id:noteentity._id,
+            studentID:noteentity.studentID,
+            folderID:noteentity.folderID,
+            note:noteentity.note,
+            description:noteentity.description,
+            url:noteentity.url,
+            index:noteentity.index,
+            dateModified:noteentity.dateModified,
+        }
+    }
+    console.log(result);
+    return (result);
 }
 
 //change active of teacher
