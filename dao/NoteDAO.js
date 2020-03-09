@@ -89,9 +89,7 @@ exports.updateNote = async function(noteID,folderID,note,description,url,index,i
         +'"index": '+noteentity.index+','
         +'"dateModified": "'+noteentity.dateModified+'"'
     +'}}';
-    // console.log(result);
     return JSON.parse(result);
-    // return makeJson('Success','Update successfully');
 }
 
 //change active of teacher
