@@ -54,3 +54,17 @@ exports.getHighlightOfUrl = async (req,res) => {
     if (isEmpty(id)||isEmpty(url)) res.send(msgEmpty());
     res.send(await hlDAO.getHighlightOfUrl(id,url));
 }
+
+exports.searchHighLight = async (req,res) => {
+    var sID=req.body.studentID;
+    var text=req.body.text;
+    if (isEmpty(text)||isEmpty(sID)) res.send(msgEmpty());
+    res.send(await hlDAO.searchHighlight(text,sID));
+}
+
+exports.getHighlightByCourse = async (req,res) => {
+    var sID=req.body.studentID;
+    var courseCode=req.body.courseCode;
+    if (isEmpty(courseCode)||isEmpty(sID)) res.send(msgEmpty());
+    res.send(await hlDAO.getHighlightByCourse(courseCode,sID));
+}

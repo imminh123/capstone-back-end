@@ -1,5 +1,6 @@
 const Highlight = require('../models/Highlight');
 const Student = require('../models/Student');
+const Course = require('../models/Course');
 const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
@@ -94,5 +95,30 @@ exports.getHighlightOfUrl = async function(id,url){
         return highlights;
     }catch{
         return makeJson('Error','highlightID not correct');
+    }
+}
+
+exports.searchHighlight = async function(text,sID){
+    try{
+        sID=Objectid(sID);
+        var result = await Highlight.find({text:{$regex:text,$options:"i"},studentID:sID}, 
+                    function(err, docs) {
+                        if (err) handleError(err);
+                });
+        return result;
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
+}
+
+exports.getHighlightByCourse = async function(courseCode,sID){
+    try{
+        sID=Objectid(sID);
+        var course = await Course.findOne({courseCode:courseCode});
+        if (course==null||course=='') return makeJson('Error','courseCode not found');
+        var result = await Highlight.find({studentID:sID,courseCode:courseCode});
+        return result;
+    }catch{
+        return makeJson('Error','studentID not correct');
     }
 }
