@@ -44,8 +44,9 @@ exports.updateHighlight = async (req,res) => {
     var index=req.body.index;
     var color=req.body.color;
     var tags=req.body.tags;
-    if (isEmpty(text)||isEmpty(index)||isEmpty(colors)) res.send(msgEmpty());
-    res.send(await hlDAO.updateHighlight(id,text,index,color,tags));
+    var courseCode=req.body.courseCode;
+    if (isEmpty(text)||isEmpty(index)||isEmpty(colors)||isEmpty(courseCode)) res.send(msgEmpty());
+    res.send(await hlDAO.updateHighlight(id,courseCode,text,index,color,tags));
 }
 
 exports.getHighlightOfUrl = async (req,res) => {

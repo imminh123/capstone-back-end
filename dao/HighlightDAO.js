@@ -72,7 +72,7 @@ exports.deleteHighlight = async function(id){
 }
 
 //update a highlight
-exports.updateHighlight = async function(hlID,text,index,color,tags){
+exports.updateHighlight = async function(hlID,courseCode,text,index,color,tags){
     //check highlightID
     try{
         hlID=Objectid(hlID);
@@ -81,7 +81,7 @@ exports.updateHighlight = async function(hlID,text,index,color,tags){
     }catch{
         return makeJson('Error','highlightID not correct');
     }
-    await Highlight.updateOne({_id:hlID},{text:text,index:index,color:color,tags:tags,date:getTime.today()});
+    await Highlight.updateOne({_id:hlID},{courseCode:courseCode,text:text,index:index,color:color,tags:tags,date:getTime.today()});
     return makeJson('Success','Update successfully');
 }
 
