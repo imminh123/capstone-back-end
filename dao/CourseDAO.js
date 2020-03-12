@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
@@ -178,4 +179,15 @@ exports.searchDepartments = async function(page,perPage,detail){
     result=JSON.stringify(result);
     result='{"totalPage":'+size+',"result":'+result+'}';
     return result;
+}
+
+exports.allCourseOfStudent = async function(sID){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
+    var student=await Student.findById(sID).populate('courses');
+    if (student==null||student=='') return makeJson('Error','studentID not found');
+    return student.courses;
 }

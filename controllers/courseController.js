@@ -78,3 +78,8 @@ exports.searchDepartments = async(req,res) => {
     if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
 }
+
+exports.getCourseOfStudent = async (req,res) => {
+    var sID=req.params['id'];
+    res.send(await CourseDAO.allCourseOfStudent(sID));
+}

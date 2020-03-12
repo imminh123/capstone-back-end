@@ -33,8 +33,8 @@ const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const adminController = require('./controllers/adminController');
-const courseAdminController = require('./controllers/adminCourseController');
-const teacherAdminController = require('./controllers/adminTeacherController');
+const courseController = require('./controllers/courseController');
+const teacherController = require('./controllers/teacherController');
 const highlightController = require('./controllers/highlightController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
@@ -261,24 +261,25 @@ app.listen(app.get('port'), () => {
 app.get('/getStatisticNumber', adminController.getAllNumber);
 
 /**
- * Admin manages course
+ * Course
  */
-app.get('/allcourses', courseAdminController.getAllCourse);
-app.get('/getcourse/:id', courseAdminController.getCourseByID);
-app.post('/createcourse/', courseAdminController.createCourse);
-app.put('/updatecourse/:id',courseAdminController.updateCourse);
-app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
-app.get('/searchcourse', courseAdminController.searchCourse);
-app.get('/searchdepartment', courseAdminController.searchDepartments);
+app.get('/allcourses', courseController.getAllCourse);
+app.get('/getcourse/:id', courseController.getCourseByID);
+app.post('/createcourse/', courseController.createCourse);
+app.put('/updatecourse/:id',courseController.updateCourse);
+app.delete('/deletecourse/:id',courseController.deleteCourse);
+app.get('/searchcourse', courseController.searchCourse);
+app.get('/searchdepartment', courseController.searchDepartments);
+app.get('/getCourseOfStudent/:id', courseController.getCourseOfStudent);
 
 /**
- * Admin manages teacher
+ * Teacher
  */
-app.get('/allteachers', teacherAdminController.getAllTeacher);
-app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
-app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
-app.get('/searchteacher', teacherAdminController.searchTeacher);
-app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisactive);
+app.get('/allteachers', teacherController.getAllTeacher);
+app.get('/getteacher/:id', teacherController.getTeacherByID);
+app.put('/updateteacher/:id', teacherController.updateTeacher);
+app.get('/searchteacher', teacherController.searchTeacher);
+app.put('/changeteacherisactive/:id', teacherController.changeteacherisactive);
 
 /**
  * Student highlight

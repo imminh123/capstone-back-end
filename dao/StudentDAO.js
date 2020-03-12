@@ -31,6 +31,7 @@ exports.getStudentByID = async function(id){
         return makeJson('Error','studentID not correct')
     }
         var student=await Student.findById(id).populate('courses');
+        if (student==null||student=='') return makeJson('Error','studentID not found');
         return student;
     
 }

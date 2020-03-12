@@ -53,5 +53,4 @@ exports.getUserByID = async function(id){
     var user=await User.findById(id).populate('profile');
     if (user==null||user=='') return makeJson('Error','userID not found');
     return user;
-    
 }
