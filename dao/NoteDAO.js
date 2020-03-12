@@ -40,15 +40,15 @@ exports.createNote = async function(studentID,courseCode,note,description,url,in
 
 //changenote
 exports.updateNote = async function(noteID,courseCode,note,description,url,index,isPinned){
-    var folder;
     //check noteID
     try{
         noteID=Objectid(noteID);
-        var noteentity=await Note.findById(noteID);
-        if (noteentity==null||noteentity=='') return makeJson('Error','noteID not found');
     }catch{
         return makeJson('Error','noteID not correct');
     }
+        var noteentity=await Note.findById(noteID);
+        if (noteentity==null||noteentity=='') return makeJson('Error','noteID not found');
+    
     //check course
     var course = await Course.findOne({courseCode:courseCode});
     if (course==null||course=='') return makeJson('Error','courseCode not found');
@@ -76,14 +76,15 @@ exports.changeIsPinned = async function(id,isPinned){
     //check teacherID
     try{
         id=Objectid(id);
-        var note=await Note.find({_id:id});
-        if (note==null||note=='') return makeJson('Error','NoteID not found');
-        await Note.updateOne({_id:id},{isPinned:isPinned});
-        return makeJson('Sucess','Update successfully');
     }
     catch{
         return makeJson('Error','NoteID not correct');
     }
+        var note=await Note.find({_id:id});
+        if (note==null||note=='') return makeJson('Error','NoteID not found');
+        await Note.updateOne({_id:id},{isPinned:isPinned});
+        return makeJson('Sucess','Update successfully');
+    
 }
 
 //deletenote
@@ -91,11 +92,12 @@ exports.deleteNote = async function(noteID){
     //check noteID
     try{
         noteID=Objectid(noteID);
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('Error','noteID not found');
     }catch{
         return makeJson('Error','noteID not correct');
     }
+        var note=await Note.findById(noteID);
+        if (note==null||note=='') return makeJson('Error','noteID not found');
+    
     await Note.deleteOne({_id:noteID},function(err){
         if (err) {
             return makeJson('Error','Error when delete');
@@ -112,12 +114,13 @@ exports.getNote = async function(noteID){
     //check noteID
     try{
         noteID=Objectid(noteID);
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('Error','noteID not found');
-        return note;
     }catch{
         return makeJson('Error','noteID not correct');
     }
+        var note=await Note.findById(noteID);
+        if (note==null||note=='') return makeJson('Error','noteID not found');
+        return note;
+    
 }
 
 //allnote
@@ -125,26 +128,28 @@ exports.getAllNoteByStudentID = async function(studentID){
     //check studentID
     try{
         studentID=Objectid(studentID);
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
         var student=await Student.findById(studentID);
         if (student==null||student=='') return makeJson('Error','studentID not found');
         var notes=await Note.find({studentID:studentID});
         return notes;
-    }catch{
-        return makeJson('Error','studentID not correct');
-    }
+   
 }
 
 exports.searchNote = async function(text,sID){
     try{
         sID=Objectid(sID);
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
         var result = await Note.find({note:{$regex:text,$options:"i"},studentID:sID}, 
                     function(err, docs) {
                         if (err) handleError(err);
                 });
         return result;
-    }catch{
-        return makeJson('Error','studentID not correct');
-    }
+    
 }
 
 exports.getNoteByCourse = async function(courseCode,sID){

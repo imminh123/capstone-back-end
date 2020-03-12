@@ -12,5 +12,5 @@ const noteSchema = new Schema({
     isPinned: {type: Boolean, default: false}
 });
 
-const Note = mongoose.model('notes', noteSchema);
+const Note = mongoose.model('note', noteSchema);
 module.exports = Note;

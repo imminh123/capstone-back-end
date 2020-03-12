@@ -39,6 +39,8 @@ const highlightController = require('./controllers/highlightController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
 const studentController = require('./controllers/studentController');
+const myUserController = require('./controllers/userController');
+
 /**
  * API keys and Passport configuration.
  */
@@ -318,5 +320,11 @@ app.post('/addcomment/:id', askController.addComment);
  */
 app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
+
+/**
+ * User
+ */
+app.get('/getUserByID/:id', myUserController.getUserByID);
+app.post('/createUser', myUserController.createUser);
 
 module.exports = app;

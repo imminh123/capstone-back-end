@@ -12,5 +12,5 @@ const highlightSchema = new Schema({
     tags: [{type:String}]
 });
 
-const Highlight = mongoose.model('highlights', highlightSchema);
+const Highlight = mongoose.model('highlight', highlightSchema);
 module.exports = Highlight;
