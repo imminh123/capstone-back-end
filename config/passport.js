@@ -89,6 +89,8 @@ const googleStrategyConfig = new GoogleStrategy({
             req.flash('info', { msg: 'Google account has been linked.' });
             done(err, user);
           });
+
+          console.log(user);
         });
       }
     });
@@ -119,6 +121,8 @@ const googleStrategyConfig = new GoogleStrategy({
           user.save((err) => {
             done(err, user);
           });
+
+          console.log(user)
         }
       });
     });

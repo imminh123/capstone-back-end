@@ -84,7 +84,7 @@ exports.allAskOfStudent = async function(studentID){
         studentID=Objectid(studentID);
         var student=await Student.findById(studentID);
         if (student==null||student=='') return makeJson('Error','studentID not found');
-        var asks=await Ask.find({student:studentID}).populate('student').populate('teacher');
+        var asks=await Ask.find({student:studentID}).populate('student').populate('comments');
         return asks;
     }catch{
         return makeJson('Error','studentID not correct');
@@ -101,10 +101,10 @@ exports.allAskOfTeacher = async function(teacherID){
     }catch{
         return makeJson('Error','teacherID not correct');
     }
-}
+} 
 
 exports.allAsk = async function(){
-    var asks=await Ask.find().populate('student').populate('teacher');
+    var asks=await Ask.find().populate('student').populate('teacher').populate('comments');
     return asks;
 }
 

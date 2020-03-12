@@ -1,3 +1,5 @@
+const AskDAO = require('../dao/AskDAO');
+
 module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('New connection');
@@ -11,10 +13,11 @@ module.exports = function(io) {
             callback(); 
         });
     
-        socket.on('send message', (message, callback) => {
-            // const user = getUser(socket.id); 
-            io.to(user.room).emit('message', {user: user.name, text: message});
-       
+        socket.on('send message', async (data, callback) =>  {
+            // const user = getUser(socket.id);  
+            // io.to(user.room).emit('message', {user: user.name, text: message});
+            const {message, user, askID } = data;
+            console.log(await AskDAO.addComment(askID,user._id,message));
             callback();  
         }) 
         
