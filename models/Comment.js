@@ -3,10 +3,11 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
     userID: {type: String, required: true},
-    ask: {type:Schema.Types.ObjectId,ref: 'asks'},
+    ask: {type:Schema.Types.ObjectId,ref: 'ask'},
     message: {type: String, require: true},
-    dateCreated: {type: String, required:true}
+    dateCreated: {type: String},
+    time: {type: String}
 });
 
-const Comment = mongoose.model('comments', commentSchema);
+const Comment = mongoose.model('comment', commentSchema);
 module.exports = Comment;

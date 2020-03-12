@@ -1,11 +1,7 @@
 const CourseDAO = require('../dao/CourseDAO');
 
-async function isEmpty(courseName,courseCode,shortDes,fullDes,courseURL){
-    if ([courseName,courseCode,shortDes,fullDes,courseURL].includes(undefined)
-        || [courseName,courseCode,shortDes,fullDes,courseURL].includes(null)
-            || (courseName=="") || (courseCode=="")
-            || (shortDes=="") || (fullDes=="") || (courseURL==""))
-                return 1;
+function isEmpty(str){
+    if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
 
@@ -15,18 +11,18 @@ function msgEmpty(){
 }
 
 exports.getAllCourse = async (req, res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     res.send(await CourseDAO.getAllCourse());
 };
 
 exports.getCourseByID = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
-    const course=await CourseDAO.getCourseByID(id);
-    res.send(course);
+    res.send(await CourseDAO.getCourseByID(id));
 };
 
 exports.createCourse = async (req, res) => {
+    // res.setHeader("Content-Type", "application/json");
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
     var departments=req.body.departments;
@@ -35,7 +31,7 @@ exports.createCourse = async (req, res) => {
     var courseURL=req.body.courseURL;
     var teachers=req.body.teachers;
     //check if all fields are filled
-    if (await isEmpty(courseName,courseCode,shortDes,fullDes,courseURL))
+    if (isEmpty(courseName)||isEmpty(courseCode)||isEmpty(shortDes)||isEmpty(fullDes)||isEmpty(courseURL))
                 res.send(msgEmpty()); 
         else {
             res.send(await CourseDAO.createCourse(courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers));                    
@@ -43,7 +39,7 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.updateCourse = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
@@ -53,7 +49,7 @@ exports.updateCourse = async (req,res) => {
     var courseURL=req.body.courseURL;
     var teachers=req.body.teachers;
     //check all fields are filled
-    if (await isEmpty(courseName,courseCode,departments,shortDes,fullDes,courseURL))
+    if (isEmpty(courseName)||isEmpty(courseCode)||isEmpty(shortDes)||isEmpty(fullDes)||isEmpty(courseURL))
                 res.send(msgEmpty()); 
         else {
             res.send(await CourseDAO.updateCourse(id,courseName,courseCode,departments,shortDes,fullDes,courseURL,teachers));                       
@@ -61,13 +57,13 @@ exports.updateCourse = async (req,res) => {
 };
 
 exports.deleteCourse =async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await CourseDAO.deleteCourse(id));
 };
 
 exports.searchCourse = async(req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
@@ -75,9 +71,15 @@ exports.searchCourse = async(req,res) => {
 };
 
 exports.searchDepartments = async(req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
+    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
+}
+
+exports.getCourseOfStudent = async (req,res) => {
+    var sID=req.params['id'];
+    res.send(await CourseDAO.allCourseOfStudent(sID));
 }

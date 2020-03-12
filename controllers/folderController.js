@@ -1,10 +1,7 @@
 const FolderDAO = require('../dao/FolderDAO');
 
-async function isEmpty(folderName,StudentID){
-    if ([folderName,StudentID].includes(undefined)
-        || [folderName,StudentID].includes(null)
-            || (folderName=="") || (StudentID==""))
-                return 1;
+function isEmpty(str){
+    if (str==null||str==undefined||str=='') return 1;
     return 0;
 }
 
@@ -14,7 +11,7 @@ function msgEmpty(){
 }
 
 exports.getFolderByStudentID = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await FolderDAO.getFolderByStudentID(id));
 };
@@ -23,7 +20,7 @@ exports.createFolder = async (req, res) => {
     var folderName=req.body.folderName;
     var studentID=req.body.studentID;
     //check if all fields are filled
-    if (await isEmpty(folderName,studentID))
+    if (isEmpty(folderName)||isEmpty(studentID))
                 res.send(msgEmpty()); 
         else {
             res.send(await FolderDAO.createFolder(folderName,studentID));                    
@@ -31,11 +28,11 @@ exports.createFolder = async (req, res) => {
 };
 
 exports.changeFolderName = async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var folderName=req.body.folderName;
     //check all fields are filled
-    if (folderName==undefined||folderName==null||folderName=='')
+    if (isEmpty(folderName))
                 res.send(msgEmpty()); 
         else {
             res.send(await FolderDAO.changeFolderName(id,folderName));                       
@@ -43,7 +40,7 @@ exports.changeFolderName = async (req,res) => {
 };
 
 exports.deleteFolder =async (req,res) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await FolderDAO.deleteFolder(id));
 };

@@ -11,9 +11,11 @@ const teacherSchema = new Schema({
         star_4:{type:Number},
         star_5:{type:Number}
     },
-    courses:[{type:Schema.Types.ObjectId,ref:'courses'}],
+    courses:[{type:Schema.Types.ObjectId,ref:'course'}],
+    gender: {type: String, required:true},
+    avatar: {type:String},
     isActive:Boolean
 });
 
-const Teacher = mongoose.model('teachers', teacherSchema);
+const Teacher = mongoose.model('teacher', teacherSchema);
 module.exports = Teacher;

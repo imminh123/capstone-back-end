@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
@@ -54,25 +55,34 @@ async function addCourseToTeacher(courseid,teachers){
         });
 };
 
+//return all course
 exports.getAllCourse = async function () {
     var courselist = await Course.find({}).populate('teachers');
     return courselist;
 };
 
+//return a course by id
 exports.getCourseByID = async function(id){
+    //check courseID
     try{
         id=Objectid(id);
-        var course = await Course.find({_id:id}).populate('teachers');
-        if (course==null||course=='') return makeJson('Error','Course ID not found');
-        return course;
     }catch{
         return makeJson('Error','Course ID not correct');
     }
+        var course = await Course.find({_id:id}).populate('teachers');
+        if (course==null||course=='') return makeJson('Error','Course ID not found');
+        return course;
+    
 };
 
+//delete course and remove teacher.this course
 exports.deleteCourse = async function(id){
+    //check courseID
     try{
         id=Objectid(id);
+    }catch{
+        return makeJson('Error','Course ID not correct');
+    }
         var course=await Course.findById(id);
         if (course==null||course=='') return makeJson('Error','ID not found');
         await Course.deleteOne({_id:id},function(err){
@@ -82,11 +92,10 @@ exports.deleteCourse = async function(id){
         });
         await removeCourseFromTeacher(id);
         return makeJson('Sucess','Delete successfully');
-    }catch{
-        return makeJson('Error','Course ID not correct');
-    }
+  
 };
 
+//create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
     if (await existed(0,code)) {
         return makeJson('Error','Course code existed');
@@ -106,30 +115,36 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     return makeJson('Sucess','Create successfully');
 };
 
+//update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
     if (await existed(id,code)) {
         return makeJson('Error','Course code existed');
     }
+    //check courseID
     try{
         id=Objectid(id);
+    }catch{
+        return makeJson('Error','Course ID not correct');
+    }
         var course=await Course.find({_id:id});
         if (course==null||course=='') return makeJson('Error','ID not found');
         await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
         await removeCourseFromTeacher(id);
         await addCourseToTeacher(id,teachers);
         return makeJson('Sucess','Update successfully');
-    }catch{
-        return makeJson('Error','Course ID not correct');
-    }
+    
 };
 
+//seach for course
 exports.searchCourse = async function(page,perPage,detail){
     var result,size;
+    //all result. may need better solution for this
     result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
     function(err, docs) {
         if (err) handleError(err);
         }).populate('teachers');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    //if all result isn't need, search for result in page
     if (page!=0){
         result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]},
                             function(err, docs) {
@@ -143,13 +158,16 @@ exports.searchCourse = async function(page,perPage,detail){
     return result;
 }
 
+//search for departments
 exports.searchDepartments = async function(page,perPage,detail){
     var result,size;
+    //all result
     result = await Course.find({departments:{$regex:detail,$options:"i"}}, 
     function(err, docs) {
         if (err) handleError(err);
         }).populate('teachers');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
+    //result in a page
     if (page!=0){
         result = await Course.find({departments:{$regex:detail,$options:"i"}},
                             function(err, docs) {
@@ -161,4 +179,15 @@ exports.searchDepartments = async function(page,perPage,detail){
     result=JSON.stringify(result);
     result='{"totalPage":'+size+',"result":'+result+'}';
     return result;
+}
+
+exports.allCourseOfStudent = async function(sID){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
+    var student=await Student.findById(sID).populate('courses');
+    if (student==null||student=='') return makeJson('Error','studentID not found');
+    return student.courses;
 }

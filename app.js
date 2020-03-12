@@ -19,6 +19,7 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
+// const cors= require('cors');
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -32,12 +33,14 @@ const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const adminController = require('./controllers/adminController');
-const courseAdminController = require('./controllers/adminCourseController');
-const teacherAdminController = require('./controllers/adminTeacherController');
+const courseController = require('./controllers/courseController');
+const teacherController = require('./controllers/teacherController');
 const highlightController = require('./controllers/highlightController');
-const folderController = require('./controllers/folderController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
+const studentController = require('./controllers/studentController');
+const myUserController = require('./controllers/userController');
+
 /**
  * API keys and Passport configuration.
  */
@@ -66,6 +69,7 @@ mongoose.connection.once('open', function () {
     });
 
 //solution for cors error
+// app.use(cors());
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
@@ -257,24 +261,25 @@ app.listen(app.get('port'), () => {
 app.get('/getStatisticNumber', adminController.getAllNumber);
 
 /**
- * Admin manages course
+ * Course
  */
-app.get('/allcourses', courseAdminController.getAllCourse);
-app.get('/getcourse/:id', courseAdminController.getCourseByID);
-app.post('/createcourse/', courseAdminController.createCourse);
-app.put('/updatecourse/:id',courseAdminController.updateCourse);
-app.delete('/deletecourse/:id',courseAdminController.deleteCourse);
-app.get('/searchcourse', courseAdminController.searchCourse);
-app.get('/searchdepartment', courseAdminController.searchDepartments);
+app.get('/allcourses', courseController.getAllCourse);
+app.get('/getcourse/:id', courseController.getCourseByID);
+app.post('/createcourse/', courseController.createCourse);
+app.put('/updatecourse/:id',courseController.updateCourse);
+app.delete('/deletecourse/:id',courseController.deleteCourse);
+app.get('/searchcourse', courseController.searchCourse);
+app.get('/searchdepartment', courseController.searchDepartments);
+app.get('/getCourseOfStudent/:id', courseController.getCourseOfStudent);
 
 /**
- * Admin manages teacher
+ * Teacher
  */
-app.get('/allteachers', teacherAdminController.getAllTeacher);
-app.get('/getteacher/:id', teacherAdminController.getTeacherByID);
-app.put('/updateteacher/:id', teacherAdminController.updateTeacher);
-app.get('/searchteacher', teacherAdminController.searchTeacher);
-app.put('/changeteacherisactive/:id', teacherAdminController.changeteacherisactive);
+app.get('/allteachers', teacherController.getAllTeacher);
+app.get('/getteacher/:id', teacherController.getTeacherByID);
+app.put('/updateteacher/:id', teacherController.updateTeacher);
+app.get('/searchteacher', teacherController.searchTeacher);
+app.put('/changeteacherisactive/:id', teacherController.changeteacherisactive);
 
 /**
  * Student highlight
@@ -284,20 +289,21 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
+app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
+app.get('/searchHighlightByText/', highlightController.searchHighLight);
+app.get('/getHighlightByCourse', highlightController.getHighlightByCourse);
 
 /**
  * Student Note
  */
-app.post('/createfolder', folderController.createFolder);
-app.get('/allfolderbystudentid/:id', folderController.getFolderByStudentID);
-app.delete('/deletefolder/:id', folderController.deleteFolder);
-app.put('/changefoldername/:id', folderController.changeFolderName)
 app.post('/createnote', noteController.createNote);
 app.put('/updatenotebyid/:id', noteController.updateNoteByID);
 app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
-app.get('/allnotebyfolderid/:id', noteController.allNoteOfFolder);
+app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
+app.get('/searchNoteByNote', noteController.searchNote);
+app.get('/getNoteByCourse', noteController.getNoteByCourse);
 
 /**
  * Ask and comment
@@ -309,5 +315,17 @@ app.get('/allaskofstudent/:id', askController.allAskOfStudent);
 app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
+
+/**
+ * Student
+ */
+app.get('/getstudentbyid/:id', studentController.getStudentByID);
+app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
+
+/**
+ * User
+ */
+app.get('/getUserByID/:id', myUserController.getUserByID);
+app.post('/createUser', myUserController.createUser);
 
 module.exports = app;
