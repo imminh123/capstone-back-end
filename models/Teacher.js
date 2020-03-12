@@ -12,6 +12,8 @@ const teacherSchema = new Schema({
         star_5:{type:Number}
     },
     courses:[{type:Schema.Types.ObjectId,ref:'courses'}],
+    gender: {type: String, required:true},
+    avatar: {type:String},
     isActive:Boolean
 });
 

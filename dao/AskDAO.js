@@ -10,6 +10,7 @@ function makeJson(type,msg){
     return JSON.parse(newObject);
 }
 
+//create new ask
 exports.createAsk = async function(scannedContent,askContent,student,teacher,courseURL){
     try{
         student=Objectid(student);
@@ -44,6 +45,7 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
     return makeJson('Sucess','Create successfully');
 }
 
+//delete a comment
 async function deleteComments(comments){
     comments.forEach(async function(data){
         data=Objectid(data);
@@ -51,7 +53,9 @@ async function deleteComments(comments){
     });
 }
 
+//delete ask and all its comments
 exports.deleteAsk = async function(id){
+    //check if ask is valid
     try{
         id=Objectid(id);
         var ask=await Ask.findById(id);
@@ -59,7 +63,9 @@ exports.deleteAsk = async function(id){
     }catch{
         return makeJson('Error','askID not correct');
     }
+    //delete all comments
     await deleteComments(ask.comments);
+    //delete ask
     await Ask.deleteOne({_id:id},function(err){
         if (err) {
             return makeJson('Error','Error when delete');
@@ -68,7 +74,9 @@ exports.deleteAsk = async function(id){
     return makeJson('Sucess','Delete successfully');
 }
 
+//get an ask by id
 exports.getAskByID = async function(askID){
+    //check valid ask
     try{
         askID=Objectid(askID);
         var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
@@ -79,7 +87,9 @@ exports.getAskByID = async function(askID){
     }
 }
 
+//return all ask of a student by id
 exports.allAskOfStudent = async function(studentID){
+    //check studentid
     try{
         studentID=Objectid(studentID);
         var student=await Student.findById(studentID);
@@ -91,7 +101,9 @@ exports.allAskOfStudent = async function(studentID){
     }
 }
 
+//return all ask of a teacher by id
 exports.allAskOfTeacher = async function(teacherID){
+    //check teacherID
     try{
         teacherID=Objectid(teacherID);
         var teacher=await Teacher.findById(teacherID);
@@ -103,12 +115,15 @@ exports.allAskOfTeacher = async function(teacherID){
     }
 } 
 
+//return all ask
 exports.allAsk = async function(){
     var asks=await Ask.find().populate('student').populate('teacher').populate('comments');
     return asks;
 }
 
+//add a new comment to ask
 exports.addComment = async function(askID,userID,message){
+    //check askID
     try{
         askID=Objectid(askID);
         var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
@@ -116,6 +131,7 @@ exports.addComment = async function(askID,userID,message){
     }catch{
         return makeJson('Error','askID not correct');
     }
+    //check input userID 
     if (userID!=ask.student._id && userID!=ask.teacher._id) return makeJson('Error','UserID isnt match');
     //create new comment
     var comment = new Comment({

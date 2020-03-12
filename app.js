@@ -20,6 +20,7 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
+// const cors= require('cors');
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -39,6 +40,7 @@ const highlightController = require('./controllers/highlightController');
 const folderController = require('./controllers/folderController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
+const studentController = require('./controllers/studentController');
 /**
  * API keys and Passport configuration.
  */
@@ -67,6 +69,7 @@ mongoose.connection.once('open', function () {
     });
 
 //solution for cors error
+// app.use(cors());
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
@@ -261,6 +264,7 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
+app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
 
 /**
  * Student Note
@@ -275,6 +279,7 @@ app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.get('/allnotebyfolderid/:id', noteController.allNoteOfFolder);
+app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
 
 /**
  * Ask and comment
@@ -287,4 +292,77 @@ app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
 
+/**
+ * Student
+ */
+app.get('/getstudentbyid/:id', studentController.getStudentByID);
+app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
+
 module.exports = app;
+
+// /**
+//  * Admin statics page
+//  */
+// app.get('/getStatisticNumber', adminController.getAllNumber);
+
+// /**
+//  * Admin manages course
+//  */
+// app.get('/allCourses', courseAdminController.getAllCourse);
+// app.get('/getCourse/:id', courseAdminController.getCourseByID);
+// app.post('/createCourse/', courseAdminController.createCourse);
+// app.put('/updateCourse/:id',courseAdminController.updateCourse);
+// app.delete('/deleteCourse/:id',courseAdminController.deleteCourse);
+// app.get('/searchCourse', courseAdminController.searchCourse);
+// app.get('/searchDepartment', courseAdminController.searchDepartments);
+
+// /**
+//  * Admin manages teacher
+//  */
+// app.get('/allTeachers', teacherAdminController.getAllTeacher);
+// app.get('/getTeacher/:id', teacherAdminController.getTeacherByID);
+// app.put('/updateTeacher/:id', teacherAdminController.updateTeacher);
+// app.get('/searchTeacher', teacherAdminController.searchTeacher);
+// app.put('/changeTeacherIsActive/:id', teacherAdminController.changeteacherisactive);
+
+// /**
+//  * Student highlight
+//  */
+// app.post('/createHighlight', highlightController.createHighlight);
+// app.get('/getHighlightbyID/:id', highlightController.getHighlightByID);
+// app.get('/allHighlightByStudentID/:id', highlightController.allHighlightByStudentID);
+// app.delete('/deleteHighlightByID/:id', highlightController.deleteHighlightbyID);
+// app.put('/updateHighlight/:id', highlightController.updateHighlight);
+// app.get('/getHighlighOfUrl/', highlightController.getHighlightOfUrl);
+
+// /**
+//  * Student Note
+//  */
+// app.post('/createFolder', folderController.createFolder);
+// app.get('/allFolderByStudentID/:id', folderController.getFolderByStudentID);
+// app.delete('/deleteFolder/:id', folderController.deleteFolder);
+// app.put('/changeFolderName/:id', folderController.changeFolderName)
+// app.post('/createNote', noteController.createNote);
+// app.put('/updateNoteByID/:id', noteController.updateNoteByID);
+// app.delete('/deleteNoteByID/:id', noteController.deleteNoteByID);
+// app.get('/getNoteByID/:id', noteController.getNoteByID);
+// app.get('/allNoteByStudentID/:id', noteController.allNoteOfStudent);
+// app.get('/allNoteByFolderID/:id', noteController.allNoteOfFolder);
+// app.put('/changeNoteIsPinned/:id', noteController.changeNoteIsPinned);
+
+// /**
+//  * Ask and comment
+//  */
+// app.post('/createAsk', askController.createAsk);
+// app.get('/allAsk', askController.allAsk);
+// app.get('/getAskByID/:id', askController.getAskByID);
+// app.get('/allAskOfStudent/:id', askController.allAskOfStudent);
+// app.get('/allAskOfTeacher/:id', askController.allAskOfTeacher);
+// app.delete('/deleteAsk/:id', askController.deleteAskByID);
+// app.post('/addComment/:id', askController.addComment);
+
+// /**
+//  * Student
+//  */
+// app.get('/getStudentByid/:id', studentController.getStudentByID);
+// app.put('/updateStudentCourse/:id', studentController.updateStudentCourse);
