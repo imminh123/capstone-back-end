@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -9,23 +10,15 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   emailVerificationToken: String,
   emailVerified: Boolean,
-  snapchat: String,
-  facebook: String,
-  twitter: String,
   google: String,
-  github: String,
-  instagram: String,
-  linkedin: String,
-  steam: String,
-  quickbooks: String,
   tokens: Array,
-
+  role:{
+    type:String,
+    enum:['admin','teacher','student']
+  },
   profile: {
-    name: String,
-    gender: String,
-    location: String,
-    website: String,
-    picture: String
+    type: Schema.Types.ObjectId,
+    refPath: 'role'
   }
 }, { timestamps: true });
 

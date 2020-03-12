@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
@@ -65,12 +66,13 @@ exports.getCourseByID = async function(id){
     //check courseID
     try{
         id=Objectid(id);
-        var course = await Course.find({_id:id}).populate('teachers');
-        if (course==null||course=='') return makeJson('Error','Course ID not found');
-        return course;
     }catch{
         return makeJson('Error','Course ID not correct');
     }
+        var course = await Course.find({_id:id}).populate('teachers');
+        if (course==null||course=='') return makeJson('Error','Course ID not found');
+        return course;
+    
 };
 
 //delete course and remove teacher.this course
@@ -78,6 +80,9 @@ exports.deleteCourse = async function(id){
     //check courseID
     try{
         id=Objectid(id);
+    }catch{
+        return makeJson('Error','Course ID not correct');
+    }
         var course=await Course.findById(id);
         if (course==null||course=='') return makeJson('Error','ID not found');
         await Course.deleteOne({_id:id},function(err){
@@ -87,9 +92,7 @@ exports.deleteCourse = async function(id){
         });
         await removeCourseFromTeacher(id);
         return makeJson('Sucess','Delete successfully');
-    }catch{
-        return makeJson('Error','Course ID not correct');
-    }
+  
 };
 
 //create a new course
@@ -120,15 +123,16 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     //check courseID
     try{
         id=Objectid(id);
+    }catch{
+        return makeJson('Error','Course ID not correct');
+    }
         var course=await Course.find({_id:id});
         if (course==null||course=='') return makeJson('Error','ID not found');
         await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
         await removeCourseFromTeacher(id);
         await addCourseToTeacher(id,teachers);
         return makeJson('Sucess','Update successfully');
-    }catch{
-        return makeJson('Error','Course ID not correct');
-    }
+    
 };
 
 //seach for course
@@ -175,4 +179,15 @@ exports.searchDepartments = async function(page,perPage,detail){
     result=JSON.stringify(result);
     result='{"totalPage":'+size+',"result":'+result+'}';
     return result;
+}
+
+exports.allCourseOfStudent = async function(sID){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('Error','studentID not correct');
+    }
+    var student=await Student.findById(sID).populate('courses');
+    if (student==null||student=='') return makeJson('Error','studentID not found');
+    return student.courses;
 }

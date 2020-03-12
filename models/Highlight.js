@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const highlightSchema = new Schema({
     studentID: {type: Schema.Types.ObjectId, required: true},
+    courseCode: {type: String},
     text: {type: String, required: true},
     index: {type: Number,required: true},
     color: {type: String, required: true},
@@ -11,5 +12,5 @@ const highlightSchema = new Schema({
     tags: [{type:String}]
 });
 
-const Highlight = mongoose.model('highlights', highlightSchema);
+const Highlight = mongoose.model('highlight', highlightSchema);
 module.exports = Highlight;

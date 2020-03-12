@@ -9,8 +9,8 @@ const courseSchema = new Schema({
     fullDes: {type: String, required:true},
     courseURL: {type: String, required:true},
     dateCreated: {type: String, required:true},
-    teachers: [{type:Schema.Types.ObjectId,ref: 'teachers'}]
+    teachers: [{type:Schema.Types.ObjectId,ref: 'teacher'}]
 });
 
-const Course = mongoose.model('courses', courseSchema);
+const Course = mongoose.model('course', courseSchema);
 module.exports = Course;
