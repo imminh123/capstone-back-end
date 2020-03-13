@@ -208,7 +208,8 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
   jwt.sign({user: user}, 'tinhanhem', (err, token) => {
     if(err) console.log(err)
-    res.cookie('user', token, { maxAge: 900000, httpOnly: true })
+
+    res.cookie('user', token, { maxAge: 900000})
     res.redirect('http://localhost:3000');
 
   })
