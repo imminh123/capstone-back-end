@@ -27,9 +27,17 @@ async function existed(id,code){
 
 async function invalidDepartment(departments){
     var departmentlist=await Department.find();
-    for (const newData of departments)
-        for (const fromDB of departmentlist)
-            if (newData!=fromDB.name) return 1;
+    var existed;
+    for (const newData of departments){
+        existed=0;
+        for (const fromDB of departmentlist){
+            if (newData==fromDB.name){
+                existed=1;
+                break;
+            }
+        }
+        if (existed==0) return 1;
+    }
     return 0;
 }
   
