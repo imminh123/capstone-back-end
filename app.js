@@ -39,6 +39,7 @@ const highlightController = require('./controllers/highlightController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
 const studentController = require('./controllers/studentController');
+const departmentController = require('./controllers/departmentController');
 const myUserController = require('./controllers/userController');
 
 /**
@@ -259,6 +260,15 @@ app.listen(app.get('port'), () => {
  * Admin statics page
  */
 app.get('/getStatisticNumber', adminController.getAllNumber);
+
+/**
+ * Department
+ */
+app.get('/allDepartment', departmentController.allDepartment);
+app.get('/getDepartment/:id', departmentController.getDepartment);
+app.post('/createDepartment', departmentController.createDepartment);
+app.put('/updateDepartment/:id', departmentController.updateDepartment);
+app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
 
 /**
  * Course

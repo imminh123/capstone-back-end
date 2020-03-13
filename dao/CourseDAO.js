@@ -1,6 +1,7 @@
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
+const Department = require('../models/Department');
 const getTime = require('../dao/getTime');
 var Objectid = require('mongodb').ObjectID;
 
@@ -23,6 +24,14 @@ async function existed(id,code){
     }
     return 1;
 };
+
+async function invalidDepartment(departments){
+    var departmentlist=await Department.find();
+    for (const newData of departments)
+        for (const fromDB of departmentlist)
+            if (newData!=fromDB.name) return 1;
+    return 0;
+}
   
 //remove this course from every teacher
 async function removeCourseFromTeacher(id){
@@ -100,6 +109,7 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     if (await existed(0,code)) {
         return makeJson('Error','Course code existed');
     }
+    if (await invalidDepartment(departments)) return makeJson('Error','Department not found');
     var course = new Course({
         courseName: name,
         courseCode: code,
@@ -117,21 +127,22 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 
 //update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
-    if (await existed(id,code)) {
-        return makeJson('Error','Course code existed');
-    }
     //check courseID
     try{
         id=Objectid(id);
     }catch{
         return makeJson('Error','Course ID not correct');
     }
-        var course=await Course.find({_id:id});
-        if (course==null||course=='') return makeJson('Error','ID not found');
-        await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
-        await removeCourseFromTeacher(id);
-        await addCourseToTeacher(id,teachers);
-        return makeJson('Sucess','Update successfully');
+    if (await existed(id,code)) {
+        return makeJson('Error','Course code existed');
+    }
+    if (await invalidDepartment(departments)) return makeJson('Error','Department not found');
+    var course=await Course.find({_id:id});
+    if (course==null||course=='') return makeJson('Error','ID not found');
+    await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
+    await removeCourseFromTeacher(id);
+    await addCourseToTeacher(id,teachers);
+    return makeJson('Sucess','Update successfully');
     
 };
 
