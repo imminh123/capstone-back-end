@@ -274,6 +274,7 @@ app.get('/getDepartment/:id', departmentController.getDepartment);
 app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
+app.get('/getDepartmentByName/', departmentController.getDepartmentByName);
 
 /**
  * Course

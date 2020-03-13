@@ -14,7 +14,7 @@ function makeJson(type,msg){
 async function existed(id,code){
     const course=await Course.findOne({courseCode:code},function (err){
         if (err) {
-            // console.log(err);
+            console.log(err);
             return 0;
         }
     });
@@ -49,7 +49,7 @@ async function removeCourseFromTeacher(id){
         {safe: true, upsert: true},
         function(err, doc) {
             if(err){
-            // console.log(err);
+            console.log(err);
             }else{
             //do stuff
             }
@@ -61,14 +61,16 @@ async function removeCourseFromTeacher(id){
 async function addCourseToTeacher(courseid,teachers){
     teachers.forEach(async function (data) {
             var teacherid = Objectid(data);
-            await Teacher.updateOne({ _id: teacherid }, { $addToSet: { courses: courseid } }, { safe: true, upsert: true }, function (err, doc) {
-                if (err) {
-                    // console.log(err);
-                }
-                else {
-                    //do stuff
-                }
-            });
+            await Teacher.updateOne({ _id: teacherid }, { $addToSet: { courses: courseid } }
+                        , { safe: true, upsert: true }
+                        , function (err, doc) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                //do stuff
+                            }
+                    });
         });
 };
 

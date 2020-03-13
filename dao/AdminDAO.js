@@ -12,7 +12,7 @@ exports.createAdmin = async function(adminName,email,gender,avatar){
     var admin=await Admin.findOne({email:email});
     if (!(admin==null||admin=='')) return makeJson('error','Email already existed');
     admin = new Admin({
-        adminName:adminName,
+        name:adminName,
         email:email,
         gender:gender,
         avatar:avatar

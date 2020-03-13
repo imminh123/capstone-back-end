@@ -24,13 +24,13 @@ exports.getTeacherByID = async (req,res) => {
 exports.updateTeacher = async (req,res) => {
     // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
-    var teacherName=req.body.teacherName;
+    var name=req.body.name;
     var email=req.body.email;
     var isActive=req.body.isActive;
-    if (isEmpty(teacherName)||isEmpty(email))
+    if (isEmpty(name)||isEmpty(email))
                 res.send(msgEmpty()); 
         else {
-            res.send(await TeacherDAO.updateTeacher(id,teacherName,email,isActive));            
+            res.send(await TeacherDAO.updateTeacher(id,name,email,isActive));            
         }
 };
 
@@ -47,6 +47,6 @@ exports.searchTeacher = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
-    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
+    if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await TeacherDAO.searchTeacher(page,perPage,detail));
 };

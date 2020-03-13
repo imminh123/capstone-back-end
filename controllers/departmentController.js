@@ -40,3 +40,8 @@ exports.updateDepartment = async (req,res) => {
     if (isEmpty(name)||isEmpty(description));
     res.send(await departmentDAO.updateDepartment(id,name,description));
 }
+
+exports.getDepartmentByName = async (req,res) => {
+    var name=req.body.name;
+    res.send(await departmentDAO.getDepartmentByName(name));
+}
