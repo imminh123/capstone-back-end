@@ -99,6 +99,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
+  proxy : true,
   cookie: { maxAge: 120960000 }, 
   store: new MongoStore({
     url: process.env.MONGODB_URI,
@@ -208,8 +209,8 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
   jwt.sign({user: user}, 'tinhanhem', (err, token) => {
     if(err) console.log(err)
-
-    res.cookie('user', token, { maxAge: 900000})
+    
+    res.cookie('user', token, { maxAge: 900000, httpOnly: true })
     res.redirect('http://localhost:3000');
 
   })
