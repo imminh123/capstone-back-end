@@ -1,4 +1,3 @@
-const Folder = require('../models/Folder');
 const Note = require('../models/Note');
 const Student = require('../models/Student');
 const Course = require('../models/Course');

@@ -6,7 +6,7 @@ function isEmpty(str){
 }
 
 function msgEmpty(){
-    var newObject = '{"Error":"All field must be filled"}';
+    var newObject = '{"error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
