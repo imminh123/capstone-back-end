@@ -1,3 +1,4 @@
+const Course = require('../models/Course');
 const Department = require('../models/Department');
 var Objectid = require('mongodb').ObjectID;
 
@@ -62,12 +63,14 @@ exports.updateDepartment = async function(id,name,description){
 
     var departmentByID=await Department.findById(id);
     if (departmentByID==null||departmentByID=='') return makeJson('error','departmentID not found');
-
-    if (departmentByID.name!=name){
+    var oldName=departmentByID.name;
+    if (oldName!=name){
         var allDep=await Department.find();
         for (const dep of allDep){
             if (name==dep.name) return makeJson('error','Department name already existed');
         }
+        //change all courses have department old name to new name
+        await Course.updateMany({departments:oldName},{$set:{'departments.$':name}});
     }
 
     await Department.updateOne({_id:id},{name:name,description:description});
