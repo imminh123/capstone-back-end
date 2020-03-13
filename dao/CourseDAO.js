@@ -130,7 +130,11 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     });
     await course.save();
     await addCourseToTeacher(course._id,teachers);
-    return makeJson('Sucess','Create successfully');
+    var result = {
+        'Sucess':'Create successfully',
+        course
+    }
+    return result;
 };
 
 //update a course
@@ -145,13 +149,17 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         return makeJson('Error','Course code existed');
     }
     if (await invalidDepartment(departments)) return makeJson('Error','Department not found');
-    var course=await Course.find({_id:id});
+    var course=await Course.findById(id);
     if (course==null||course=='') return makeJson('Error','ID not found');
     await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
     await removeCourseFromTeacher(id);
     await addCourseToTeacher(id,teachers);
-    return makeJson('Sucess','Update successfully');
-    
+    course=await Course.findById(id);
+    var result = {
+        'Sucess':'Create successfully',
+        course
+    }
+    return result;
 };
 
 //seach for course
