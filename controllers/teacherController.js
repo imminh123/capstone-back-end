@@ -47,6 +47,6 @@ exports.searchTeacher = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
-    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
+    if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await TeacherDAO.searchTeacher(page,perPage,detail));
 };
