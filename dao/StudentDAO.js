@@ -8,18 +8,18 @@ function makeJson(type,msg){
 }
 
 exports.createStudent = async function(name,email,gender,avatar){
-    var student=await Student.findOne({email:email});
-    if (!(student==null||student=='')) return '';
+    var student = await Student.findOne({email:email});
     
+    if (!(student==null||student=='')) return {error : "There's an existing email"};
+
     student = new Student({
-        studentName:name,
-        studentCode:"Not Yet",
+        name:name,
+        code:email,
         email:email,
         courses:[],
         gender:gender,
         avatar:avatar
     });
-    console.log('new student '+student);
     await student.save();
     return student;
 }

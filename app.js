@@ -81,7 +81,7 @@ app.use(function (req, res, next) {
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 5000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(expressStatusMonitor());
@@ -97,23 +97,17 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 1209600000 }, // two weeks in milliseconds
+  cookie: { maxAge: 120960000 }, // two weeks in milliseconds
   store: new MongoStore({
     url: process.env.MONGODB_URI,
     autoReconnect: true,
   })
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-// app.use((req, res, next) => {
-//   if (req.path === '/api/upload') {
-//     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-//     next();
-//   } else {
-//     lusca.csrf()(req, res, next);
-//   }
-// });
+
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
@@ -205,10 +199,13 @@ app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuth
  * OAuth authentication routes. (Sign in)
  */
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/spreadsheets.readonly'], accessType: 'offline', prompt: 'consent' }));
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
+  // res.redirect(req.session.returnTo || '/');
+  res.redirect('http://localhost:3000/');
 });
+
+
 
 /**
  * OAuth authorization routes. (API examples)

@@ -25,11 +25,12 @@
         else
           li.dropdown(class=(title === 'Account Management') ? 'active' : undefined).nav-item
             a.dropdown-toggle.nav-link(href='#', data-toggle='dropdown')
-              if user.profile.picture
-                img(src=user.profile.picture)
-              else
-                img(src=user.gravatar(60))
-              span= user.profile.name || user.email || user.id
+              //- if user.profile.picture
+              //-   img(src=user.profile.picture)
+              //- else
+              img(src='https://i.imgur.com/DPSSSkb.png')
+              //- span= user.profile.name || user.email || user.id
+              span= 'Minh'
               i.caret
             div.dropdown-menu
               a.dropdown-item(href='/account') My Account
