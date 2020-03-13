@@ -131,7 +131,7 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     await course.save();
     await addCourseToTeacher(course._id,teachers);
     var result = {
-        'Sucess':'Create successfully',
+        'Success':'Create successfully',
         course
     }
     return result;
@@ -156,7 +156,7 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     await addCourseToTeacher(id,teachers);
     course=await Course.findById(id);
     var result = {
-        'Sucess':'Create successfully',
+        'Success':'Create successfully',
         course
     }
     return result;
