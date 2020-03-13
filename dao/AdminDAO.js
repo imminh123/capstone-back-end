@@ -10,14 +10,13 @@ function makeJson(type,msg){
 
 exports.createAdmin = async function(adminName,email,gender,avatar){
     var admin=await Admin.findOne({email:email});
-    if (!(admin==null||admin=='')) return makeJson('Error','Email already existed');
+    if (!(admin==null||admin=='')) return makeJson('error','Email already existed');
     admin = new Admin({
         adminName:adminName,
         email:email,
         gender:gender,
         avatar:avatar
     });
-    console.log('new admin '+admin);
     await admin.save();
     return admin;
 }

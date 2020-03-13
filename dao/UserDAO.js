@@ -12,8 +12,7 @@ function makeJson(type,msg){
 
 exports.createUser = async function(email,google,tokens,role,profile){
     var user=await User.findOne({email:email});
-    console.log('find user '+user);
-    if (!(user==null||user=='')) return makeJson('Error','User Email already existed');
+    if (!(user==null||user=='')) return makeJson('error','User Email already existed');
 
     if (role=='admin') {
         profile = await AdminDAO.createAdmin(profile.name,email,profile.gender,profile.avatar);
@@ -25,9 +24,9 @@ exports.createUser = async function(email,google,tokens,role,profile){
         profile = await StudentDAO.createStudent(profile.name,email,profile.gender,profile.avatar);
     }
     else
-        return makeJson('Error','Role not correct [admin,teacher,student]');
+        return makeJson('error','Role not correct [admin,teacher,student]');
     console.log('new profile '+profile);
-    if (profile=='') return makeJson('Error','Profile Email already existed');
+    if (profile=='') return makeJson('error','Profile Email already existed');
     user = new User({
         email:email,
         google:google,
@@ -38,7 +37,7 @@ exports.createUser = async function(email,google,tokens,role,profile){
     await user.save();
     console.log('final user '+user);
     result={
-        'Success':'Create successfully',
+        'success':'Create successfully',
         user
     };
     return result;
@@ -48,9 +47,9 @@ exports.getUserByID = async function(id){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','userID not correct');
+        return makeJson('error','userID not correct');
     }
     var user=await User.findById(id).populate('profile');
-    if (user==null||user=='') return makeJson('Error','userID not found');
+    if (user==null||user=='') return makeJson('error','userID not found');
     return user;
 }
