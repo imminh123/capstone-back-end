@@ -12,7 +12,7 @@ function makeJson(type,msg){
 //create a highlight
 exports.createHighlight = async function(studentid,text,index,color,url,tags){
     try{studentid=Objectid(studentid);}
-    catch{return makeJson('Error','studentID not correct')}
+    catch{return makeJson('error','studentID not correct')}
     var highlight = new Highlight({
         studentID: studentid,
         text: text,
@@ -23,7 +23,7 @@ exports.createHighlight = async function(studentid,text,index,color,url,tags){
         tags: tags
     });
     await highlight.save();
-    return makeJson('Sucess','Create successfully');
+    return makeJson('success','Create successfully');
 }
 
 //get highlight by id
@@ -32,10 +32,10 @@ exports.getHighlight = async function(id){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','highlightID not correct');
+        return makeJson('error','highlightID not correct');
     }
         var highlight=await Highlight.findById(id);
-        if (highlight==null||highlight=='') return makeJson('Error','highlightID not found');
+        if (highlight==null||highlight=='') return makeJson('error','highlightID not found');
         return highlight;
     
 }
@@ -46,10 +46,10 @@ exports.getAllHighlightByStudentID = async function(studentID){
     try{
         studentID=Objectid(studentID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
         var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('Error','studentID not found');
+        if (student==null||student=='') return makeJson('error','studentID not found');
         var highlights=Highlight.find({studentID:studentID});
         return highlights;
    
@@ -61,17 +61,17 @@ exports.deleteHighlight = async function(id){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','highlightID not correct');
+        return makeJson('error','highlightID not correct');
     }
         var highlight=await Highlight.findById(id);
-        if (highlight==null||highlight=='') return makeJson('Error','highlightID not found');
+        if (highlight==null||highlight=='') return makeJson('error','highlightID not found');
     
     await Highlight.deleteOne({_id:id},function(err){
         if (err) {
-            return makeJson('Error','Error when delete');
+            return makeJson('error','Error when delete');
         }
     });
-    return makeJson('Sucess','Delete successfully');
+    return makeJson('success','Delete successfully');
 }
 
 //update a highlight
@@ -80,13 +80,13 @@ exports.updateHighlight = async function(hlID,courseCode,text,index,color,tags){
     try{
         hlID=Objectid(hlID);
     }catch{
-        return makeJson('Error','highlightID not correct');
+        return makeJson('error','highlightID not correct');
     }
         var highlight=await Highlight.findById(hlID);
-        if (highlight==null||highlight=='') return makeJson('Error','highlightID not found');
+        if (highlight==null||highlight=='') return makeJson('error','highlightID not found');
    
     await Highlight.updateOne({_id:hlID},{courseCode:courseCode,text:text,index:index,color:color,tags:tags,date:getTime.today()});
-    return makeJson('Success','Update successfully');
+    return makeJson('success','Update successfully');
 }
 
 //get highlight in an url
@@ -94,10 +94,10 @@ exports.getHighlightOfUrl = async function(id,url){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','highlightID not correct');
+        return makeJson('error','highlightID not correct');
     }
         var student=await Student.findById(id);
-        if (student==null||student=='') return makeJson('Error','studentID not found');
+        if (student==null||student=='') return makeJson('error','studentID not found');
         var highlights=await Highlight.find({studentID:id,url:url});
         return highlights;
     
@@ -107,7 +107,7 @@ exports.searchHighlight = async function(text,sID){
     try{
         sID=Objectid(sID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
         var result = await Highlight.find({text:{$regex:text,$options:"i"},studentID:sID}, 
                     function(err, docs) {
@@ -121,10 +121,10 @@ exports.getHighlightByCourse = async function(courseCode,sID){
     try{
         sID=Objectid(sID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
         var course = await Course.findOne({courseCode:courseCode});
-        if (course==null||course=='') return makeJson('Error','courseCode not found');
+        if (course==null||course=='') return makeJson('error','courseCode not found');
         var result = await Highlight.find({studentID:sID,courseCode:courseCode});
         return result;
     
