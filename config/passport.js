@@ -66,8 +66,8 @@ const clientID = '1064836068373-o9o8a3js68b63tlhspmgp1dq74dlplmu.apps.googleuser
 const clientSecret = 'BATawVSFOWsV_i_CuwqSlY8I';
 
 const googleStrategyConfig = new GoogleStrategy({
-  clientID: process.env.GOOGLE_ID || clientID, 
-  clientSecret: process.env.GOOGLE_SECRET || clientSecret,
+  clientID: clientID, 
+  clientSecret: clientSecret,
   callbackURL: '/auth/google/callback',
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
