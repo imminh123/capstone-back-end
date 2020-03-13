@@ -13,7 +13,7 @@ exports.createTeacher = async function(name,email,gender,avatar){
     if (!(teacher==null||teacher=='')) return makeJson('error','Email already existed');
     
     teacher = new Teacher({
-        teacherName:name,
+        name:name,
         email:email,
         rating:{
             star_1:0,
@@ -62,7 +62,7 @@ exports.updateTeacher = async function(id,name,email,isActive){
     }
         var teacher = await Teacher.find({_id:id});
         if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
-        await Teacher.updateOne({_id:id},{teacherName:name,email:email,isActive:isActive});
+        await Teacher.updateOne({_id:id},{name:name,email:email,isActive:isActive});
         //remove this teacher from every course
         // await Course.updateMany(
         //     {},
@@ -117,14 +117,14 @@ exports.changeteacherisactive = async function(id,isActive){
 exports.searchTeacher = async function(page,perPage,detail){
     var result,size;
     //all result. may need a better solution
-    result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+    result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('courses');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     //result of a page
     if (page!=0){
-        result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+        result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('courses')
