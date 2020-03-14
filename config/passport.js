@@ -12,7 +12,7 @@ const UserDAO = require('../dao/UserDAO');
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  console.log(user)
+  // console.log(user)
   done(null, user.id);
 });    
 

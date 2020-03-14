@@ -43,6 +43,7 @@
     "googleapis": "^46.0.0",
     "instagram-node": "^0.5.8",
     "jquery": "^3.4.1",
+    "jsonwebtoken": "^8.5.1",
     "lastfm": "^0.9.3",
     "lob": "^6.0.6",
     "lodash": "^4.17.15",

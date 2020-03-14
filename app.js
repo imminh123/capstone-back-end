@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -98,7 +99,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 120960000 }, // two weeks in milliseconds
+  cookie: { maxAge: 120960000 }, 
   store: new MongoStore({
     url: process.env.MONGODB_URI,
     autoReconnect: true,
@@ -200,10 +201,17 @@ app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuth
  * OAuth authentication routes. (Sign in)
  */
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }));
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
   // res.redirect(req.session.returnTo || '/');
-  res.redirect('http://localhost:3000/');
+  const user = res.req.user;
+
+  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+    if(err) console.log(err)
+    res.cookie('user', token, { maxAge: 900000, httpOnly: true })
+    res.redirect('http://localhost:3000');
+
+  })
 });
 
 

@@ -15,7 +15,11 @@ exports.createUser = async function(email,google,tokens,role,profile){
     var newProfile = null;
     var error,status;
     
+<<<<<<< HEAD
+    if (!(user==null||user=='')) return makeJson('Error','User Email already existed');
+=======
     if (!(user==null||user=='')) return makeJson('error','User Email already existed');
+>>>>>>> 53c08d0d0553da41eb48c1acc9b5186a4b138b5b
 
     if (role=='admin') {
         newProfile = await AdminDAO.createAdmin(profile.name,email,profile.gender,profile.avatar);
@@ -28,7 +32,11 @@ exports.createUser = async function(email,google,tokens,role,profile){
 
     }
     else
+<<<<<<< HEAD
+        return makeJson('Error','Role not correct [admin,teacher,student]');
+=======
         return makeJson('error','Role not correct [admin,teacher,student]');
+>>>>>>> 53c08d0d0553da41eb48c1acc9b5186a4b138b5b
         
 
     if (newProfile.error) return makeJson('error',newProfile.error);
