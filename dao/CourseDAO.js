@@ -17,9 +17,7 @@ async function existed(id,code){
             console.log(err);
             return 0;
         }
-    });console.log(id+' '+code);
-    console.log(course);
-    
+    });    
     //if no course was found. Or a course was found but code is unchanged
     if (course==null || course._id==id.toString()) {
         return 0;
