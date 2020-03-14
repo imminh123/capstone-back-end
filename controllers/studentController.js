@@ -11,3 +11,7 @@ exports.getStudentByID = async (req,res) => {
     var studentID=req.params['id'];
     res.send(await StudentDAO.getStudentByID(studentID));
 }
+
+exports.allStudent = async (req,res) => {
+    res.send(await StudentDAO.allStudent());
+}
