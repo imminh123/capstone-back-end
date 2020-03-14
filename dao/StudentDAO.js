@@ -36,6 +36,11 @@ exports.getStudentByID = async function(id){
     
 }
 
+exports.allStudent = async function(){
+    var students=await Student.find();
+    return students;
+}
+
 exports.updateCourseOfStudent = async function(id,courses){
     try{
         id=Objectid(id);

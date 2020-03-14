@@ -338,6 +338,7 @@ app.post('/addcomment/:id', askController.addComment);
  */
 app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
+app.get('/allStudent', studentController.allStudent);
 
 /**
  * User
