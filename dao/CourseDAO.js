@@ -17,9 +17,11 @@ async function existed(id,code){
             console.log(err);
             return 0;
         }
-    });
+    });console.log(id+' '+code);
+    console.log(course);
+    
     //if no course was found. Or a course was found but code is unchanged
-    if (course==null || course._id==id) {
+    if (course==null || course._id==id.toString()) {
         return 0;
     }
     return 1;
@@ -158,7 +160,7 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     await addCourseToTeacher(id,teachers);
     course=await Course.findById(id);
     var result = {
-        'success':'Create successfully',
+        'success':'Update successfully',
         course
     }
     return result;
