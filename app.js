@@ -210,7 +210,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     if(err) console.log(err)
     
     res.cookie('user', token, { maxAge: 900000, httpOnly: true })
-    res.redirect('http://capstonebackendapi.herokuapp.com');
+    res.redirect('http://noteitfu.herokuapp.com/');
 
   })
 });
