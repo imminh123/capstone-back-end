@@ -50,10 +50,11 @@ exports.createUser = async function(email,google,tokens,role,profile){
         if(user) 
             status = 'success'
         else 
-            status = 'fail'
+            status = 'error'
 
         return { status, user, error }
     });
+    
 }
 
 exports.getUserByID = async function(id){
