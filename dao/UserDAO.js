@@ -38,6 +38,7 @@ exports.createUser = async function(email,google,tokens,role,profile){
         google:google,
         tokens:tokens,
         role:role,
+        avatar: profile.avatar,
         profile: {...profile, ...newProfile}
     });
 
