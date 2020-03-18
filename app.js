@@ -215,7 +215,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     if(err) console.log(err)
     
     res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    res.redirect('http://192.168.1.205:3000?token=' + token);
+    res.redirect('http://localhost:3001?token=' + token);
 
   })
 
