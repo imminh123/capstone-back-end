@@ -106,17 +106,9 @@ exports.deleteNote = async function(noteID){
     }catch{
         return makeJson('error','noteID not correct');
     }
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('error','noteID not found');
-    
-    await Note.deleteOne({_id:noteID},function(err){
-        if (err) {
-            return makeJson('error','Error when delete');
-        }
-    });
-    await Folder.updateOne(
-        {},
-        {$pull: {notes:noteID}});
+    var note=await Note.findById(noteID);
+    if (note==null||note=='') return makeJson('error','noteID not found');
+    await Note.deleteOne({_id:noteID});
     return makeJson('success','Delete successfully');
 }
 
