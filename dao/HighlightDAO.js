@@ -59,7 +59,7 @@ exports.createHighlight = async function(studentid,scannedContent,index,color,ur
         scannedContent: scannedContent,
         index: index,
         color: color,
-        date: getFunction.today(),
+        dateModified: getFunction.today(),
         url : url,
         tags: tags,
         course:course
@@ -124,7 +124,7 @@ exports.updateHighlight = async function(hlID,course,scannedContent,index,color,
     else 
         if (isCourse==0) return makeJson('error','courseID not found');
    
-    await Highlight.updateOne({_id:hlID},{course:course,scannedContent:scannedContent,index:index,color:color,tags:tags,date:getFunction.today()});
+    await Highlight.updateOne({_id:hlID},{course:course,scannedContent:scannedContent,index:index,color:color,tags:tags,dateModified:getFunction.today()});
     return makeJson('success','Update successfully');
 }
 

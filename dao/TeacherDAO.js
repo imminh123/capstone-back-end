@@ -16,7 +16,7 @@ exports.allTeacherByCourse=async function(courseID){
     }
     var course=await Course.findById(courseID);
     if (course==null||course=='') return makeJson('error','ID not found');
-    var teachers=await Teacher.find({courses:""});
+    var teachers=await Teacher.find({courses:courseID});
     return teachers;
 }
 

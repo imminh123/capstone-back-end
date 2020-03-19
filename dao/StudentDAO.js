@@ -33,26 +33,27 @@ exports.getStudentByID = async function(id){
     }catch{
         return makeJson('error','studentID not correct')
     }
-        var student=await Student.findById(id).populate('courses');
-        if (student==null||student=='') return makeJson('error','studentID not found');
-        return student;
+    var student=await Student.findById(id).populate('courses');
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    return student;
     
 }
 
 exports.allStudent = async function(){
-    var students=await Student.find();
-    return students;
+    return await Student.find();;
 }
 
 exports.updateCourseOfStudent = async function(id,courses){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('error','studentID not correct')
+        return makeJson('error','studentID not correct');
     }
-        if (courses==null||courses==undefined) return makeJson('Error','Courses null or underfined');
-        await Student.updateOne({_id:id},{courses:courses});
-        return makeJson('success','Update successfuly');
+    var student=Student.findById(id);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (courses==null||courses==undefined) return makeJson('error','Courses null or underfined');
+    await Student.updateOne({_id:id},{courses:courses});
+    return makeJson('success','Update successfuly');
 }
 
 exports.getStudentStatistic=async function(sID){

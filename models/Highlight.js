@@ -7,7 +7,7 @@ const highlightSchema = new Schema({
     scannedContent: {type: String, required: true},
     index: {type: Number,required: true},
     color: {type: String, required: true},
-    date: {type: String, require:true},
+    dateModified: {type: String, require:true},
     url: {type: String, require:true},
     tags: [{type:String}]
 });
