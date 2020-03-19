@@ -1,7 +1,7 @@
 const Highlight = require('../models/Highlight');
 const Student = require('../models/Student');
 const Course = require('../models/Course');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -59,7 +59,7 @@ exports.createHighlight = async function(studentid,scannedContent,index,color,ur
         scannedContent: scannedContent,
         index: index,
         color: color,
-        date: getTime.today(),
+        date: getFunction.today(),
         url : url,
         tags: tags,
         course:course
@@ -124,7 +124,7 @@ exports.updateHighlight = async function(hlID,course,scannedContent,index,color,
     else 
         if (isCourse==0) return makeJson('error','courseID not found');
    
-    await Highlight.updateOne({_id:hlID},{course:course,scannedContent:scannedContent,index:index,color:color,tags:tags,date:getTime.today()});
+    await Highlight.updateOne({_id:hlID},{course:course,scannedContent:scannedContent,index:index,color:color,tags:tags,date:getFunction.today()});
     return makeJson('success','Update successfully');
 }
 

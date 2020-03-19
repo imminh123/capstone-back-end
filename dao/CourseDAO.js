@@ -2,7 +2,7 @@ const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Department = require('../models/Department');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -126,7 +126,7 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
         shortDes: short,
         fullDes: full,
         courseURL : url,
-        dateCreated: getTime.today(),
+        dateCreated: getFunction.today(),
         teachers: teachers
     });
     await course.save();

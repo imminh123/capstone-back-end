@@ -1,7 +1,7 @@
 const Note = require('../models/Note');
 const Student = require('../models/Student');
 const Course = require('../models/Course');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -25,7 +25,7 @@ exports.createNote = async function(studentID,course,scannedContent,description,
     }catch{
         return makeJson('error','courseID not correct');
     }
-    console.log(course);
+
     var courseEn = await Course.findOne({_id:course});
     if (courseEn==null||courseEn=='') return makeJson('error','Course not found');
 
@@ -36,7 +36,7 @@ exports.createNote = async function(studentID,course,scannedContent,description,
         description:description,
         url:url,
         index:index,
-        dateModified: getTime.today()
+        dateModified: getFunction.today()
     });
 
     await note.save();
@@ -63,7 +63,7 @@ exports.updateNote = async function(noteID,course,scannedContent,description,url
     var courseEN = await Course.findById(course);
     if (courseEN==null||courseEN=='') return makeJson('error','Course not found');
 
-    await Note.updateOne({_id:noteID},{course:course,scannedContent:scannedContent,description:description,url:url,index:index,isPinned:isPinned,dateModified:getTime.today()});
+    await Note.updateOne({_id:noteID},{course:course,scannedContent:scannedContent,description:description,url:url,index:index,isPinned:isPinned,dateModified:getFunction.today()});
     note=await Note.findById(noteID);
     var result = {
         success:'Update successfully',

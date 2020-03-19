@@ -143,28 +143,3 @@ describe('User Model', () => {
     expect(gravatar.includes(md5)).to.equal(true);
   });
 });
-
-
-
-describe('Create new course in db test', function () {
-    it('Create a course in db test', function (done) {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
-        today = dd + '/' + mm + '/' + yyyy;
-        var newCourse = new Course({
-            courseName: "The first Avenger",
-            courseCode: "Z",
-            category: "SE",
-            shortDes: "A",
-            fullDes: "B",
-            skill : ["abc","def"],
-            dateCreated: today
-        });
-        console.log(newCourse);
-        newCourse.save().then(function () {
-            done();
-        });
-    });
-});

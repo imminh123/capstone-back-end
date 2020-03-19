@@ -2,7 +2,7 @@ const User = require('../models/User');
 const AdminDAO = require('../dao/AdminDAO');
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
-const getTime = require('../dao/getTime');
+// const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
