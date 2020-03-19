@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   emailVerificationToken: String,
   emailVerified: Boolean,
   google: String,
+  avatar: String,
   tokens: Array,
   role:{
     type:String,
