@@ -199,12 +199,12 @@ exports.getHighlightByColor = async function(color,sID){
 }
 
 exports.getRecentHighlight = async function(sID,limit){
-    
+
     var isStudent=await checkStudent(sID);
     if (isStudent==-1) return makeJson('error','studentID not correct');
     else 
         if (isStudent==0) return makeJson('error','studentID not found');
 
-    var highlights = Highlight.find({studentID:sID}).sort({_id:-1}).limit(limit);
+    var highlights = Highlight.find({studentID:sID}).sort({dateModified:-1}).limit(parseInt(limit));
     return highlights;
 }

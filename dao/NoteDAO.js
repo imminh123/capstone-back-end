@@ -214,6 +214,6 @@ exports.getRecentNote = async function(sID,limit){
     var student=await Student.findById(sID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    var notes = Note.find({studentID:sID}).sort({_id:-1}).limit(limit);
+    var notes = Note.find({studentID:sID}).sort({dateModified:-1}).limit(parseInt(limit));
     return notes;
 }
