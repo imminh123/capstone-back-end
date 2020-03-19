@@ -25,7 +25,12 @@ passport.deserializeUser((id, done) => {
 /**
  * Sign in using Email and Password.
  */
-passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+passport.use('sign-in',new LocalStrategy(
+  { 
+    usernameField: 'email', 
+    passwordField: 'password' 
+  }
+  , (email, password, done) => {
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) { return done(err); }
     if (!user) {
@@ -34,6 +39,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
     if (!user.password) {
       return done(null, false, { msg: 'Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile.' });
     }
+
     user.comparePassword(password, (err, isMatch) => {
       if (err) { return done(err); }
       if (isMatch) {

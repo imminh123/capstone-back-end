@@ -3,14 +3,17 @@ const AdminDAO = require('../dao/AdminDAO');
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
 const getTime = require('../dao/getTime');
+var bcrypt = require('bcrypt');
 var Objectid = require('mongodb').ObjectID;
+
+const saltRounds = 10;
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
 }
 
-exports.createUser = async function(email,google,tokens,role,profile){
+exports.createUser = async function(email,google,tokens,role,profile, password){
     var user = await User.findOne({email:email});
     var newProfile = null;
     var error,status;
@@ -33,8 +36,11 @@ exports.createUser = async function(email,google,tokens,role,profile){
 
     if (newProfile.error) return makeJson('error',newProfile.error);
 
+    
+
     const newUser = new User({
         email:email,
+        password: password,
         google:google,
         tokens:tokens,
         role:role,

@@ -147,9 +147,6 @@ app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawes
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
 app.get('/forgot', userController.getForgot);
 app.post('/forgot', userController.postForgot);
 app.get('/reset/:token', userController.getReset);
@@ -202,22 +199,39 @@ app.get('/api/chart', apiController.getChart);
 app.get('/api/google/sheets', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleSheets);
 app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getQuickbooks);
 
+
+//Login routes
+app.post('/login', passport.authenticate('sign-in', { failureRedirect: 'http://localhost:3001' }), (req, res) => {
+
+  const user = res.req.user;
+
+  console.log(user);
+
+  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+    if(err) console.log(err)
+
+    res.status(200).json({err,token});
+
+  })
+});
 /**
  * OAuth authentication routes. (Sign in)
  */
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3001' }), (req, res) => {
   // res.redirect(req.session.returnTo || '/');
   const user = res.req.user;
-
   jwt.sign({user: user}, 'tinhanhem', (err, token) => {
     if(err) console.log(err)
     
-    res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+    console.log(token)
+    // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
     res.redirect('http://localhost:3001?token=' + token);
 
   })
+
+  // res.redirect('/');
 
 });   
 
