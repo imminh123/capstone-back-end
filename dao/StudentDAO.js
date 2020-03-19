@@ -1,6 +1,9 @@
 var Objectid = require('mongodb').ObjectID;
 const Student = require('../models/Student');
 const Course = require('../models/Course');
+const Note = require('../models/Note');
+const Highlight = require('../models/Highlight');
+const Ask = require('../models/Ask');
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
@@ -50,5 +53,23 @@ exports.updateCourseOfStudent = async function(id,courses){
         if (courses==null||courses==undefined) return makeJson('Error','Courses null or underfined');
         await Student.updateOne({_id:id},{courses:courses});
         return makeJson('success','Update successfuly');
-    
+}
+
+exports.getStudentStatistic=async function(sID){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('error','studentID not correct');
+    }
+    var student=await Student.findById(sID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    var notes=await Note.find({studentID:sID});
+    var hls=await Highlight.find({studentID:sID});
+    var asks=await Ask.find({student:sID});
+    var result={
+        noteNumber:notes.length,
+        highlightNumber:hls.length,
+        askNumber:asks.length
+    }
+    return result;
 }

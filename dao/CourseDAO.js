@@ -88,10 +88,9 @@ exports.getCourseByID = async function(id){
     }catch{
         return makeJson('error','Course ID not correct');
     }
-        var course = await Course.find({_id:id}).populate('teachers');
-        if (course==null||course=='') return makeJson('error','Course ID not found');
-        return course;
-    
+    var course = await Course.find({_id:id}).populate('teachers');
+    if (course==null||course=='') return makeJson('error','Course ID not found');
+    return course;
 };
 
 //delete course and remove teacher.this course

@@ -209,7 +209,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   jwt.sign({user: user}, 'tinhanhem', (err, token) => {
     if(err) console.log(err)
     res.cookie('user', token, { maxAge: 900000, httpOnly: true })
-    res.redirect('http://localhost:3000');
+    res.redirect('http://localhost:5000');
 
   })
 });
@@ -308,6 +308,9 @@ app.put('/updatehighlight/:id', highlightController.updateHighlight);
 app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
 app.get('/searchHighlightByText/', highlightController.searchHighLight);
 app.get('/getHighlightByCourse', highlightController.getHighlightByCourse);
+app.get('/getRecentHighlight', highlightController.getRecentHighlight);
+app.delete('/deleteHighlightByCourseID', highlightController.deleteHighlightByCourseID);
+app.get('/getHighlightByColor', highlightController.getHighlightByColor);
 
 /**
  * Student Note
@@ -318,8 +321,10 @@ app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
-app.get('/searchNoteByNote', noteController.searchNote);
+app.get('/searchNote', noteController.searchNote);
 app.get('/getNoteByCourse', noteController.getNoteByCourse);
+app.get('/getRecentNote', noteController.getRecentNote);
+app.delete('/deleteNoteByCourseID', noteController.deleteNoteByCourseID);
 
 /**
  * Ask and comment
@@ -338,7 +343,7 @@ app.post('/addcomment/:id', askController.addComment);
 app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
 app.get('/allStudent', studentController.allStudent);
-
+app.get('/getStudentStatistic/:id', studentController.getStudentStatistic);
 /**
  * User
  */

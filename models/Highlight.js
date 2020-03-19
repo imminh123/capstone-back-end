@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const highlightSchema = new Schema({
     studentID: {type: Schema.Types.ObjectId, required: true},
-    courseCode: {type: String},
-    text: {type: String, required: true},
+    course: {type: Schema.Types.ObjectId, require: true, ref: 'course'},
+    scannedContent: {type: String, required: true},
     index: {type: Number,required: true},
     color: {type: String, required: true},
     date: {type: String, require:true},
