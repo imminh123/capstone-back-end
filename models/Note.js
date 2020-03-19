@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const noteSchema = new Schema({
     studentID: {type: Schema.Types.ObjectId, required:true},
-    courseCode: {type: String},
-    note: {type:String},
+    course: {type: Schema.Types.ObjectId, require: true, ref: 'course'},
+    scannedContent: {type:String},
     description: {type: String},
     url: {type:String, required:true},
     index: {type:Number, required:true},

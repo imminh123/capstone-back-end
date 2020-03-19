@@ -4,6 +4,7 @@ const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
 const getTime = require('../dao/getTime');
 var bcrypt = require('bcrypt');
+// const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 const saltRounds = 10;

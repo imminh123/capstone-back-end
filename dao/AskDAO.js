@@ -2,7 +2,7 @@ const Ask = require('../models/Ask');
 const Comment = require('../models/Comment');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -37,11 +37,9 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
         teacher:teacher,
         courseURL:courseURL,
         comments:[],
-        dateModified: getTime.today(),
-        dateCreated: getTime.today()
+        dateModified: getFunction.today(),
+        dateCreated: getFunction.today()
     });
-
-    console.log(ask);
 
     await ask.save();
     return makeJson('success','Create successfully');
@@ -144,12 +142,12 @@ exports.addComment = async function(askID,userID,message){
         userID: userID,
         ask: askID,
         message: message,
-        dateCreated: getTime.today()
+        dateCreated: getFunction.today()
     });
     await comment.save();
     //push comment to ask
     await Ask.updateOne({ _id: askID }, 
-        { $addToSet: { comments: comment._id } , dateModified: getTime.today()}, { safe: true, upsert: true }, function (err, doc) {
+        { $addToSet: { comments: comment._id } , dateModified: getFunction.today()}, { safe: true, upsert: true }, function (err, doc) {
         if (err) {
             console.log(err);
         }

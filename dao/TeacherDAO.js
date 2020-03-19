@@ -7,6 +7,19 @@ function makeJson(type,msg){
     return JSON.parse(newObject);
 }
 
+exports.allTeacherByCourse=async function(courseID){
+    //check courseID
+    try{
+        courseID=Objectid(courseID);
+    }catch{
+        return makeJson('error','Course ID not correct');
+    }
+    var course=await Course.findById(courseID);
+    if (course==null||course=='') return makeJson('error','ID not found');
+    var teachers=await Teacher.find({courses:courseID});
+    return teachers;
+}
+
 //create teacher
 exports.createTeacher = async function(name,email,gender,avatar){
     var teacher=await Teacher.findOne({email:email});
@@ -45,10 +58,10 @@ exports.getTeacherByID = async function(id){
     }catch{
         return makeJson('error','Teacher ID not correct');
     }
-        var teacher = await Teacher.findOne({_id:id}).populate('courses');
-        if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found')
-        else
-            return teacher;
+    var teacher = await Teacher.findOne({_id:id}).populate('courses');
+    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found')
+    else
+        return teacher;
     
 };
 

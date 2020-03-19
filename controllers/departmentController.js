@@ -42,6 +42,6 @@ exports.updateDepartment = async (req,res) => {
 }
 
 exports.getDepartmentByName = async (req,res) => {
-    var name=req.body.name;
+    var name=req.params['name'];
     res.send(await departmentDAO.getDepartmentByName(name));
 }

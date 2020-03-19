@@ -50,3 +50,8 @@ exports.searchTeacher = async(req,res) => {
     if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await TeacherDAO.searchTeacher(page,perPage,detail));
 };
+
+exports.allTeacherByCourse = async(req,res)=>{
+    var courseID=req.params['id'];
+    res.send(await TeacherDAO.allTeacherByCourse(courseID));
+}
