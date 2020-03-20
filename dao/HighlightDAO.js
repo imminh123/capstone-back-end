@@ -129,7 +129,7 @@ exports.updateHighlight = async function(hlID,course,scannedContent,index,color,
 }
 
 //get highlight in an url
-exports.getHighlightOfUrl = async function(id,url){
+exports.getHighlightByUrl = async function(id,url){
     
     var isStudent=await checkStudent(id);
     if (isStudent==-1) return makeJson('error','studentID not correct');
@@ -204,7 +204,9 @@ exports.getRecentHighlight = async function(sID,limit){
     if (isStudent==-1) return makeJson('error','studentID not correct');
     else 
         if (isStudent==0) return makeJson('error','studentID not found');
-
-    var highlights = Highlight.find({studentID:sID}).sort({dateModified:-1}).limit(parseInt(limit));
-    return highlights;
+    var highlights = await Highlight.find({studentID:sID});
+    highlights.sort(function(a,b){
+        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+    });
+    return highlights.slice(0,limit);
 }

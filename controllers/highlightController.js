@@ -50,11 +50,11 @@ exports.updateHighlight = async (req,res) => {
     res.send(await hlDAO.updateHighlight(id,course,scannedContent,index,color,tags));
 }
 
-exports.getHighlightOfUrl = async (req,res) => {
+exports.getHighlightByUrl = async (req,res) => {
     var id=req.body.studentID;
     var url=req.body.url;
     if (isEmpty(id)||isEmpty(url)) res.send(msgEmpty());
-    res.send(await hlDAO.getHighlightOfUrl(id,url));
+    res.send(await hlDAO.getHighlightByUrl(id,url));
 }
 
 exports.searchHighLight = async (req,res) => {

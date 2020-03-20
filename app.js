@@ -294,7 +294,7 @@ app.get('/getDepartment/:id', departmentController.getDepartment);
 app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
-app.get('/getDepartmentByName/', departmentController.getDepartmentByName);
+app.get('/getDepartmentByName/:name', departmentController.getDepartmentByName);
 
 /**
  * Course
@@ -316,7 +316,7 @@ app.get('/getteacher/:id', teacherController.getTeacherByID);
 app.put('/updateteacher/:id', teacherController.updateTeacher);
 app.get('/searchteacher', teacherController.searchTeacher);
 app.put('/changeteacherisactive/:id', teacherController.changeteacherisactive);
-
+app.get('/allTeacherByCourse/:id', teacherController.allTeacherByCourse);
 /**
  * Student highlight
  */
@@ -325,9 +325,12 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
-app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
-app.get('/searchHighlightByText/', highlightController.searchHighLight);
-app.get('/getHighlightByCourse', highlightController.getHighlightByCourse);
+app.get('/getHighlightByUrl/', highlightController.getHighlightByUrl);
+app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight);
+app.get('/getHighlightByCourse/:studentID/:courseID', highlightController.getHighlightByCourse);
+app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);
+app.delete('/deleteHighlightByCourseID/:studentID/:courseID', highlightController.deleteHighlightByCourseID);
+app.get('/getHighlightByColor/:studentID/:color', highlightController.getHighlightByColor);
 
 /**
  * Student Note
@@ -338,8 +341,10 @@ app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
-app.get('/searchNoteByNote', noteController.searchNote);
-app.get('/getNoteByCourse', noteController.getNoteByCourse);
+app.get('/searchNote/:studentID/:detail', noteController.searchNote);
+app.get('/getNoteByCourse/:studentID/:courseID', noteController.getNoteByCourse);
+app.get('/getRecentNote/:studentID/:limit', noteController.getRecentNote);
+app.delete('/deleteNoteByCourseID/:studentID/:courseID', noteController.deleteNoteByCourseID);
 
 /**
  * Ask and comment
