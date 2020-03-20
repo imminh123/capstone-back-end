@@ -231,7 +231,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
   })
 
-  // res.redgirect('/');
+  // res.redirect('/');
 
 });   
 
