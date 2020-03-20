@@ -12,4 +12,4 @@ COPY . /starter
 
 CMD ["npm","start"]
 
-EXPOSE 3000
+EXPOSE 5000

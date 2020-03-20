@@ -7,12 +7,14 @@ const { OAuthStrategy } = require('passport-oauth');
 const { OAuth2Strategy } = require('passport-oauth');
 const _ = require('lodash');
 const moment = require('moment');
+const UserDAO = require('../dao/UserDAO');
 
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
+  // console.log(user)
   done(null, user.id);
-});
+});    
 
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
@@ -23,8 +25,15 @@ passport.deserializeUser((id, done) => {
 /**
  * Sign in using Email and Password.
  */
-passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+passport.use('sign-in',new LocalStrategy(
+  { 
+    usernameField: 'email', 
+    passwordField: 'password' 
+  }
+  , (email, password, done) => {
+
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
+
     if (err) { return done(err); }
     if (!user) {
       return done(null, false, { msg: `Email ${email} not found.` });
@@ -32,6 +41,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
     if (!user.password) {
       return done(null, false, { msg: 'Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile.' });
     }
+
     user.comparePassword(password, (err, isMatch) => {
       if (err) { return done(err); }
       if (isMatch) {
@@ -40,6 +50,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
       return done(null, false, { msg: 'Invalid email or password.' });
     });
   });
+
 }));
 
 /**
@@ -60,73 +71,53 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 /**
  * Sign in with Google.
  */
+const clientID = '1064836068373-o9o8a3js68b63tlhspmgp1dq74dlplmu.apps.googleusercontent.com';
+const clientSecret = 'BATawVSFOWsV_i_CuwqSlY8I';
+
 const googleStrategyConfig = new GoogleStrategy({
-  clientID: process.env.GOOGLE_ID,
-  clientSecret: process.env.GOOGLE_SECRET,
+  clientID: clientID, 
+  clientSecret: clientSecret,
   callbackURL: '/auth/google/callback',
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
-  if (req.user) {
-    User.findOne({ google: profile.id }, (err, existingUser) => {
-      if (err) { return done(err); }
-      if (existingUser && (existingUser.id !== req.user.id)) {
-        req.flash('errors', { msg: 'There is already a Google account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
-        done(err);
-      } else {
-        User.findById(req.user.id, (err, user) => {
-          if (err) { return done(err); }
-          user.google = profile.id;
-          user.tokens.push({
-            kind: 'google',
-            accessToken,
-            accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
-            refreshToken,
-          });
-          user.profile.name = user.profile.name || profile.displayName;
-          user.profile.gender = user.profile.gender || profile._json.gender;
-          user.profile.picture = user.profile.picture || profile._json.picture;
-          user.save((err) => {
-            req.flash('info', { msg: 'Google account has been linked.' });
-            done(err, user);
-          });
-
-          console.log(user);
-        });
-      }
-    });
-  } else {
     User.findOne({ google: profile.id }, (err, existingUser) => {
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
       }
-      User.findOne({ email: profile.emails[0].value }, (err, existingEmailUser) => {
+
+      //check if there's an email duplicate with google email in DB
+      User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
           done(err);
         } else {
-          const user = new User();
-          user.email = profile.emails[0].value;
-          user.google = profile.id;
-          user.tokens.push({
+          let email = profile.emails[0].value;
+          let google = profile.id;
+          let tokens = {
             kind: 'google',
             accessToken,
             accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
             refreshToken,
-          });
-          user.profile.name = profile.displayName;
-          user.profile.gender = profile._json.gender;
-          user.profile.picture = profile._json.picture;
-          user.save((err) => {
-            done(err, user);
-          });
+          };
+          let role = 'student';
+          let profileForParam = {};
+          profileForParam.name = profile.displayName;
+          profileForParam.gender = profile._json.gender || 'other';
+          profileForParam.avatar = profile._json.picture;
 
-          console.log(user)
+          const user = await UserDAO.createUser(email, google, tokens, role, profileForParam);
+
+          if(user) {
+            return done(null, user);
+          }else {
+            done(err);
+          }
+          // console.log(user);
         }
       });
     });
-  }
 });
 passport.use('google', googleStrategyConfig);
 refresh.use('google', googleStrategyConfig);

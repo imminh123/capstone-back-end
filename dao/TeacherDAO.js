@@ -7,13 +7,26 @@ function makeJson(type,msg){
     return JSON.parse(newObject);
 }
 
+exports.allTeacherByCourse=async function(courseID){
+    //check courseID
+    try{
+        courseID=Objectid(courseID);
+    }catch{
+        return makeJson('error','Course ID not correct');
+    }
+    var course=await Course.findById(courseID);
+    if (course==null||course=='') return makeJson('error','ID not found');
+    var teachers=await Teacher.find({courses:courseID});
+    return teachers;
+}
+
 //create teacher
 exports.createTeacher = async function(name,email,gender,avatar){
     var teacher=await Teacher.findOne({email:email});
-    if (!(teacher==null||teacher=='')) return makeJson('Error','Email already existed');
+    if (!(teacher==null||teacher=='')) return makeJson('error','Email already existed');
     
     teacher = new Teacher({
-        teacherName:name,
+        name:name,
         email:email,
         rating:{
             star_1:0,
@@ -27,7 +40,6 @@ exports.createTeacher = async function(name,email,gender,avatar){
         avatar:avatar,
         isActive:true
     });
-    console.log('new teacher '+teacher);
     await teacher.save();
     return teacher;
 }
@@ -44,12 +56,12 @@ exports.getTeacherByID = async function(id){
     try{
         id = Objectid(id);
     }catch{
-        return makeJson('Error','Teacher ID not correct');
+        return makeJson('error','Teacher ID not correct');
     }
-        var teacher = await Teacher.findOne({_id:id}).populate('courses');
-        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found')
-        else
-            return teacher;
+    var teacher = await Teacher.findOne({_id:id}).populate('courses');
+    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found')
+    else
+        return teacher;
     
 };
 
@@ -59,11 +71,11 @@ exports.updateTeacher = async function(id,name,email,isActive){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','Teacher ID not correct');
+        return makeJson('error','Teacher ID not correct');
     }
         var teacher = await Teacher.find({_id:id});
-        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found');
-        await Teacher.updateOne({_id:id},{teacherName:name,email:email,isActive:isActive});
+        if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
+        await Teacher.updateOne({_id:id},{name:name,email:email,isActive:isActive});
         //remove this teacher from every course
         // await Course.updateMany(
         //     {},
@@ -94,7 +106,7 @@ exports.updateTeacher = async function(id,name,email,isActive){
         //         }
         //     );
         // });
-        return makeJson('Success','Update successfully');
+        return makeJson('success','Update successfully');
     
 };
 
@@ -105,12 +117,12 @@ exports.changeteacherisactive = async function(id,isActive){
         id=Objectid(id);
     }
     catch{
-        return makeJson('Error','Teacher ID not correct');
+        return makeJson('error','Teacher ID not correct');
     }
         var teacher=await Teacher.find({_id:id});
-        if (teacher==null||teacher=='') return makeJson('Error','Teacher ID not found');
+        if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
         await Teacher.updateOne({_id:id},{isActive:isActive});
-        return makeJson('Sucess','Update successfully');
+        return makeJson('success','Update successfully');
     
 }
 
@@ -118,14 +130,14 @@ exports.changeteacherisactive = async function(id,isActive){
 exports.searchTeacher = async function(page,perPage,detail){
     var result,size;
     //all result. may need a better solution
-    result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+    result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('courses');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     //result of a page
     if (page!=0){
-        result = await Teacher.find({$or:[{teacherName:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
+        result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
                             function(err, docs) {
                                 if (err) handleError(err);
                                 }).populate('courses')

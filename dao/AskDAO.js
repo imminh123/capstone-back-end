@@ -2,7 +2,7 @@ const Ask = require('../models/Ask');
 const Comment = require('../models/Comment');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -15,19 +15,19 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
     try{
         student=Objectid(student);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
         var studententity=await Student.findById(student);
-        if (studententity==null||studententity=='') return makeJson('Error','studentID not found');
+        if (studententity==null||studententity=='') return makeJson('error','studentID not found');
     
 
     try{
         teacher=Objectid(teacher);
     }catch{
-        return makeJson('Error','teacherID not correct');
+        return makeJson('error','teacherID not correct');
     }
         var teacherentity=await Student.findById(student);
-        if (teacherentity==null||teacherentity=='') return makeJson('Error','teacherID not found');
+        if (teacherentity==null||teacherentity=='') return makeJson('error','teacherID not found');
    
     
     var ask = new Ask({
@@ -37,14 +37,12 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
         teacher:teacher,
         courseURL:courseURL,
         comments:[],
-        dateModified: getTime.today(),
-        dateCreated: getTime.today()
+        dateModified: getFunction.today(),
+        dateCreated: getFunction.today()
     });
 
-    console.log(ask);
-
     await ask.save();
-    return makeJson('Sucess','Create successfully');
+    return makeJson('success','Create successfully');
 }
 
 //delete a comment
@@ -61,20 +59,20 @@ exports.deleteAsk = async function(id){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('Error','askID not correct');
+        return makeJson('error','askID not correct');
     }
         var ask=await Ask.findById(id);
-        if (ask==null||ask=='') return makeJson('Error','askID not found');
+        if (ask==null||ask=='') return makeJson('error','askID not found');
     
     //delete all comments
     await deleteComments(ask.comments);
     //delete ask
     await Ask.deleteOne({_id:id},function(err){
         if (err) {
-            return makeJson('Error','Error when delete');
+            return makeJson('error','error when delete');
         }
     });
-    return makeJson('Sucess','Delete successfully');
+    return makeJson('success','Delete successfully');
 }
 
 //get an ask by id
@@ -83,10 +81,10 @@ exports.getAskByID = async function(askID){
     try{
         askID=Objectid(askID);
     }catch{
-        return makeJson('Error','askID not correct');
+        return makeJson('error','askID not correct');
     }
         var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-        if (ask==null||ask=='') return makeJson('Error','askID not found');
+        if (ask==null||ask=='') return makeJson('error','askID not found');
         return ask;
    
 }
@@ -97,11 +95,11 @@ exports.allAskOfStudent = async function(studentID){
     try{
         studentID=Objectid(studentID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
         var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('Error','studentID not found');
-        var asks=await Ask.find({student:studentID}).populate('student').populate('comments');
+        if (student==null||student=='') return makeJson('error','studentID not found');
+        var asks=await Ask.find({student:studentID}).populate('student').populate('teacher');
         return asks;
     
 }
@@ -112,10 +110,10 @@ exports.allAskOfTeacher = async function(teacherID){
     try{
         teacherID=Objectid(teacherID);
     }catch{
-        return makeJson('Error','teacherID not correct');
+        return makeJson('error','teacherID not correct');
     }
         var teacher=await Teacher.findById(teacherID);
-        if (teacher==null||teacher=='') return makeJson('Error','teacherID not found');
+        if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
         var asks=await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
         return asks;
     
@@ -133,23 +131,23 @@ exports.addComment = async function(askID,userID,message){
     try{
         askID=Objectid(askID);
     }catch{
-        return makeJson('Error','askID not correct');
+        return makeJson('error','askID not correct');
     }
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return makeJson('Error','askID not found');
+    if (ask==null||ask=='') return makeJson('error','askID not found');
     //check input userID 
-    if (userID!=ask.student._id && userID!=ask.teacher._id) return makeJson('Error','UserID isnt match');
+    if (userID!=ask.student._id && userID!=ask.teacher._id) return makeJson('error','UserID isnt match');
     //create new comment
     var comment = new Comment({
         userID: userID,
         ask: askID,
         message: message,
-        dateCreated: getTime.today()
+        dateCreated: getFunction.today()
     });
     await comment.save();
     //push comment to ask
     await Ask.updateOne({ _id: askID }, 
-        { $addToSet: { comments: comment._id } , dateModified: getTime.today()}, { safe: true, upsert: true }, function (err, doc) {
+        { $addToSet: { comments: comment._id } , dateModified: getFunction.today()}, { safe: true, upsert: true }, function (err, doc) {
         if (err) {
             console.log(err);
         }
@@ -157,5 +155,5 @@ exports.addComment = async function(askID,userID,message){
             //do stuff
         }
     });
-    return makeJson('Sucess','Add comment successfully');
+    return makeJson('success','Add comment successfully');
 }

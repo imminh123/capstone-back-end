@@ -6,7 +6,7 @@ function isEmpty(str){
 }
 
 function msgEmpty(){
-    var newObject = '{"Error":"All field must be filled"}';
+    var newObject = '{"error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
@@ -67,6 +67,7 @@ exports.searchCourse = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
+    if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await CourseDAO.searchCourse(page,perPage,detail));
 };
 
@@ -75,7 +76,7 @@ exports.searchDepartments = async(req,res) => {
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
-    if (isEmpty(page)||isEmpty(perPage)||isEmpty(detail)) res.send(msgEmpty());
+    if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
 }
 

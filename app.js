@@ -3,6 +3,7 @@
  */
 const express = require('express');
 const http = require('http');
+const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -20,7 +21,7 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
-// const cors= require('cors');
+const cors= require('cors');
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -40,6 +41,7 @@ const highlightController = require('./controllers/highlightController');
 const noteController = require('./controllers/noteController');
 const askController = require('./controllers/askController');
 const studentController = require('./controllers/studentController');
+const departmentController = require('./controllers/departmentController');
 const myUserController = require('./controllers/userController');
 
 /**
@@ -70,7 +72,12 @@ mongoose.connection.once('open', function () {
     });
 
 //solution for cors error
-// app.use(cors());
+
+var corsOptions = {
+  origin: '*',
+  credentials: true };
+app.use(cors(corsOptions));
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
@@ -98,23 +105,17 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 1209600000 }, // two weeks in milliseconds
+  cookie: { maxAge: 120960000 }, 
   store: new MongoStore({
     url: process.env.MONGODB_URI,
     autoReconnect: true,
   })
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-// app.use((req, res, next) => {
-//   if (req.path === '/api/upload') {
-//     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-//     next();
-//   } else {
-//     lusca.csrf()(req, res, next);
-//   }
-// });
+
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
@@ -147,9 +148,6 @@ app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawes
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
 app.get('/forgot', userController.getForgot);
 app.post('/forgot', userController.postForgot);
 app.get('/reset/:token', userController.getReset);
@@ -181,14 +179,45 @@ app.get('/api/paypal/cancel', apiController.getPayPalCancel);
 app.get('/api/upload', lusca({ csrf: true }), apiController.getFileUpload);
 app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiController.postFileUpload);
 
+
+//Login routes
+app.post('/login', passport.authenticate('sign-in'), (req, res) => {
+
+  const user = res.req.user;
+
+
+  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+    if(err) console.log(err)
+
+    // console.log(user);
+
+    res.status(200).json({err,token});
+ 
+  })
+  
+});
 /**
  * OAuth authentication routes. (Sign in)
  */
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3001' }), (req, res) => {
+  // res.redirect(req.session.returnTo || '/');
+  const user = res.req.user;
+  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+    if(err) console.log(err)
+    
+    console.log(token)
+    // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+    res.redirect('http://localhost:3001?token=' + token);
+
+  })
+
+  // res.redirect('/');
+
+});   
+
+
 /**
  * OAuth authorization routes. (API examples)
  */
@@ -233,9 +262,19 @@ server.listen(app.get('port'), () => {
 // });
 
 /**
- * Admin statics page
+ * Admin
  */
 app.get('/getStatisticNumber', adminController.getAllNumber);
+
+/**
+ * Department
+ */
+app.get('/allDepartment', departmentController.allDepartment);
+app.get('/getDepartment/:id', departmentController.getDepartment);
+app.post('/createDepartment', departmentController.createDepartment);
+app.put('/updateDepartment/:id', departmentController.updateDepartment);
+app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
+app.get('/getDepartmentByName/:name', departmentController.getDepartmentByName);
 
 /**
  * Course
@@ -257,6 +296,7 @@ app.get('/getteacher/:id', teacherController.getTeacherByID);
 app.put('/updateteacher/:id', teacherController.updateTeacher);
 app.get('/searchteacher', teacherController.searchTeacher);
 app.put('/changeteacherisactive/:id', teacherController.changeteacherisactive);
+app.get('/allTeacherByCourse/:id', teacherController.allTeacherByCourse);
 
 /**
  * Student highlight
@@ -266,9 +306,12 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
-app.get('/gethighlightofurl/', highlightController.getHighlightOfUrl);
-app.get('/searchHighlightByText/', highlightController.searchHighLight);
-app.get('/getHighlightByCourse', highlightController.getHighlightByCourse);
+app.get('/getHighlightByUrl/', highlightController.getHighlightByUrl);
+app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight);
+app.get('/getHighlightByCourse/:studentID/:courseID', highlightController.getHighlightByCourse);
+app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);
+app.delete('/deleteHighlightByCourseID/:studentID/:courseID', highlightController.deleteHighlightByCourseID);
+app.get('/getHighlightByColor/:studentID/:courseID/:color', highlightController.getHighlightByColor);
 
 /**
  * Student Note
@@ -279,8 +322,10 @@ app.delete('/deletenotebyid/:id', noteController.deleteNoteByID);
 app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
-app.get('/searchNoteByNote', noteController.searchNote);
-app.get('/getNoteByCourse', noteController.getNoteByCourse);
+app.get('/searchNote/:studentID/:detail', noteController.searchNote);
+app.get('/getNoteByCourse/:studentID/:courseID', noteController.getNoteByCourse);
+app.get('/getRecentNote/:studentID/:limit', noteController.getRecentNote);
+app.delete('/deleteNoteByCourseID/:studentID/:courseID', noteController.deleteNoteByCourseID);
 
 /**
  * Ask and comment
@@ -298,6 +343,8 @@ app.post('/addcomment/:id', askController.addComment);
  */
 app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
+app.get('/allStudent', studentController.allStudent);
+app.get('/getStudentStatistic/:id', studentController.getStudentStatistic);
 
 /**
  * User

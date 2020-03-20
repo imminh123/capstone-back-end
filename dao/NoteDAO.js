@@ -1,8 +1,7 @@
-const Folder = require('../models/Folder');
 const Note = require('../models/Note');
 const Student = require('../models/Student');
 const Course = require('../models/Course');
-const getTime = require('../dao/getTime');
+const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
 function makeJson(type,msg){
@@ -11,61 +10,73 @@ function makeJson(type,msg){
 }
 
 //create a note
-exports.createNote = async function(studentID,courseCode,note,description,url,index){
+exports.createNote = async function(studentID,course,scannedContent,description,url,index){
     //check studentid
     try{
         studentID=Objectid(studentID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('Error','studentID not found');
+    if (student==null||student=='') return makeJson('error','studentID not found');
     //check course
-    var course = await Course.findOne({courseCode:courseCode});
-    if (course==null||course=='') return makeJson('Error','courseCode not found');
+    try{
+        course=Objectid(course);
+    }catch{
+        return makeJson('error','courseID not correct');
+    }
+
+    var courseEn = await Course.findOne({_id:course});
+    if (courseEn==null||courseEn=='') return makeJson('error','Course not found');
 
     var note = new Note({
         studentID:studentID,
-        courseCode:courseCode,
-        note:note,
+        course:course,
+        scannedContent:scannedContent,
         description:description,
         url:url,
         index:index,
-        dateModified: getTime.today()
+        dateModified: getFunction.today()
     });
 
     await note.save();
-    return makeJson('Sucess','Create successfully');
+    return makeJson('success','Create successfully');
 }
 
 //changenote
-exports.updateNote = async function(noteID,courseCode,note,description,url,index,isPinned){
+exports.updateNote = async function(noteID,course,scannedContent,description,url,index,isPinned){
     //check noteID
     try{
         noteID=Objectid(noteID);
     }catch{
-        return makeJson('Error','noteID not correct');
+        return makeJson('error','noteID not correct');
     }
-        var noteentity=await Note.findById(noteID);
-        if (noteentity==null||noteentity=='') return makeJson('Error','noteID not found');
+    var note=await Note.findById(noteID);
+    if (note==null||note=='') return makeJson('error','noteID not found');
     
     //check course
-    var course = await Course.findOne({courseCode:courseCode});
-    if (course==null||course=='') return makeJson('Error','courseCode not found');
-    await Note.updateOne({_id:noteID},{courseCode:courseCode,note:note,description:description,url:url,index:index,isPinned:isPinned,dateModified:getTime.today()});
-    noteentity=await Note.findById(noteID);
+    try {
+        course=Objectid(course);
+    }catch{
+        return makeJson('error','courseID not correct');
+    }
+    var courseEN = await Course.findById(course);
+    if (courseEN==null||courseEN=='') return makeJson('error','Course not found');
+
+    await Note.updateOne({_id:noteID},{course:course,scannedContent:scannedContent,description:description,url:url,index:index,isPinned:isPinned,dateModified:getFunction.today()});
+    note=await Note.findById(noteID);
     var result = {
-        Success:'Update successfully',
+        success:'Update successfully',
         note:{
-            isPinned:noteentity.isPinned,
-            _id:noteentity._id,
-            studentID:noteentity.studentID,
-            courseCode:noteentity.courseCode,
-            note:noteentity.note,
-            description:noteentity.description,
-            url:noteentity.url,
-            index:noteentity.index,
-            dateModified:noteentity.dateModified,
+            isPinned:note.isPinned,
+            _id:note._id,
+            studentID:note.studentID,
+            course:note.course,
+            scannedContent:note.scannedContent,
+            description:note.description,
+            url:note.url,
+            index:note.index,
+            dateModified:note.dateModified,
         }
     }
     return (result);
@@ -78,12 +89,12 @@ exports.changeIsPinned = async function(id,isPinned){
         id=Objectid(id);
     }
     catch{
-        return makeJson('Error','NoteID not correct');
+        return makeJson('error','NoteID not correct');
     }
         var note=await Note.find({_id:id});
-        if (note==null||note=='') return makeJson('Error','NoteID not found');
+        if (note==null||note=='') return makeJson('error','NoteID not found');
         await Note.updateOne({_id:id},{isPinned:isPinned});
-        return makeJson('Sucess','Update successfully');
+        return makeJson('success','Update successfully');
     
 }
 
@@ -93,20 +104,12 @@ exports.deleteNote = async function(noteID){
     try{
         noteID=Objectid(noteID);
     }catch{
-        return makeJson('Error','noteID not correct');
+        return makeJson('error','noteID not correct');
     }
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('Error','noteID not found');
-    
-    await Note.deleteOne({_id:noteID},function(err){
-        if (err) {
-            return makeJson('Error','Error when delete');
-        }
-    });
-    await Folder.updateOne(
-        {},
-        {$pull: {notes:noteID}});
-    return makeJson('Sucess','Delete successfully');
+    var note=await Note.findById(noteID);
+    if (note==null||note=='') return makeJson('error','noteID not found');
+    await Note.deleteOne({_id:noteID});
+    return makeJson('success','Delete successfully');
 }
 
 //getnote
@@ -115,11 +118,11 @@ exports.getNote = async function(noteID){
     try{
         noteID=Objectid(noteID);
     }catch{
-        return makeJson('Error','noteID not correct');
+        return makeJson('error','noteID not correct');
     }
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('Error','noteID not found');
-        return note;
+    var note=await Note.findById(noteID);
+    if (note==null||note=='') return makeJson('error','noteID not found');
+    return note;
     
 }
 
@@ -129,37 +132,83 @@ exports.getAllNoteByStudentID = async function(studentID){
     try{
         studentID=Objectid(studentID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
-        var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('Error','studentID not found');
-        var notes=await Note.find({studentID:studentID});
-        return notes;
+    var student=await Student.findById(studentID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    var notes=await Note.find({studentID:studentID});
+    return notes;
    
 }
 
-exports.searchNote = async function(text,sID){
+exports.searchNote = async function(sID,detail){
     try{
         sID=Objectid(sID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
-        var result = await Note.find({note:{$regex:text,$options:"i"},studentID:sID}, 
+    var student=await Student.findById(sID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    var result = await Note.find({$or:[{scannedContent:{$regex:detail,$options:"i"}},{description:{$regex:detail,$options:"i"}}]}, 
                     function(err, docs) {
                         if (err) handleError(err);
                 });
         return result;
-    
 }
 
-exports.getNoteByCourse = async function(courseCode,sID){
+exports.getNoteByCourse = async function(course,sID){
     try{
         sID=Objectid(sID);
     }catch{
-        return makeJson('Error','studentID not correct');
+        return makeJson('error','studentID not correct');
     }
-        var course = await Course.findOne({courseCode:courseCode});
-        if (course==null||course=='') return makeJson('Error','courseCode not found');
-        var result = await Note.find({studentID:sID,courseCode:courseCode});
-        return result;
+    var student=await Student.findById(sID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+
+    try {
+        course=Objectid(course);
+    }catch{
+        return makeJson('error','courseID not correct');
+    }
+    var courseEN = await Course.findById(course);
+    if (courseEN==null||courseEN=='') return makeJson('error','Course not found');
+    var result = await Note.find({studentID:sID,course:course});
+    return result;
+}
+
+exports.deleteNoteByCourseID= async function(sID,course){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('error','studentID not correct');
+    }
+    var student=await Student.findById(studentID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+
+    try {
+        course=Objectid(course);
+    }catch{
+        return makeJson('error','courseID not correct');
+    }
+    var courseEN=await Course.findById(course);
+    if (courseEN==null||courseEN=='') return makeJson('error','courseID not found');
+
+    await Note.deleteMany({studentID:sID,course:course});
+    return makeJson('success','Delete successfully');
+}
+
+exports.getRecentNote = async function(sID,limit){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('error','studentID not correct');
+    }
+    var student=await Student.findById(sID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    var notes = await Note.find({studentID:sID});
+    notes.sort(function(a,b){
+        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+    });
+    
+    return notes.slice(0,limit);
 }

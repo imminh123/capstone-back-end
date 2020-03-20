@@ -6,39 +6,39 @@ function isEmpty(str){
 }
 
 function msgEmpty(){
-    var newObject = '{"Error":"All field must be filled"}';
+    var newObject = '{"error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
 exports.createNote = async (req,res) => {
     var studentID=req.body.studentID;
-    var courseCode=req.body.courseCode;
-    var note=req.body.note;
+    var course=req.body.course;
+    var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
     //check if all fields are filled
-    if (isEmpty(studentID)||isEmpty(courseCode)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index))
+    if (isEmpty(studentID)||isEmpty(course)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index))
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.createNote(studentID,courseCode,note,description,url,index));                    
+            res.send(await NoteDAO.createNote(studentID,course,scannedContent,description,url,index));                    
         }
 }
 
 exports.updateNoteByID = async (req,res) => {
     // res.setHeader("Content-Type", "application/json");
     var noteID=req.params['id'];
-    var courseCode=req.body.courseCode;
-    var note=req.body.note;
+    var course=req.body.course;
+    var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
     var isPinned=req.body.isPinned;
     //check if all fields are filled
-    if (isEmpty(courseCode)||isEmpty(note)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned==undefined||isPinned.toString()=='')
+    if (isEmpty(course)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned==undefined||isPinned.toString()=='')
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.updateNote(noteID,courseCode,note,description,url,index,isPinned));                    
+            res.send(await NoteDAO.updateNote(noteID,course,scannedContent,description,url,index,isPinned));                    
         }
 }
 
@@ -66,15 +66,25 @@ exports.allNoteOfStudent = async (req,res) => {
 }
 
 exports.searchNote = async (req,res) => {
-    var sID=req.body.studentID;
-    var note=req.body.note;
-    if (isEmpty(note)||isEmpty(sID)) res.send(msgEmpty());
-    res.send(await NoteDAO.searchNote(note,sID));
+    var sID=req.params['studentID'];
+    var detail=req.params['detail'];
+    res.send(await NoteDAO.searchNote(sID,detail));
 }
 
 exports.getNoteByCourse = async (req,res) => {
-    var sID=req.body.studentID;
-    var courseCode=req.body.courseCode;
-    if (isEmpty(courseCode)||isEmpty(sID)) res.send(msgEmpty());
-    res.send(await NoteDAO.getNoteByCourse(courseCode,sID));
+    var sID=req.params['studentID'];
+    var course=req.params['courseID'];
+    res.send(await NoteDAO.getNoteByCourse(course,sID));
+}
+
+exports.deleteNoteByCourseID = async (req,res) => {
+    var sID=req.params['studentID'];
+    var course=req.params['courseID'];
+    res.send(await NoteDAO.deleteNoteByCourseID(sID,course));
+}
+
+exports.getRecentNote = async (req,res) => {
+    var sID=req.params['studentID'];
+    var limit=req.params['limit'];
+    res.send(await NoteDAO.getRecentNote(sID,limit));
 }

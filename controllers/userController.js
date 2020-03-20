@@ -6,25 +6,18 @@ function isEmpty(str){
 }
 
 function msgEmpty(){
-    var newObject = '{"Error":"All field must be filled"}';
+    var newObject = '{"error":"All field must be filled"}';
     return JSON.parse(newObject);
 }
 
 exports.createUser = async (req, res, next) => {
     var email=req.body.email;
+    var password=req.body.password;
     var google=req.body.google;
     var tokens=req.body.tokens;
     var role=req.body.role;
     var profile=req.body.profile;
-    console.log(email);
-    console.log(google);
-    console.log(tokens);
-    console.log(role);
-    console.log(profile);
-    //check if all fields are filled
-    // if (isEmpty(email)||isEmpty(google)||isEmpty(tokens)||isEmpty(role)||isEmpty(profile))
-    //             res.send(msgEmpty());
-    res.send(await userDAO.createUser(email,google,tokens,role,profile));               
+    res.send(await userDAO.createUser(email,google,tokens,role,profile,password));               
 };
 
 exports.getUserByID = async (req,res) => {
