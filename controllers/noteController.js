@@ -68,27 +68,23 @@ exports.allNoteOfStudent = async (req,res) => {
 exports.searchNote = async (req,res) => {
     var sID=req.params['studentID'];
     var detail=req.params['detail'];
-    if (isEmpty(sID)) res.send(msgEmpty());
     res.send(await NoteDAO.searchNote(sID,detail));
 }
 
 exports.getNoteByCourse = async (req,res) => {
     var sID=req.params['studentID'];
     var course=req.params['courseID'];
-    if (isEmpty(course)||isEmpty(sID)) res.send(msgEmpty());
     res.send(await NoteDAO.getNoteByCourse(course,sID));
 }
 
 exports.deleteNoteByCourseID = async (req,res) => {
     var sID=req.params['studentID'];
     var course=req.params['courseID'];
-    if (isEmpty(course)||isEmpty(sID)) res.send(msgEmpty());
     res.send(await NoteDAO.deleteNoteByCourseID(sID,course));
 }
 
 exports.getRecentNote = async (req,res) => {
     var sID=req.params['studentID'];
     var limit=req.params['limit'];
-    if (isEmpty(sID)) res.send(msgEmpty());
     res.send(await NoteDAO.getRecentNote(sID,limit));
 }

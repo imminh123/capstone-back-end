@@ -187,14 +187,19 @@ exports.deleteHLByCourseID= async function(sID,course){
     return makeJson('success','Delete successfully');
 }
 
-exports.getHighlightByColor = async function(color,sID){
+exports.getHighlightByColor = async function(color,sID,cID){
     
     var isStudent=await checkStudent(sID);
     if (isStudent==-1) return makeJson('error','studentID not correct');
     else 
         if (isStudent==0) return makeJson('error','studentID not found');
+    
+        var isCourse=await checkCourse(cID);
+    if (isCourse==-1) return makeJson('error','courseID not correct');
+    // else 
+    //     if (isCourse==0) return makeJson('error','courseID not found');
 
-    var highlights=await Highlight.find({studentID:sID,color:color});
+    var highlights=await Highlight.find({studentID:sID,course:cID,color:color});
     return highlights;
 }
 

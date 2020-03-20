@@ -331,7 +331,7 @@ app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight
 app.get('/getHighlightByCourse/:studentID/:courseID', highlightController.getHighlightByCourse);
 app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);
 app.delete('/deleteHighlightByCourseID/:studentID/:courseID', highlightController.deleteHighlightByCourseID);
-app.get('/getHighlightByColor/:studentID/:color', highlightController.getHighlightByColor);
+app.get('/getHighlightByColor/:studentID/:courseID/:color', highlightController.getHighlightByColor);
 
 /**
  * Student Note
