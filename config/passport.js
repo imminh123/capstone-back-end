@@ -48,6 +48,8 @@ passport.use('sign-in',new LocalStrategy(
       return done(null, false, { msg: 'Invalid email or password.' });
     });
   });
+
+  return done(null)
 }));
 
 /**
