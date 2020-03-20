@@ -201,7 +201,7 @@ app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuth
 
 
 //Login routes
-app.post('/login', passport.authenticate('sign-in', { failureRedirect: 'http://localhost:3001' }), (req, res) => {
+app.post('/login', passport.authenticate('sign-in'), (req, res) => {
 
   const user = res.req.user;
 
@@ -211,8 +211,9 @@ app.post('/login', passport.authenticate('sign-in', { failureRedirect: 'http://l
     if(err) console.log(err)
 
     res.status(200).json({err,token});
-
+ 
   })
+  
 });
 /**
  * OAuth authentication routes. (Sign in)
