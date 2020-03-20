@@ -106,17 +106,9 @@ exports.deleteNote = async function(noteID){
     }catch{
         return makeJson('error','noteID not correct');
     }
-        var note=await Note.findById(noteID);
-        if (note==null||note=='') return makeJson('error','noteID not found');
-    
-    await Note.deleteOne({_id:noteID},function(err){
-        if (err) {
-            return makeJson('error','Error when delete');
-        }
-    });
-    await Folder.updateOne(
-        {},
-        {$pull: {notes:noteID}});
+    var note=await Note.findById(noteID);
+    if (note==null||note=='') return makeJson('error','noteID not found');
+    await Note.deleteOne({_id:noteID});
     return makeJson('success','Delete successfully');
 }
 
@@ -213,7 +205,10 @@ exports.getRecentNote = async function(sID,limit){
     }
     var student=await Student.findById(sID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-
-    var notes = Note.find({studentID:sID}).sort({dateModified:-1}).limit(parseInt(limit));
-    return notes;
+    var notes = await Note.find({studentID:sID});
+    notes.sort(function(a,b){
+        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+    });
+    
+    return notes.slice(0,limit);
 }
