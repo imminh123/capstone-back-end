@@ -282,7 +282,7 @@ app.listen(app.get('port'), () => {
 });
 
 /**
- * Admin statics page
+ * Admin
  */
 app.get('/getStatisticNumber', adminController.getAllNumber);
 
@@ -317,6 +317,7 @@ app.put('/updateteacher/:id', teacherController.updateTeacher);
 app.get('/searchteacher', teacherController.searchTeacher);
 app.put('/changeteacherisactive/:id', teacherController.changeteacherisactive);
 app.get('/allTeacherByCourse/:id', teacherController.allTeacherByCourse);
+
 /**
  * Student highlight
  */
@@ -363,6 +364,7 @@ app.post('/addcomment/:id', askController.addComment);
 app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
 app.get('/allStudent', studentController.allStudent);
+app.get('/getStudentStatistic/:id', studentController.getStudentStatistic);
 
 /**
  * User
