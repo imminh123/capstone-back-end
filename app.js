@@ -205,10 +205,11 @@ app.post('/login', passport.authenticate('sign-in'), (req, res) => {
 
   const user = res.req.user;
 
-  console.log(user);
 
   jwt.sign({user: user}, 'tinhanhem', (err, token) => {
     if(err) console.log(err)
+
+    // console.log(user);
 
     res.status(200).json({err,token});
  

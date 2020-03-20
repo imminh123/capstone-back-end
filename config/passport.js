@@ -31,7 +31,9 @@ passport.use('sign-in',new LocalStrategy(
     passwordField: 'password' 
   }
   , (email, password, done) => {
+
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
+
     if (err) { return done(err); }
     if (!user) {
       return done(null, false, { msg: `Email ${email} not found.` });
@@ -49,7 +51,6 @@ passport.use('sign-in',new LocalStrategy(
     });
   });
 
-  return done(null)
 }));
 
 /**
