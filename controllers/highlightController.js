@@ -53,41 +53,36 @@ exports.updateHighlight = async (req,res) => {
 exports.getHighlightByUrl = async (req,res) => {
     var id=req.body.studentID;
     var url=req.body.url;
-    if (isEmpty(id)||isEmpty(url)) res.send(msgEmpty());
     res.send(await hlDAO.getHighlightByUrl(id,url));
 }
 
 exports.searchHighLight = async (req,res) => {
     var sID=req.params['studentID'];
     var scannedContent=req.params['text'];
-    if (isEmpty(scannedContent)||isEmpty(sID)) res.send(msgEmpty());
     res.send(await hlDAO.searchHighlight(scannedContent,sID));
 }
 
 exports.getHighlightByCourse = async (req,res) => {
     var sID=req.params['studentID'];
     var course=req.params['courseID'];
-    if (isEmpty(course)||isEmpty(sID)) res.send(msgEmpty());
     res.send(await hlDAO.getHighlightByCourse(course,sID));
 }
 
 exports.deleteHighlightByCourseID = async (req,res) => {
     var sID=req.params['studentID'];
     var course=req.params['courseID'];
-    if (isEmpty(course)||isEmpty(sID)) res.send(msgEmpty());
     res.send(await hlDAO.deleteHLByCourseID(sID,course));
 }
 
 exports.getHighlightByColor =async(req,res) => {
     var sID=req.params['studentID'];
+    var cID=req.params['courseID'];
     var color=req.params['color'];
-    if (isEmpty(color)||isEmpty(sID)) res.send(msgEmpty());
-    res.send(await hlDAO.getHighlightByColor(color,sID));
+    res.send(await hlDAO.getHighlightByColor(color,sID,cID));
 }
 
 exports.getRecentHighlight = async (req,res) => {
     var sID=req.params['studentID'];
     var limit=req.params['limit'];
-    if (isEmpty(sID)) res.send(msgEmpty());
     res.send(await hlDAO.getRecentHighlight(sID,limit));
 }
