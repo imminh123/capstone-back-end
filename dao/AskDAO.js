@@ -151,5 +151,5 @@ exports.addComment = async function(askID,userID,message){
             //do stuff
         }
     });
-    return makeJson('success','Add comment successfully');
+    return {comment};
 }
