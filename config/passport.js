@@ -12,7 +12,7 @@ const UserDAO = require('../dao/UserDAO');
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  // console.log(user)
+  console.log(user) 
   done(null, user.id);
 });    
 
@@ -107,7 +107,7 @@ const googleStrategyConfig = new GoogleStrategy({
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
 
-          const user = await UserDAO.createUser(email, google, tokens, role, profileForParam);
+          const user = await UserDAO.createUser(email, google, tokens, role, profileForParam, null);
 
           if(user) {
             return done(null, user);
