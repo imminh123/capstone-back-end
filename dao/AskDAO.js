@@ -17,19 +17,17 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
     }catch{
         return makeJson('error','studentID not correct');
     }
-        var studententity=await Student.findById(student);
-        if (studententity==null||studententity=='') return makeJson('error','studentID not found');
+    var studententity=await Student.findById(student);
+    if (studententity==null||studententity=='') return makeJson('error','studentID not found');
     
-
     try{
         teacher=Objectid(teacher);
     }catch{
         return makeJson('error','teacherID not correct');
     }
-        var teacherentity=await Student.findById(student);
-        if (teacherentity==null||teacherentity=='') return makeJson('error','teacherID not found');
+    var teacherentity=await Student.findById(student);
+    if (teacherentity==null||teacherentity=='') return makeJson('error','teacherID not found');
    
-    
     var ask = new Ask({
         scannedContent:scannedContent,
         askContent:askContent,
@@ -83,9 +81,9 @@ exports.getAskByID = async function(askID){
     }catch{
         return makeJson('error','askID not correct');
     }
-        var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-        if (ask==null||ask=='') return makeJson('error','askID not found');
-        return ask;
+    var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
+    if (ask==null||ask=='') return makeJson('error','askID not found');
+    return ask;
    
 }
 
@@ -97,10 +95,9 @@ exports.allAskOfStudent = async function(studentID){
     }catch{
         return makeJson('error','studentID not correct');
     }
-        var student=await Student.findById(studentID);
-        if (student==null||student=='') return makeJson('error','studentID not found');
-        var asks=await Ask.find({student:studentID}).populate('student').populate('teacher');
-        return asks;
+    var student=await Student.findById(studentID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    return await Ask.find({student:studentID}).populate('student').populate('teacher');
     
 }
 
@@ -112,17 +109,15 @@ exports.allAskOfTeacher = async function(teacherID){
     }catch{
         return makeJson('error','teacherID not correct');
     }
-        var teacher=await Teacher.findById(teacherID);
-        if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
-        var asks=await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
-        return asks;
+    var teacher=await Teacher.findById(teacherID);
+    if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
+    return await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
     
 }
 
 //return all ask
 exports.allAsk = async function(){
-    var asks=await Ask.find().populate('student').populate('teacher');
-    return asks;
+    return await Ask.find().populate('student').populate('teacher');
 }
 
 //add a new comment to ask

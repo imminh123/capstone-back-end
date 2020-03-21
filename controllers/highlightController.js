@@ -51,8 +51,8 @@ exports.updateHighlight = async (req,res) => {
 }
 
 exports.getHighlightByUrl = async (req,res) => {
-    var id=req.body.studentID;
-    var url=req.body.url;
+    var id=req.params['studentID'];
+    var url=req.params['url'];
     res.send(await hlDAO.getHighlightByUrl(id,url));
 }
 

@@ -16,8 +16,7 @@ exports.allTeacherByCourse=async function(courseID){
     }
     var course=await Course.findById(courseID);
     if (course==null||course=='') return makeJson('error','ID not found');
-    var teachers=await Teacher.find({courses:courseID});
-    return teachers;
+    return await Teacher.find({courses:courseID});
 }
 
 //create teacher
@@ -46,8 +45,7 @@ exports.createTeacher = async function(name,email,gender,avatar){
 
 //get all teacher
 exports.getAllTeacher = async function () {
-    var teacherlist = await Teacher.find({}).populate('courses');
-    return teacherlist;
+    return await Teacher.find({}).populate('courses');
 };
 
 //get a teacher by id
@@ -61,8 +59,7 @@ exports.getTeacherByID = async function(id){
     var teacher = await Teacher.findOne({_id:id}).populate('courses');
     if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found')
     else
-        return teacher;
-    
+    return teacher;
 };
 
 //update a teacher
@@ -106,8 +103,7 @@ exports.updateTeacher = async function(id,name,email,isActive){
         //         }
         //     );
         // });
-        return makeJson('success','Update successfully');
-    
+    return makeJson('success','Update successfully');
 };
 
 //change active of teacher
@@ -119,11 +115,10 @@ exports.changeteacherisactive = async function(id,isActive){
     catch{
         return makeJson('error','Teacher ID not correct');
     }
-        var teacher=await Teacher.find({_id:id});
-        if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
-        await Teacher.updateOne({_id:id},{isActive:isActive});
-        return makeJson('success','Update successfully');
-    
+    var teacher=await Teacher.find({_id:id});
+    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
+    await Teacher.updateOne({_id:id},{isActive:isActive});
+    return makeJson('success','Update successfully');
 }
 
 //search teacher name and email

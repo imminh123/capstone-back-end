@@ -309,6 +309,7 @@ app.delete('/deletecourse/:id',courseController.deleteCourse);
 app.get('/searchcourse', courseController.searchCourse);
 app.get('/searchdepartment', courseController.searchDepartments);
 app.get('/getCourseOfStudent/:id', courseController.getCourseOfStudent);
+app.get('/getCourseByUrl/:url', courseController.getCourseByUrl);
 
 /**
  * Teacher
@@ -328,7 +329,7 @@ app.get('/gethighlightbyid/:id', highlightController.getHighlightByID);
 app.get('/allhighlightbystudentid/:id', highlightController.allHighlightByStudentID);
 app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
-app.get('/getHighlightByUrl/', highlightController.getHighlightByUrl);
+app.get('/getHighlightByUrl/:studentID/:url', highlightController.getHighlightByUrl);
 app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight);
 app.get('/getHighlightByCourse/:studentID/:courseID', highlightController.getHighlightByCourse);
 app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);

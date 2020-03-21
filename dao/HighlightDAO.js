@@ -90,8 +90,7 @@ exports.getAllHighlightByStudentID = async function(studentID){
     else 
         if (isStudent==0) return makeJson('error','studentID not found');
 
-    var highlights=Highlight.find({studentID:studentID});
-    return highlights;
+    return await Highlight.find({studentID:studentID});
    
 }
 
@@ -136,13 +135,11 @@ exports.getHighlightByUrl = async function(id,url){
     else 
         if (isStudent==0) return makeJson('error','studentID not found');
 
-    var highlights=await Highlight.find({studentID:id,url:url});
-    return highlights;
+    return await Highlight.find({studentID:id,url:url});
     
 }
 
 exports.searchHighlight = async function(scannedContent,sID){
-
     var isStudent=await checkStudent(sID);
     if (isStudent==-1) return makeJson('error','studentID not correct');
     else 
@@ -152,12 +149,10 @@ exports.searchHighlight = async function(scannedContent,sID){
                     function(err, docs) {
                         if (err) handleError(err);
                 });
-        return result;
-    
+    return result;
 }
 
-exports.getHighlightByCourse = async function(course,sID){
-    
+exports.getHighlightByCourse = async function(course,sID){  
     var isStudent=await checkStudent(sID);
     if (isStudent==-1) return makeJson('error','studentID not correct');
     else 
@@ -167,8 +162,7 @@ exports.getHighlightByCourse = async function(course,sID){
     if (isCourse==-1) return makeJson('error','courseID not correct');
     else 
         if (isCourse==0) return makeJson('error','courseID not found');
-    var result = await Highlight.find({studentID:sID,course:course});
-    return result;
+    return await Highlight.find({studentID:sID,course:course});
 }
 
 exports.deleteHLByCourseID= async function(sID,course){
@@ -199,8 +193,7 @@ exports.getHighlightByColor = async function(color,sID,cID){
     // else 
     //     if (isCourse==0) return makeJson('error','courseID not found');
 
-    var highlights=await Highlight.find({studentID:sID,course:cID,color:color});
-    return highlights;
+    return await Highlight.find({studentID:sID,course:cID,color:color});
 }
 
 exports.getRecentHighlight = async function(sID,limit){

@@ -79,7 +79,7 @@ exports.updateNote = async function(noteID,course,scannedContent,description,url
             dateModified:note.dateModified,
         }
     }
-    return (result);
+    return result;
 }
 
 //change active of teacher
@@ -95,7 +95,6 @@ exports.changeIsPinned = async function(id,isPinned){
         if (note==null||note=='') return makeJson('error','NoteID not found');
         await Note.updateOne({_id:id},{isPinned:isPinned});
         return makeJson('success','Update successfully');
-    
 }
 
 //deletenote
@@ -136,8 +135,7 @@ exports.getAllNoteByStudentID = async function(studentID){
     }
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-    var notes=await Note.find({studentID:studentID});
-    return notes;
+    return await Note.find({studentID:studentID});
    
 }
 
@@ -149,11 +147,13 @@ exports.searchNote = async function(sID,detail){
     }
     var student=await Student.findById(sID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-    var result = await Note.find({$or:[{scannedContent:{$regex:detail,$options:"i"}},{description:{$regex:detail,$options:"i"}}]}, 
-                    function(err, docs) {
-                        if (err) handleError(err);
-                });
-        return result;
+    var result = await Note.find({
+            studentID:sID,
+            $or:[{scannedContent:{$regex:detail,$options:"i"}},
+                  {description:{$regex:detail,$options:"i"}}
+                ]
+        });
+    return result;
 }
 
 exports.getNoteByCourse = async function(course,sID){
@@ -172,8 +172,7 @@ exports.getNoteByCourse = async function(course,sID){
     }
     var courseEN = await Course.findById(course);
     if (courseEN==null||courseEN=='') return makeJson('error','Course not found');
-    var result = await Note.find({studentID:sID,course:course});
-    return result;
+    return await Note.find({studentID:sID,course:course});
 }
 
 exports.deleteNoteByCourseID= async function(sID,course){
@@ -209,6 +208,5 @@ exports.getRecentNote = async function(sID,limit){
     notes.sort(function(a,b){
         return Date.parse(b.dateModified)-Date.parse(a.dateModified);
     });
-    
     return notes.slice(0,limit);
 }

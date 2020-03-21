@@ -84,3 +84,8 @@ exports.getCourseOfStudent = async (req,res) => {
     var sID=req.params['id'];
     res.send(await CourseDAO.allCourseOfStudent(sID));
 }
+
+exports.getCourseByUrl=async(req,res)=>{
+    var url=req.params['url'];
+    res.send(await CourseDAO.getCourseByUrl(url));
+}

@@ -37,7 +37,7 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 
     if (newProfile.error) return makeJson('error',newProfile.error);
 
-    
+
 
     const newUser = new User({
         email:email,

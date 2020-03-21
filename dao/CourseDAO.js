@@ -76,8 +76,7 @@ async function addCourseToTeacher(courseid,teachers){
 
 //return all course
 exports.getAllCourse = async function () {
-    var courselist = await Course.find({}).populate('teachers');
-    return courselist;
+    return await Course.find({}).populate('teachers');
 };
 
 //return a course by id
@@ -108,9 +107,8 @@ exports.deleteCourse = async function(id){
                 return makeJson('error','Error when delete');
             }
         });
-        await removeCourseFromTeacher(id);
-        return makeJson('success','Delete successfully');
-  
+    await removeCourseFromTeacher(id);
+    return makeJson('success','Delete successfully');
 };
 
 //create a new course
@@ -218,4 +216,8 @@ exports.allCourseOfStudent = async function(sID){
     var student=await Student.findById(sID).populate('courses');
     if (student==null||student=='') return makeJson('error','studentID not found');
     return student.courses;
+}
+
+exports.getCourseByUrl=async function(url){
+    return await Course.findOne({courseURL:url}).populate('teachers');
 }
