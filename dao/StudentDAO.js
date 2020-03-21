@@ -8,7 +8,7 @@ const Ask = require('../models/Ask');
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
-}
+} 
 
 exports.createStudent = async function(name,email,gender,avatar){
     var student = await Student.findOne({email:email});

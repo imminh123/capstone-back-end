@@ -2,7 +2,7 @@ const AskDAO = require('../dao/AskDAO');
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
-        console.log('New connection');
+        console.log('New connection'); 
         socket.on('join', (data, callback) => {
             console.log(data);   
             socket.emit('hello', 'Helllo user this is server calling');
@@ -17,7 +17,8 @@ module.exports = function(io) {
             // const user = getUser(socket.id);  
             // io.to(user.room).emit('message', {user: user.name, text: message});
             const {message, user, askID } = data;
-            console.log(await AskDAO.addComment(askID,user._id,message));
+            console.log(data);
+            console.log(await AskDAO.addComment(askID,user.profile,message));
             callback();  
         }) 
         
