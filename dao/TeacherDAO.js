@@ -77,15 +77,7 @@ exports.updateTeacher = async function(id,name,email,isActive){
         // await Course.updateMany(
         //     {},
         //     {$pull: {teachers: id}},
-        //     {safe: true, upsert: true},
-        //     function(err, doc) {
-        //         if(err){
-        //             // console.log(err);
-        //             return makeJson('There was an error with courses');
-        //         }else{
-        //         //do stuff
-        //         }
-        //     }
+        //     {safe: true, upsert: true}
         // );
         // //add this teacher to new course
         // courses.forEach(async function(data){
@@ -93,14 +85,6 @@ exports.updateTeacher = async function(id,name,email,isActive){
         //     await Course.updateOne({_id:courseid},
         //         {$addToSet: {teachers:id}},
         //         {safe: true, upsert: true},
-        //         function(err, doc) {
-        //             if(err){
-        //                 // console.log(err);
-        //                 return makeJson('There was an error with courses');
-        //             }else{
-        //             //do stuff
-        //             }
-        //         }
         //     );
         // });
     return makeJson('success','Update successfully');
@@ -125,17 +109,11 @@ exports.changeteacherisactive = async function(id,isActive){
 exports.searchTeacher = async function(page,perPage,detail){
     var result,size;
     //all result. may need a better solution
-    result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
-                            function(err, docs) {
-                                if (err) handleError(err);
-                                }).populate('courses');
+    result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}).populate('courses');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     //result of a page
     if (page!=0){
-        result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}, 
-                            function(err, docs) {
-                                if (err) handleError(err);
-                                }).populate('courses')
+        result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}).populate('courses')
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }

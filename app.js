@@ -310,7 +310,7 @@ app.put('/updatehighlight/:id', highlightController.updateHighlight);
 app.get('/getHighlightByUrl/:studentID/:url', highlightController.getHighlightByUrl);
 app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight);
 app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);
-app.get('/getHighlightByColor/:studentID/:courseID/:color', highlightController.getHighlightByColor);
+app.get('/getHighlightByColor/:studentID/:folderID/:color', highlightController.getHighlightByColor);
 
 /**
  * Student Note

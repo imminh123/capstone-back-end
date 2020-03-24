@@ -17,11 +17,11 @@ exports.createHighlight = async (req, res, next) => {
     var color=req.body.color;
     var url=req.body.url;
     var tags=req.body.tags;
-    var course=req.body.course;
+    var folderID=req.body.folderID;
     //check if all fields are filled
-    if (isEmpty(studentid)||isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(url)||isEmpty(course))
+    if (isEmpty(studentid)||isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(url)||isEmpty(folderID))
                 res.send(msgEmpty());
-    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,tags,course));               
+    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,tags,folderID));               
 };
 
 exports.getHighlightByID = async (req,res) => {
@@ -45,9 +45,9 @@ exports.updateHighlight = async (req,res) => {
     var index=req.body.index;
     var color=req.body.color;
     var tags=req.body.tags;
-    var course=req.body.course;
-    if (isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(course)) res.send(msgEmpty());
-    res.send(await hlDAO.updateHighlight(id,course,scannedContent,index,color,tags));
+    var folderID=req.body.folderID;
+    if (isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(folderID)) res.send(msgEmpty());
+    res.send(await hlDAO.updateHighlight(id,folderID,scannedContent,index,color,tags));
 }
 
 exports.getHighlightByUrl = async (req,res) => {
@@ -64,9 +64,9 @@ exports.searchHighLight = async (req,res) => {
 
 exports.getHighlightByColor =async(req,res) => {
     var sID=req.params['studentID'];
-    var cID=req.params['courseID'];
+    var fID=req.params['folderID'];
     var color=req.params['color'];
-    res.send(await hlDAO.getHighlightByColor(color,sID,cID));
+    res.send(await hlDAO.getHighlightByColor(color,sID,fID));
 }
 
 exports.getRecentHighlight = async (req,res) => {

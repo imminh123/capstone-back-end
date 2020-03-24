@@ -46,11 +46,7 @@ exports.deleteDepartmentByID = async function(id){
     var department=await Department.findById(id);
     if (department==null||department=='') return makeJson('error','departmentID not found');
     
-    await Department.deleteOne({_id:id},function(err){
-        if (err) {
-            return makeJson('error','Error when delete');
-        }
-    });
+    await Department.deleteOne({_id:id});
     return makeJson('success','Delete successfully');
 }
 
