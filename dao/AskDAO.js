@@ -118,7 +118,8 @@ exports.allAskOfTeacher = async function(teacherID){
 
 //return all ask
 exports.allAsk = async function(){
-    return await Ask.find().populate('student').populate('teacher');
+    var asks=await Ask.find().populate('student').populate('teacher').populate('comments');
+    return asks;
 }
 
 //add a new comment to ask
@@ -151,5 +152,5 @@ exports.addComment = async function(askID,userID,message){
             //do stuff
         }
     });
-    return makeJson('success','Add comment successfully');
+    return {comment};
 }

@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 const express = require('express');
+const http = require('http');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
@@ -170,35 +171,14 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 app.get('/api', apiController.getApi);
 app.get('/api/lastfm', apiController.getLastfm);
 app.get('/api/nyt', apiController.getNewYorkTimes);
-app.get('/api/steam', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getSteam);
-app.get('/api/stripe', apiController.getStripe);
-app.post('/api/stripe', apiController.postStripe);
-app.get('/api/scraping', apiController.getScraping);
-app.get('/api/twilio', apiController.getTwilio);
-app.post('/api/twilio', apiController.postTwilio);
-app.get('/api/clockwork', apiController.getClockwork);
-app.post('/api/clockwork', apiController.postClockwork);
-app.get('/api/foursquare', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFoursquare);
-app.get('/api/tumblr', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTumblr);
 app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 app.get('/api/github', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGithub);
 app.get('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTwitter);
-app.post('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postTwitter);
-app.get('/api/instagram', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getInstagram);
 app.get('/api/paypal', apiController.getPayPal);
 app.get('/api/paypal/success', apiController.getPayPalSuccess);
 app.get('/api/paypal/cancel', apiController.getPayPalCancel);
-app.get('/api/lob', apiController.getLob);
 app.get('/api/upload', lusca({ csrf: true }), apiController.getFileUpload);
 app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiController.postFileUpload);
-app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
-app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
-app.get('/api/here-maps', apiController.getHereMaps);
-app.get('/api/google-maps', apiController.getGoogleMaps);
-app.get('/api/google/drive', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleDrive);
-app.get('/api/chart', apiController.getChart);
-app.get('/api/google/sheets', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleSheets);
-app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getQuickbooks);
 
 
 //Login routes
@@ -222,15 +202,15 @@ app.post('/login', passport.authenticate('sign-in'), (req, res) => {
  */
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3001' }), (req, res) => {
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'https://noteitfu.herokuapp.com' }), (req, res) => {
   // res.redirect(req.session.returnTo || '/');
   const user = res.req.user;
-  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+  jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
     if(err) console.log(err)
     
     console.log(token)
     // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    res.redirect('http://localhost:3001?token=' + token);
+    res.redirect('https://noteitfu.herokuapp.com?token=' + token);
 
   })
 
@@ -246,22 +226,7 @@ app.get('/auth/foursquare', passport.authorize('foursquare'));
 app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
   res.redirect('/api/foursquare');
 });
-app.get('/auth/tumblr', passport.authorize('tumblr'));
-app.get('/auth/tumblr/callback', passport.authorize('tumblr', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect('/api/tumblr');
-});
-app.get('/auth/steam', passport.authorize('openid', { state: 'SOME STATE' }));
-app.get('/auth/steam/callback', passport.authorize('openid', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect(req.session.returnTo);
-});
-app.get('/auth/pinterest', passport.authorize('pinterest', { scope: 'read_public write_public' }));
-app.get('/auth/pinterest/callback', passport.authorize('pinterest', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/api/pinterest');
-});
-app.get('/auth/quickbooks', passport.authorize('quickbooks', { scope: ['com.intuit.quickbooks.accounting'], state: 'SOME STATE' }));
-app.get('/auth/quickbooks/callback', passport.authorize('quickbooks', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo);
-});
+
 
 /**
  * Error Handler.
@@ -276,13 +241,26 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
+//SocketIO
+const server = http.Server(app);
+const io = require('socket.io')(server);
+const socketIOController = require('./controllers/socketIOController');
+socketIOController(io);
+
+
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), () => {
-  console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
-  console.log('  Press CTRL-C to stop\n');
-});
+
+ //to use with SocketIO
+server.listen(app.get('port'), () => {
+  console.log(`Server has start on port ${app.get('port')}`);
+}); 
+
+// app.listen(app.get('port'), () => {
+//   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
+//   console.log('  Press CTRL-C to stop\n');
+// });
 
 /**
  * Admin
