@@ -201,7 +201,7 @@ app.post('/login', passport.authenticate('sign-in'), (req, res) => {
  */
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'https://noteitfu.herokuapp.com' }), (req, res) => {
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3002' }), (req, res) => {
   // res.redirect(req.session.returnTo || '/');
   const user = res.req.user;
   jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
@@ -209,7 +209,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     
     console.log(token)
     // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    res.redirect('https://noteitfu.herokuapp.com?token=' + token);
+    res.redirect('http://localhost:3002?token=' + token);
 
   })
 
