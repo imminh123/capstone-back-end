@@ -2,6 +2,7 @@ const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Department = require('../models/Department');
+const Folder = require('../models/Folder');
 const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
@@ -46,14 +47,7 @@ async function removeCourseFromTeacher(id){
     await Teacher.updateMany(
         {},
         {$pull: {courses:id}},
-        {safe: true, upsert: true},
-        function(err, doc) {
-            if(err){
-            console.log(err);
-            }else{
-            //do stuff
-            }
-        }
+        {safe: true, upsert: true}
     );
 };
 
@@ -100,13 +94,10 @@ exports.deleteCourse = async function(id){
     }catch{
         return makeJson('error','Course ID not correct');
     }
-        var course=await Course.findById(id);
-        if (course==null||course=='') return makeJson('error','ID not found');
-        await Course.deleteOne({_id:id},function(err){
-            if (err) {
-                return makeJson('error','Error when delete');
-            }
-        });
+    var course=await Course.findById(id);
+    if (course==null||course=='') return makeJson('error','ID not found');
+    await Folder.updateOne({courseID:course._id},{courseID:''});
+    await Course.deleteOne({_id:id});
     await removeCourseFromTeacher(id);
     return makeJson('success','Delete successfully');
 };
@@ -128,6 +119,14 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
         teachers: teachers
     });
     await course.save();
+
+    var folder = new Folder({
+        courseID: course._id,
+        courseName: name,
+        courseCode: code
+    });
+    await folder.save();
+
     await addCourseToTeacher(course._id,teachers);
     var result = {
         'success':'Create successfully',
@@ -149,6 +148,10 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     }
     if (await invalidDepartment(departments)) return makeJson('error','Department not found');
     var course=await Course.findById(id);
+
+    if (course.courseCode!=code||course.courseName!=name)
+        await Folder.updateOne({courseID:course._id},{courseCode:code,courseName:name});
+
     if (course==null||course=='') return makeJson('error','ID not found');
     await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
     await removeCourseFromTeacher(id);
@@ -165,17 +168,11 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
 exports.searchCourse = async function(page,perPage,detail){
     var result,size;
     //all result. may need better solution for this
-    result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}, 
-    function(err, docs) {
-        if (err) handleError(err);
-        }).populate('teachers');
+    result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}).populate('teachers');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     //if all result isn't need, search for result in page
     if (page!=0){
-        result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]},
-                            function(err, docs) {
-                                if (err) handleError(err);
-                                }).populate('teachers')
+        result = await Course.find({$or:[{courseName:{$regex:detail,$options:"i"}},{courseCode:{$regex:detail,$options:"i"}}]}).populate('teachers')
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
@@ -188,17 +185,11 @@ exports.searchCourse = async function(page,perPage,detail){
 exports.searchDepartments = async function(page,perPage,detail){
     var result,size;
     //all result
-    result = await Course.find({departments:{$regex:detail,$options:"i"}}, 
-    function(err, docs) {
-        if (err) handleError(err);
-        }).populate('teachers');
+    result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers');
     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
     //result in a page
     if (page!=0){
-        result = await Course.find({departments:{$regex:detail,$options:"i"}},
-                            function(err, docs) {
-                                if (err) handleError(err);
-                                }).populate('teachers')
+        result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers')
                                 .skip(perPage*(page-1))
                                 .limit(Number(perPage));
     }
@@ -207,17 +198,18 @@ exports.searchDepartments = async function(page,perPage,detail){
     return result;
 }
 
-exports.allCourseOfStudent = async function(sID){
-    try{
-        sID=Objectid(sID);
-    }catch{
-        return makeJson('error','studentID not correct');
-    }
-    var student=await Student.findById(sID).populate('courses');
-    if (student==null||student=='') return makeJson('error','studentID not found');
-    return student.courses;
-}
-
 exports.getCourseByUrl=async function(url){
     return await Course.findOne({courseURL:url}).populate('teachers');
+}
+
+exports.getCourseOfDepartment = async function(id){
+    try {
+        id=Objectid(id);
+    }
+    catch{
+        return makeJson('error','departmentID not correct');
+    }
+    var department=await Department.findById(id);
+    if (department==null||department=='') return makeJson('error','departmentID not found');
+    return await Course.find({departments:department.name});
 }

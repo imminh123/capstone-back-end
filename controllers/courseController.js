@@ -80,12 +80,12 @@ exports.searchDepartments = async(req,res) => {
     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
 }
 
-exports.getCourseOfStudent = async (req,res) => {
-    var sID=req.params['id'];
-    res.send(await CourseDAO.allCourseOfStudent(sID));
-}
-
 exports.getCourseByUrl=async(req,res)=>{
     var url=req.params['url'];
     res.send(await CourseDAO.getCourseByUrl(url));
+}
+
+exports.getCourseOfDepartment=async(req,res)=>{
+    var id=req.params['id'];
+    res.send(await CourseDAO.getCourseOfDepartment(id));
 }

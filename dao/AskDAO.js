@@ -36,7 +36,8 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
         courseURL:courseURL,
         comments:[],
         dateModified: getFunction.today(),
-        dateCreated: getFunction.today()
+        dateCreated: getFunction.today(),
+        status: "waiting"
     });
 
     await ask.save();
@@ -65,11 +66,7 @@ exports.deleteAsk = async function(id){
     //delete all comments
     await deleteComments(ask.comments);
     //delete ask
-    await Ask.deleteOne({_id:id},function(err){
-        if (err) {
-            return makeJson('error','error when delete');
-        }
-    });
+    await Ask.deleteOne({_id:id});
     return makeJson('success','Delete successfully');
 }
 

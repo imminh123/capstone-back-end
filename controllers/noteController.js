@@ -12,33 +12,33 @@ function msgEmpty(){
 
 exports.createNote = async (req,res) => {
     var studentID=req.body.studentID;
-    var course=req.body.course;
+    var folderID=req.body.folderID;
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
     //check if all fields are filled
-    if (isEmpty(studentID)||isEmpty(course)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index))
+    if (isEmpty(studentID)||isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index))
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.createNote(studentID,course,scannedContent,description,url,index));                    
+            res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url,index));                    
         }
 }
 
 exports.updateNoteByID = async (req,res) => {
     // res.setHeader("Content-Type", "application/json");
     var noteID=req.params['id'];
-    var course=req.body.course;
+    var folderID=req.body.folderID;
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
     var index=req.body.index;
     var isPinned=req.body.isPinned;
     //check if all fields are filled
-    if (isEmpty(course)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned==undefined||isPinned.toString()=='')
+    if (isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned==undefined||isPinned.toString()=='')
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.updateNote(noteID,course,scannedContent,description,url,index,isPinned));                    
+            res.send(await NoteDAO.updateNote(noteID,folderID,scannedContent,description,url,index,isPinned));                    
         }
 }
 
@@ -69,18 +69,6 @@ exports.searchNote = async (req,res) => {
     var sID=req.params['studentID'];
     var detail=req.params['detail'];
     res.send(await NoteDAO.searchNote(sID,detail));
-}
-
-exports.getNoteByCourse = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await NoteDAO.getNoteByCourse(course,sID));
-}
-
-exports.deleteNoteByCourseID = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await NoteDAO.deleteNoteByCourseID(sID,course));
 }
 
 exports.getRecentNote = async (req,res) => {

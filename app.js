@@ -43,6 +43,7 @@ const askController = require('./controllers/askController');
 const studentController = require('./controllers/studentController');
 const departmentController = require('./controllers/departmentController');
 const myUserController = require('./controllers/userController');
+const folderController = require('./controllers/folderController');
 
 /**
  * API keys and Passport configuration.
@@ -283,7 +284,6 @@ app.get('/getDepartment/:id', departmentController.getDepartment);
 app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
-app.get('/getDepartmentByName/:name', departmentController.getDepartmentByName);
 
 /**
  * Course
@@ -295,8 +295,8 @@ app.put('/updatecourse/:id',courseController.updateCourse);
 app.delete('/deletecourse/:id',courseController.deleteCourse);
 app.get('/searchcourse', courseController.searchCourse);
 app.get('/searchdepartment', courseController.searchDepartments);
-app.get('/getCourseOfStudent/:id', courseController.getCourseOfStudent);
 app.get('/getCourseByUrl/:url', courseController.getCourseByUrl);
+app.get('/getCourseOfDepartment/:id', courseController.getCourseOfDepartment)
 
 /**
  * Teacher
@@ -318,10 +318,8 @@ app.delete('/deletehighlightbyid/:id', highlightController.deleteHighlightbyID);
 app.put('/updatehighlight/:id', highlightController.updateHighlight);
 app.get('/getHighlightByUrl/:studentID/:url', highlightController.getHighlightByUrl);
 app.get('/searchHighlight/:studentID/:text', highlightController.searchHighLight);
-app.get('/getHighlightByCourse/:studentID/:courseID', highlightController.getHighlightByCourse);
 app.get('/getRecentHighlight/:studentID/:limit', highlightController.getRecentHighlight);
-app.delete('/deleteHighlightByCourseID/:studentID/:courseID', highlightController.deleteHighlightByCourseID);
-app.get('/getHighlightByColor/:studentID/:courseID/:color', highlightController.getHighlightByColor);
+app.get('/getHighlightByColor/:studentID/:folderID/:color', highlightController.getHighlightByColor);
 
 /**
  * Student Note
@@ -333,9 +331,18 @@ app.get('/getnotebyid/:id', noteController.getNoteByID);
 app.get('/allnotebystudentid/:id', noteController.allNoteOfStudent);
 app.put('/changenoteispinned/:id', noteController.changeNoteIsPinned);
 app.get('/searchNote/:studentID/:detail', noteController.searchNote);
-app.get('/getNoteByCourse/:studentID/:courseID', noteController.getNoteByCourse);
 app.get('/getRecentNote/:studentID/:limit', noteController.getRecentNote);
-app.delete('/deleteNoteByCourseID/:studentID/:courseID', noteController.deleteNoteByCourseID);
+
+/**
+ * Folder
+ */
+app.get('/getAllFolder/', folderController.getAllFolder);
+app.get('/getFolderNote/:id', folderController.getFolderNote);
+app.get('/getFolderHighlight/:id', folderController.getFolderHighlight);
+app.get('/getHighlightByFolderID/:studentID/:folderID', folderController.getHighlightByFolderID);
+app.delete('/deleteHighlightByFolderID/:studentID/:folderID', folderController.deleteHighlightByFolderID);
+app.get('/getNoteByFolderID/:studentID/:folderID', folderController.getNoteByFolderID);
+app.delete('/deleteNoteByFolderID/:studentID/:folderID', folderController.deleteNoteByFolderID);
 
 /**
  * Ask and comment
@@ -355,6 +362,7 @@ app.get('/getstudentbyid/:id', studentController.getStudentByID);
 app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
 app.get('/allStudent', studentController.allStudent);
 app.get('/getStudentStatistic/:id', studentController.getStudentStatistic);
+app.get('/getCourseOfStudent/:id', studentController.getCourseOfStudent);
 
 /**
  * User

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const highlightSchema = new Schema({
     studentID: {type: Schema.Types.ObjectId, required: true},
-    course: {type: Schema.Types.ObjectId, require: true, ref: 'course'},
+    folderID: {type: Schema.Types.ObjectId, require: true},
     scannedContent: {type: String, required: true},
     index: {type: Number,required: true},
     color: {type: String, required: true},
