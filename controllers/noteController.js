@@ -71,18 +71,6 @@ exports.searchNote = async (req,res) => {
     res.send(await NoteDAO.searchNote(sID,detail));
 }
 
-exports.getNoteByCourse = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await NoteDAO.getNoteByCourse(course,sID));
-}
-
-exports.deleteNoteByCourseID = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await NoteDAO.deleteNoteByCourseID(sID,course));
-}
-
 exports.getRecentNote = async (req,res) => {
     var sID=req.params['studentID'];
     var limit=req.params['limit'];

@@ -19,3 +19,8 @@ exports.getStudentStatistic = async (req,res) => {
     var id=req.params['id'];
     res.send(await StudentDAO.getStudentStatistic(id));
 }
+
+exports.getCourseOfStudent = async (req,res) => {
+    var sID=req.params['id'];
+    res.send(await StudentDAO.allCourseOfStudent(sID));
+}

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const noteSchema = new Schema({
     studentID: {type: Schema.Types.ObjectId, required:true},
-    course: {type: Schema.Types.ObjectId, require: true, ref: 'course'},
+    folderID: {type: Schema.Types.ObjectId, require: true},
     scannedContent: {type:String},
     description: {type: String},
     url: {type:String, required:true},

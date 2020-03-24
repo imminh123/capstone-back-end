@@ -156,46 +156,6 @@ exports.searchNote = async function(sID,detail){
     return result;
 }
 
-exports.getNoteByCourse = async function(course,sID){
-    try{
-        sID=Objectid(sID);
-    }catch{
-        return makeJson('error','studentID not correct');
-    }
-    var student=await Student.findById(sID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
-
-    try {
-        course=Objectid(course);
-    }catch{
-        return makeJson('error','courseID not correct');
-    }
-    var courseEN = await Course.findById(course);
-    if (courseEN==null||courseEN=='') return makeJson('error','Course not found');
-    return await Note.find({studentID:sID,course:course});
-}
-
-exports.deleteNoteByCourseID= async function(sID,course){
-    try{
-        sID=Objectid(sID);
-    }catch{
-        return makeJson('error','studentID not correct');
-    }
-    var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
-
-    try {
-        course=Objectid(course);
-    }catch{
-        return makeJson('error','courseID not correct');
-    }
-    var courseEN=await Course.findById(course);
-    if (courseEN==null||courseEN=='') return makeJson('error','courseID not found');
-
-    await Note.deleteMany({studentID:sID,course:course});
-    return makeJson('success','Delete successfully');
-}
-
 exports.getRecentNote = async function(sID,limit){
     try{
         sID=Objectid(sID);

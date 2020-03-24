@@ -1,6 +1,5 @@
 var Objectid = require('mongodb').ObjectID;
 const Student = require('../models/Student');
-const Course = require('../models/Course');
 const Note = require('../models/Note');
 const Highlight = require('../models/Highlight');
 const Ask = require('../models/Ask');
@@ -73,4 +72,15 @@ exports.getStudentStatistic=async function(sID){
         askNumber:asks.length
     }
     return result;
+}
+
+exports.allCourseOfStudent = async function(sID){
+    try{
+        sID=Objectid(sID);
+    }catch{
+        return makeJson('error','studentID not correct');
+    }
+    var student=await Student.findById(sID).populate('courses');
+    if (student==null||student=='') return makeJson('error','studentID not found');
+    return student.courses;
 }

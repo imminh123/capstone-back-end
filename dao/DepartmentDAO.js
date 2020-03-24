@@ -7,10 +7,6 @@ function makeJson(type,msg){
     return JSON.parse(newObject);
 }
 
-async function newNameExisted(name){
-    
-}
-
 exports.createDepartment = async function(name,description){
     var department = await Department.findOne({name:name});
     if (!(department==null||department=='')) return makeJson('error','Department name already existed');
@@ -30,11 +26,15 @@ exports.getDepartmentByID = async function(id){
     try{
         id=Objectid(id);
     }catch{
-        return makeJson('error','highlightID not correct');
+        return makeJson('error','departmentID not correct');
     }
     var department=await Department.findById(id);
     if (department==null||department=='') return makeJson('error','departmentID not found');
-    return department;  
+    var result = {
+        numberOfCourse:(await Course.find({departments:department.name})).length,
+        department
+    }
+    return result;
 }
 
 exports.deleteDepartmentByID = async function(id){
@@ -85,21 +85,4 @@ exports.updateDepartment = async function(id,name,description){
 exports.getAllDepartment = async function(){
     var result=await Department.find();
     return result;
-}
-
-exports.getDepartmentByName = async function(name){
-    var department=await Department.findOne({name:name});
-    if (department==null||department=='') return makeJson('error','Department name not found');
-    return department;
-}
-
-exports.deleteDepartmentByName = async function(name){
-    var department=await Department.findById(id);
-    if (department==null||department=='') return makeJson('error','Department name not found');
-    await Department.deleteOne({name:name},function(err){
-        if (err) {
-            return makeJson('error','Error when delete');
-        }
-    });
-    return makeJson('success','Delete successfully');
 }

@@ -9,7 +9,8 @@ const askSchema = new Schema({
     courseURL: {type: String},
     comments: [{type:Schema.Types.ObjectId, ref: 'comment'}],
     dateModified: {type: String, require: true},
-    dateCreated: {type: String, required:true}
+    dateCreated: {type: String, required:true},
+    status: {type: String}
 });
 
 const Ask = mongoose.model('ask', askSchema);

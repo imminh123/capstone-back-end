@@ -62,18 +62,6 @@ exports.searchHighLight = async (req,res) => {
     res.send(await hlDAO.searchHighlight(scannedContent,sID));
 }
 
-exports.getHighlightByCourse = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await hlDAO.getHighlightByCourse(course,sID));
-}
-
-exports.deleteHighlightByCourseID = async (req,res) => {
-    var sID=req.params['studentID'];
-    var course=req.params['courseID'];
-    res.send(await hlDAO.deleteHLByCourseID(sID,course));
-}
-
 exports.getHighlightByColor =async(req,res) => {
     var sID=req.params['studentID'];
     var cID=req.params['courseID'];

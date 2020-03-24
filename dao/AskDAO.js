@@ -36,7 +36,8 @@ exports.createAsk = async function(scannedContent,askContent,student,teacher,cou
         courseURL:courseURL,
         comments:[],
         dateModified: getFunction.today(),
-        dateCreated: getFunction.today()
+        dateCreated: getFunction.today(),
+        status: "waiting"
     });
 
     await ask.save();
