@@ -241,10 +241,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //SocketIO
-const server = http.Server(app);
-const io = require('socket.io')(server);
-const socketIOController = require('./controllers/socketIOController');
-socketIOController(io);
+const { createServer } = require("http");
+const WebSocket = require("ws");
+const server = createServer(app);
+
 
 
 /**
@@ -256,10 +256,19 @@ server.listen(app.get('port'), () => {
   console.log(`Server has start on port ${app.get('port')}`);
 }); 
 
-// app.listen(app.get('port'), () => {
-//   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
-//   console.log('  Press CTRL-C to stop\n');
-// });
+const wss = new WebSocket.Server({ server });
+const socketIOController = require('./controllers/socketIOController');
+socketIOController(wss, WebSocket);
+
+// wss.on('connection', function connection(ws) {
+//   ws.on('message', function incoming(data) {
+//     wss.clients.forEach(function each(client) {
+//       if (client !== ws && client.readyState === WebSocket.OPEN) {
+//         client.send(data);
+//       }
+//     }); 
+//   });
+// }); 
 
 /**
  * Admin
