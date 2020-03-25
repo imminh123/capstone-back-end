@@ -40,3 +40,8 @@ exports.updateDepartment = async (req,res) => {
     if (isEmpty(name)||isEmpty(description));
     res.send(await departmentDAO.updateDepartment(id,name,description));
 }
+
+exports.getCourseOfDepartment=async(req,res)=>{
+    var id=req.params['id'];
+    res.send(await departmentDAO.getCourseOfDepartment(id));
+}

@@ -55,17 +55,17 @@ exports.updateCourseOfStudent = async function(id,courses){
     return makeJson('success','Update successfuly');
 }
 
-exports.getStudentStatistic=async function(sID){
+exports.getStudentStatistic=async function(studentID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-    var notes=await Note.find({studentID:sID});
-    var hls=await Highlight.find({studentID:sID});
-    var asks=await Ask.find({student:sID});
+    var notes=await Note.find({studentID:studentID});
+    var hls=await Highlight.find({studentID:studentID});
+    var asks=await Ask.find({student:studentID});
     var result={
         noteNumber:notes.length,
         highlightNumber:hls.length,
@@ -74,13 +74,13 @@ exports.getStudentStatistic=async function(sID){
     return result;
 }
 
-exports.allCourseOfStudent = async function(sID){
+exports.allCourseOfStudent = async function(studentID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID).populate('courses');
+    var student=await Student.findById(studentID).populate('courses');
     if (student==null||student=='') return makeJson('error','studentID not found');
     return student.courses;
 }

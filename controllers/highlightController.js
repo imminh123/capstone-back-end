@@ -57,20 +57,20 @@ exports.getHighlightByUrl = async (req,res) => {
 }
 
 exports.searchHighLight = async (req,res) => {
-    var sID=req.params['studentID'];
+    var studentID=req.params['studentID'];
     var scannedContent=req.params['text'];
-    res.send(await hlDAO.searchHighlight(scannedContent,sID));
+    res.send(await hlDAO.searchHighlight(scannedContent,studentID));
 }
 
 exports.getHighlightByColor =async(req,res) => {
-    var sID=req.params['studentID'];
-    var fID=req.params['folderID'];
+    var studentID=req.params['studentID'];
+    var folderID=req.params['folderID'];
     var color=req.params['color'];
-    res.send(await hlDAO.getHighlightByColor(color,sID,fID));
+    res.send(await hlDAO.getHighlightByColor(color,studentID,folderID));
 }
 
 exports.getRecentHighlight = async (req,res) => {
-    var sID=req.params['studentID'];
+    var studentID=req.params['studentID'];
     var limit=req.params['limit'];
-    res.send(await hlDAO.getRecentHighlight(sID,limit));
+    res.send(await hlDAO.getRecentHighlight(studentID,limit));
 }

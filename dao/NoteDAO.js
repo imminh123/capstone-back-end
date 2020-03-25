@@ -138,16 +138,16 @@ exports.getAllNoteByStudentID = async function(studentID){
    
 }
 
-exports.searchNote = async function(sID,detail){
+exports.searchNote = async function(studentID,detail){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
     var result = await Note.find({
-            studentID:sID,
+            studentID:studentID,
             $or:[{scannedContent:{$regex:detail,$options:"i"}},
                   {description:{$regex:detail,$options:"i"}}
                 ]
@@ -155,15 +155,15 @@ exports.searchNote = async function(sID,detail){
     return result;
 }
 
-exports.getRecentNote = async function(sID,limit){
+exports.getRecentNote = async function(studentID,limit){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-    var notes = await Note.find({studentID:sID});
+    var notes = await Note.find({studentID:studentID});
     notes.sort(function(a,b){
         return Date.parse(b.dateModified)-Date.parse(a.dateModified);
     });

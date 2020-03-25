@@ -13,12 +13,7 @@ function makeJson(type,msg){
 
 //check if code has already existed
 async function existed(id,code){
-    const course=await Course.findOne({courseCode:code},function (err){
-        if (err) {
-            console.log(err);
-            return 0;
-        }
-    });    
+    const course=await Course.findOne({courseCode:code});    
     //if no course was found. Or a course was found but code is unchanged
     if (course==null || course._id==id.toString()) {
         return 0;
@@ -56,21 +51,13 @@ async function addCourseToTeacher(courseid,teachers){
     teachers.forEach(async function (data) {
             var teacherid = Objectid(data);
             await Teacher.updateOne({ _id: teacherid }, { $addToSet: { courses: courseid } }
-                        , { safe: true, upsert: true }
-                        , function (err, doc) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                //do stuff
-                            }
-                    });
+                        , { safe: true, upsert: true });
         });
 };
 
 //return all course
 exports.getAllCourse = async function () {
-    return await Course.find({}).populate('teachers');
+    return await Course.find({}).populate('teachers').sort({_id:-1});;
 };
 
 //return a course by id
@@ -200,16 +187,4 @@ exports.searchDepartments = async function(page,perPage,detail){
 
 exports.getCourseByUrl=async function(url){
     return await Course.findOne({courseURL:url}).populate('teachers');
-}
-
-exports.getCourseOfDepartment = async function(id){
-    try {
-        id=Objectid(id);
-    }
-    catch{
-        return makeJson('error','departmentID not correct');
-    }
-    var department=await Department.findById(id);
-    if (department==null||department=='') return makeJson('error','departmentID not found');
-    return await Course.find({departments:department.name});
 }

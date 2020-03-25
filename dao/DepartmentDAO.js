@@ -45,8 +45,13 @@ exports.deleteDepartmentByID = async function(id){
     }
     var department=await Department.findById(id);
     if (department==null||department=='') return makeJson('error','departmentID not found');
-    
+    await Course.updateMany(
+        {},
+        {$pull: {departments:department.name}},
+        {safe: true, upsert: true}
+    );
     await Department.deleteOne({_id:id});
+
     return makeJson('success','Delete successfully');
 }
 
@@ -79,6 +84,29 @@ exports.updateDepartment = async function(id,name,description){
 }
 
 exports.getAllDepartment = async function(){
-    var result=await Department.find();
+    var departments=await Department.find().sort({_id:-1});
+    var result=[],course,newOb;
+    for (department of departments){
+        course = await Course.find({departments:department.name}).select('courseName courseCode');
+        newOb = {
+            _id:department._id,
+            name:department.name,
+            description:department.description,
+            courses:course
+        }
+        result.push(newOb);
+    }
     return result;
+}
+
+exports.getCourseOfDepartment = async function(id){
+    try {
+        id=Objectid(id);
+    }
+    catch{
+        return makeJson('error','departmentID not correct');
+    }
+    var department=await Department.findById(id);
+    if (department==null||department=='') return makeJson('error','departmentID not found');
+    return await Course.find({departments:department.name});
 }

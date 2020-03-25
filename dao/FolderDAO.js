@@ -1,6 +1,5 @@
 const Student = require('../models/Student');
 const Folder = require('../models/Folder');
-const Course = require('../models/Course');
 const Note = require('../models/Note');
 const Highlight = require('../models/Highlight');
 var Objectid = require('mongodb').ObjectID;
@@ -14,20 +13,20 @@ exports.getAllFolder = async function(){
     return await Folder.find();
 }
 
-exports.getFolderNote = async function(sID){
+exports.getFolderNote = async function(studentID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     var folders=[];
 
-    var courses=(await Student.findById(sID).populate('course')).courses;
+    var courses=(await Student.findById(studentID).populate('course')).courses;
     var folders = await Folder.find({courseID:{$in:courses}});
-    var notes=await Note.find({studentID:sID});
+    var notes=await Note.find({studentID:studentID});
     var existed;
     for (note of notes) {
         existed=0;
@@ -44,20 +43,20 @@ exports.getFolderNote = async function(sID){
     return folders;
 }
 
-exports.getFolderHighlight = async function(sID){
+exports.getFolderHighlight = async function(studentID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     var folders=[];
 
-    var courses=(await Student.findById(sID).populate('course')).courses;
+    var courses=(await Student.findById(studentID).populate('course')).courses;
     var folders = await Folder.find({courseID:{$in:courses}});
-    var highlights=await Highlight.find({studentID:sID});
+    var highlights=await Highlight.find({studentID:studentID});
     var existed;
     for (highlight of highlights) {
         existed=0;
@@ -74,87 +73,87 @@ exports.getFolderHighlight = async function(sID){
     return folders;
 }
 
-exports.getHighlightByFolderID = async function(sID,fID){
-
+exports.getHighlightByFolderID = async function(studentID,folderID){
+ 
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     try {
-        fID=Objectid(fID);
+        folderID=Objectid(folderID);
     }catch{
         return makeJson('error','ID not correct');
     }
-    var folder = await Folder.findById(fID);
+    var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    return await Highlight.find({studentID:sID,folderID:fID});
+    return await Highlight.find({studentID:studentID,folderID:folderID});
 }
 
-exports.deleteHighlightByFolderID= async function(sID,fID){
+exports.deleteHighlightByFolderID= async function(studentID,folderID){
     
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     try {
-        fID=Objectid(fID);
+        folderID=Objectid(folderID);
     }catch{
         return makeJson('error','ID not correct');
     }
-    var folder = await Folder.findById(fID);
+    var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    await Highlight.deleteMany({studentID:sID,folderID:fID});
+    await Highlight.deleteMany({studentID:studentID,folderID:folderID});
     return makeJson('success','Delete successfully');
 }
 
 
-exports.getNoteByFolderID = async function(sID,fID){
+exports.getNoteByFolderID = async function(studentID,folderID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     try {
-        fID=Objectid(fID);
+        folderID=Objectid(folderID);
     }catch{
         return makeJson('error','ID not correct');
     }
-    var folder = await Folder.findById(fID);
+    var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    return await Note.find({studentID:sID,folderID:fID});
+    return await Note.find({studentID:studentID,folderID:folderID});
 }
 
-exports.deleteNoteByFolderID= async function(sID,fID){
+exports.deleteNoteByFolderID= async function(studentID,folderID){
     try{
-        sID=Objectid(sID);
+        studentID=Objectid(studentID);
     }catch{
         return makeJson('error','studentID not correct');
     }
-    var student=await Student.findById(sID);
+    var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
     try {
-        fID=Objectid(fID);
+        folderID=Objectid(folderID);
     }catch{
         return makeJson('error','ID not correct');
     }
-    var folder = await Folder.findById(fID);
+    var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    await Note.deleteMany({studentID:sID,folderID:fID});
+    await Note.deleteMany({studentID:studentID,folderID:folderID});
     return makeJson('success','Delete successfully');
 }

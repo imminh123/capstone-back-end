@@ -1,6 +1,6 @@
 const Highlight = require('../models/Highlight');
 const Student = require('../models/Student');
-const Course = require('../models/Course');
+const Folder = require('../models/Folder');
 const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 
@@ -166,7 +166,7 @@ exports.getHighlightByColor = async function(color,studentID,folderID){
     var folder=await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    return await Highlight.find({studentID:sID,course:cID,color:color});
+    return await Highlight.find({studentID:studentID,folderID:folderID,color:color});
 }
 
 exports.getRecentHighlight = async function(studentID,limit){
