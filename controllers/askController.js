@@ -17,7 +17,7 @@ exports.createAsk = async (req,res) => {
     var teacher=req.body.teacher;
     var courseURL=req.body.courseURL;
     //check if all fields are filled
-    if (isEmpty(scannedContent)||isEmpty(askContent)||isEmpty(student)||isEmpty(teacher)||isEmpty(courseURL))
+    if (isEmpty(scannedContent)||isEmpty(askContent)||isEmpty(student)||isEmpty(teacher))
                 res.send(msgEmpty()); 
         else {
             res.send(await AskDAO.createAsk(scannedContent,askContent,student,teacher,courseURL));                    
