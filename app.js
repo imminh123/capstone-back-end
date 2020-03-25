@@ -182,27 +182,34 @@ app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiContr
 
 
 //Login routes
-app.post('/login', passport.authenticate('sign-in'), (req, res) => {
+app.post('/login', (req, res, next) => {
+  passport.authenticate('sign-in', (err, user , info) => {
+      if (err) {
+          res.status(500).send(JSON.stringify({
+          'msg': "Internal Server Error"
+      }));
+      }
+      if (!user) {
+          res.status(401).send(JSON.stringify({
+              err: "Username or Password is incorrect"
+          }));
+      } 
+      if (user) {
+        jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+          if(err) console.log(err)
+          res.status(200).json({err,token});
+        })
+      }
+  })(req, res, next);
 
-  const user = res.req.user;
-
-
-  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
-    if(err) console.log(err)
-
-    // console.log(user);
-
-    res.status(200).json({err,token});
- 
-  })
-  
+  // const user = res.req.user;
 });
 /**
  * OAuth authentication routes. (Sign in)
  */
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], accessType: 'offline', prompt: 'consent' }, { display: 'popup' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'https://noteitfu.herokuapp.com' }), (req, res) => {
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3002' }), (req, res) => {
   // res.redirect(req.session.returnTo || '/');
   const user = res.req.user;
   jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
@@ -210,7 +217,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     
     console.log(token)
     // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    res.redirect('https://noteitfu.herokuapp.com?token=' + token);
+    res.redirect('http://localhost:3002?token=' + token);
 
   })
 
@@ -242,10 +249,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //SocketIO
-const server = http.Server(app);
-const io = require('socket.io')(server);
-const socketIOController = require('./controllers/socketIOController');
-socketIOController(io);
+const { createServer } = require("http");
+const WebSocket = require("ws");
+const server = createServer(app);
+
 
 
 /**
@@ -257,10 +264,19 @@ server.listen(app.get('port'), () => {
   console.log(`Server has start on port ${app.get('port')}`);
 }); 
 
-// app.listen(app.get('port'), () => {
-//   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
-//   console.log('  Press CTRL-C to stop\n');
-// });
+const wss = new WebSocket.Server({ server });
+const socketIOController = require('./controllers/socketIOController');
+socketIOController(wss, WebSocket);
+
+// wss.on('connection', function connection(ws) {
+//   ws.on('message', function incoming(data) {
+//     wss.clients.forEach(function each(client) {
+//       if (client !== ws && client.readyState === WebSocket.OPEN) {
+//         client.send(data);
+//       }
+//     }); 
+//   });
+// }); 
 
 /**
  * Admin
