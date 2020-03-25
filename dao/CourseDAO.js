@@ -1,6 +1,5 @@
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
-const Student = require('../models/Student');
 const Department = require('../models/Department');
 const Folder = require('../models/Folder');
 const getFunction = require('./getFunction');
