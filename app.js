@@ -182,20 +182,27 @@ app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiContr
 
 
 //Login routes
-app.post('/login', passport.authenticate('sign-in'), (req, res) => {
+app.post('/login', (req, res, next) => {
+  passport.authenticate('sign-in', (err, user , info) => {
+      if (err) {
+          res.status(500).send(JSON.stringify({
+          'msg': "Internal Server Error"
+      }));
+      }
+      if (!user) {
+          res.status(401).send(JSON.stringify({
+              err: "Username or Password is incorrect"
+          }));
+      } 
+      if (user) {
+        jwt.sign({user: user}, 'tinhanhem', (err, token) => {
+          if(err) console.log(err)
+          res.status(200).json({err,token});
+        })
+      }
+  })(req, res, next);
 
-  const user = res.req.user;
-
-
-  jwt.sign({user: user}, 'tinhanhem', (err, token) => {
-    if(err) console.log(err)
-
-    // console.log(user);
-
-    res.status(200).json({err,token});
- 
-  })
-  
+  // const user = res.req.user;
 });
 /**
  * OAuth authentication routes. (Sign in)
