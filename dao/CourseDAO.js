@@ -201,15 +201,3 @@ exports.searchDepartments = async function(page,perPage,detail){
 exports.getCourseByUrl=async function(url){
     return await Course.findOne({courseURL:url}).populate('teachers');
 }
-
-exports.getCourseOfDepartment = async function(id){
-    try {
-        id=Objectid(id);
-    }
-    catch{
-        return makeJson('error','departmentID not correct');
-    }
-    var department=await Department.findById(id);
-    if (department==null||department=='') return makeJson('error','departmentID not found');
-    return await Course.find({departments:department.name});
-}

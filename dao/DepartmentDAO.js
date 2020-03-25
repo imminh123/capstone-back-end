@@ -79,6 +79,29 @@ exports.updateDepartment = async function(id,name,description){
 }
 
 exports.getAllDepartment = async function(){
-    var result=await Department.find();
+    var departments=await Department.find();
+    var result=[],course,newOb;
+    for (department of departments){
+        course = await Course.find({departments:department.name});
+        newOb = {
+            _id:department._id,
+            name:department.name,
+            description:department.description,
+            course:course
+        }
+        result.push(newOb);
+    }
     return result;
+}
+
+exports.getCourseOfDepartment = async function(id){
+    try {
+        id=Objectid(id);
+    }
+    catch{
+        return makeJson('error','departmentID not correct');
+    }
+    var department=await Department.findById(id);
+    if (department==null||department=='') return makeJson('error','departmentID not found');
+    return await Course.find({departments:department.name});
 }

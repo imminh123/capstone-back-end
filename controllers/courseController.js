@@ -84,8 +84,3 @@ exports.getCourseByUrl=async(req,res)=>{
     var url=req.params['url'];
     res.send(await CourseDAO.getCourseByUrl(url));
 }
-
-exports.getCourseOfDepartment=async(req,res)=>{
-    var id=req.params['id'];
-    res.send(await CourseDAO.getCourseOfDepartment(id));
-}

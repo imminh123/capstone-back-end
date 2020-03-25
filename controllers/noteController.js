@@ -66,13 +66,13 @@ exports.allNoteOfStudent = async (req,res) => {
 }
 
 exports.searchNote = async (req,res) => {
-    var sID=req.params['studentID'];
+    var studentID=req.params['studentID'];
     var detail=req.params['detail'];
-    res.send(await NoteDAO.searchNote(sID,detail));
+    res.send(await NoteDAO.searchNote(studentID,detail));
 }
 
 exports.getRecentNote = async (req,res) => {
-    var sID=req.params['studentID'];
+    var studentID=req.params['studentID'];
     var limit=req.params['limit'];
-    res.send(await NoteDAO.getRecentNote(sID,limit));
+    res.send(await NoteDAO.getRecentNote(studentID,limit));
 }
