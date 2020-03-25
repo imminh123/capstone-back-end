@@ -79,7 +79,7 @@ exports.updateDepartment = async function(id,name,description){
 }
 
 exports.getAllDepartment = async function(){
-    var departments=await Department.find();
+    var departments=await Department.find().sort({_id:-1});
     var result=[],course,newOb;
     for (department of departments){
         course = await Course.find({departments:department.name}).select('courseName courseCode');

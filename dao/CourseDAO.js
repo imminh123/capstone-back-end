@@ -57,7 +57,7 @@ async function addCourseToTeacher(courseid,teachers){
 
 //return all course
 exports.getAllCourse = async function () {
-    return await Course.find({}).populate('teachers');
+    return await Course.find({}).populate('teachers').sort({_id:-1});;
 };
 
 //return a course by id
