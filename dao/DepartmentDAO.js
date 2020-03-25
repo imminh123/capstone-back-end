@@ -82,12 +82,12 @@ exports.getAllDepartment = async function(){
     var departments=await Department.find();
     var result=[],course,newOb;
     for (department of departments){
-        course = await Course.find({departments:department.name});
+        course = await Course.find({departments:department.name}).select('courseName courseCode');
         newOb = {
             _id:department._id,
             name:department.name,
             description:department.description,
-            course:course
+            courses:course
         }
         result.push(newOb);
     }
