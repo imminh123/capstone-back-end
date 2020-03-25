@@ -56,7 +56,6 @@ exports.deleteNoteByID = async (req,res) => {
 
 exports.getNoteByID = async (req,res) => {
     var noteID=req.params['id'];
-    // console.log(await NoteDAO.getNote(noteID));
     res.send(await NoteDAO.getNote(noteID));
 }
 

@@ -1,6 +1,5 @@
 const Student = require('../models/Student');
 const Folder = require('../models/Folder');
-const Course = require('../models/Course');
 const Note = require('../models/Note');
 const Highlight = require('../models/Highlight');
 var Objectid = require('mongodb').ObjectID;
@@ -75,7 +74,7 @@ exports.getFolderHighlight = async function(studentID){
 }
 
 exports.getHighlightByFolderID = async function(studentID,folderID){
-
+ 
     try{
         studentID=Objectid(studentID);
     }catch{

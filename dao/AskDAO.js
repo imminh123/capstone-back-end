@@ -139,14 +139,7 @@ exports.addComment = async function(askID,userID,message){
     });
     await comment.save();
     //push comment to ask
-    await Ask.updateOne({ _id: askID }, 
-        { $addToSet: { comments: comment._id } , dateModified: getFunction.today()}, { safe: true, upsert: true }, function (err, doc) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            //do stuff
-        }
-    });
+    await Ask.updateOne({_id: skID}, 
+        {$addToSet:{comments:comment._id},dateModified:getFunction.today()},{safe:true,upsert:true});
     return {comment};
 }

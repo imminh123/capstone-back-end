@@ -1,6 +1,6 @@
 const Highlight = require('../models/Highlight');
 const Student = require('../models/Student');
-const Course = require('../models/Course');
+const Folder = require('../models/Folder');
 const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
 

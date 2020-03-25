@@ -13,12 +13,7 @@ function makeJson(type,msg){
 
 //check if code has already existed
 async function existed(id,code){
-    const course=await Course.findOne({courseCode:code},function (err){
-        if (err) {
-            console.log(err);
-            return 0;
-        }
-    });    
+    const course=await Course.findOne({courseCode:code});    
     //if no course was found. Or a course was found but code is unchanged
     if (course==null || course._id==id.toString()) {
         return 0;
@@ -56,15 +51,7 @@ async function addCourseToTeacher(courseid,teachers){
     teachers.forEach(async function (data) {
             var teacherid = Objectid(data);
             await Teacher.updateOne({ _id: teacherid }, { $addToSet: { courses: courseid } }
-                        , { safe: true, upsert: true }
-                        , function (err, doc) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                //do stuff
-                            }
-                    });
+                        , { safe: true, upsert: true });
         });
 };
 
