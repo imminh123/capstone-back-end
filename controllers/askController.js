@@ -31,8 +31,9 @@ exports.createAsk = async (req,res) => {
 }
 
 exports.getAskByID = async (req,res) => {
-    var noteID=req.params['id'];
-    res.send(await AskDAO.getAskByID(noteID));
+    var userID=req.params['userID'];
+    var askID=req.params['askID'];
+    res.send(await AskDAO.getAskByID(userID,askID));
 }
 
 exports.allAskOfStudent = async (req,res) => {

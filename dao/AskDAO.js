@@ -73,7 +73,7 @@ exports.deleteAsk = async function(id){
 }
 
 //get an ask by id
-exports.getAskByID = async function(askID){
+exports.getAskByID = async function(userID,askID){
     //check valid ask
     try{
         askID=Objectid(askID);
@@ -82,7 +82,7 @@ exports.getAskByID = async function(askID){
     }
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
     if (ask==null||ask=='') return makeJson('error','askID not found');
-    await Ask.updateOne({_id:askID});
+    //check userID is teacher or student then update status accordingly
     return ask;
 }
 

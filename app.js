@@ -357,7 +357,7 @@ app.delete('/deleteFolderByID/:id', folderController.deleteFolder)
  */
 app.post('/createask', askController.createAsk);
 app.get('/allask', askController.allAsk);
-app.get('/getaskbyid/:id', askController.getAskByID);
+app.get('/getAsk/:userID/:askID', askController.getAskByID);
 app.get('/allaskofstudent/:id', askController.allAskOfStudent);
 app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
