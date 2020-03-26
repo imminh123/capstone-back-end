@@ -1,7 +1,6 @@
-var Objectid = require('mongodb').ObjectID;
 const Admin = require('../models/Admin');
-const Teacher = require('../models/Teacher');
 const Course = require('../models/Course');
+const Teacher = require('../models/Teacher');
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';

@@ -1,8 +1,10 @@
 var Objectid = require('mongodb').ObjectID;
-const Student = require('../models/Student');
-const Note = require('../models/Note');
-const Highlight = require('../models/Highlight');
 const Ask = require('../models/Ask');
+const Note = require('../models/Note');
+const Course = require('../models/Course');
+const Folder = require('../models/Folder');
+const Student = require('../models/Student');
+const Highlight = require('../models/Highlight');
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
@@ -51,7 +53,25 @@ exports.updateCourseOfStudent = async function(id,courses){
     var student=Student.findById(id);
     if (student==null||student=='') return makeJson('error','studentID not found');
     if (courses==null||courses==undefined) return makeJson('error','Courses null or underfined');
+    for (courseID of courses){
+        var course=await Course.findById(courseID);
+        if (course==null) return makeJson('error','courseID not found');
+    }
     await Student.updateOne({_id:id},{courses:courses});
+    //create new folder
+    for (courseID of courses){
+        var folder=await Folder.findOne({studentID:id,courseID:courseID});
+        if (folder==null) {
+            var course=await Course.findById(courseID);
+            var newFolder= new Folder({
+                studentID:id,
+                courseID:courseID,
+                courseName:course.courseName,
+                courseCode:course.courseCode
+            });
+            newFolder.save();
+        }
+    }
     return makeJson('success','Update successfuly');
 }
 

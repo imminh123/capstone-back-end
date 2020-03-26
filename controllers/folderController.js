@@ -4,36 +4,39 @@ exports.getAllFolder=async (req,res)=>{
     res.send(await folderDAO.getAllFolder());
 }
 
-exports.getFolderNote = async (req,res) => {
+exports.getFolderByStudentID = async (req,res) => {
     var id=req.params['id'];
-    res.send(await folderDAO.getFolderNote(id));
-}
-
-exports.getFolderHighlight = async (req,res) => {
-    var id=req.params['id'];
-    res.send(await folderDAO.getFolderHighlight(id));
+    res.send(await folderDAO.getFolderByStudentID(id));
 }
 
 exports.getHighlightByFolderID = async (req,res) => {
-    var studentID=req.params['studentID'];
     var folderID=req.params['folderID'];
-    res.send(await folderDAO.getHighlightByFolderID(studentID,folderID));
+    res.send(await folderDAO.getHighlightByFolderID(folderID));
 }
 
 exports.deleteHighlightByFolderID = async (req,res) => {
-    var studentID=req.params['studentID'];
     var folderID=req.params['folderID'];
-    res.send(await folderDAO.deleteHighlightByFolderID(studentID,folderID));
+    res.send(await folderDAO.deleteHighlightByFolderID(folderID));
 }
 
 exports.getNoteByFolderID = async (req,res) => {
-    var studentID=req.params['studentID'];
     var folderID=req.params['folderID'];
-    res.send(await folderDAO.getNoteByFolderID(studentID,folderID));
+    res.send(await folderDAO.getNoteByFolderID(folderID));
 }
 
 exports.deleteNoteByFolderID = async (req,res) => {
-    var studentID=req.params['studentID'];
     var folderID=req.params['folderID'];
-    res.send(await folderDAO.deleteNoteByFolderID(studentID,folderID));
+    res.send(await folderDAO.deleteNoteByFolderID(folderID));
+}
+
+exports.createFolder = async(req,res)=>{
+    var studentID=req.body.studentID;
+    var courseCode=req.body.courseCode;
+    var courseName=req.body.courseName;
+    res.send(await folderDAO.createFolder(studentID,courseCode,courseName));
+}
+
+exports.deleteFolder=async(req,res)=>{
+    var id=req.params['id'];
+    res.send(await folderDAO.deleteFolder(id));
 }

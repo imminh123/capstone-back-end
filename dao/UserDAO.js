@@ -1,11 +1,10 @@
 const User = require('../models/User');
+var Objectid = require('mongodb').ObjectID;
 const AdminDAO = require('../dao/AdminDAO');
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
-const getFunction = require('../dao/getFunction');
 var bcrypt = require('bcrypt');
-// const getFunction = require('./getFunction');
-var Objectid = require('mongodb').ObjectID;
+
 
 const saltRounds = 10;
 

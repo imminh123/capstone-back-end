@@ -8,9 +8,10 @@ const askSchema = new Schema({
     teacher: {type:Schema.Types.ObjectId, ref: 'teacher'}, 
     courseURL: {type: String},
     comments: [{type:Schema.Types.ObjectId, ref: 'comment'}],
+    rating: {type:Number},
     dateModified: {type: String, require: true},
     dateCreated: {type: String, required:true},
-    status: {type: String}
+    status: {type:String}
 });
 
 const Ask = mongoose.model('ask', askSchema);

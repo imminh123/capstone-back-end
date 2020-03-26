@@ -10,6 +10,12 @@ function msgEmpty(){
     return JSON.parse(newObject);
 }
 
+exports.closeAsk=async(req,res)=>{
+    var askID=req.params['id'];
+    var rating=req.params['rating'];
+    res.send(await AskDAO.closeAsk(askID,rating));
+}
+
 exports.createAsk = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var askContent=req.body.askContent;

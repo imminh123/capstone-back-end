@@ -1,6 +1,7 @@
+var Objectid = require('mongodb').ObjectID;
 const Course = require('../models/Course');
 const Department = require('../models/Department');
-var Objectid = require('mongodb').ObjectID;
+
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
@@ -82,12 +83,12 @@ exports.updateDepartment = async function(id,name,description){
     };
     return result;
 }
-
+//change course
 exports.getAllDepartment = async function(){
     var departments=await Department.find().sort({_id:-1});
     var result=[],course,newOb;
     for (department of departments){
-        course = await Course.find({departments:department.name}).select('courseName courseCode');
+        course = await Course.find({departments:department.name});
         newOb = {
             _id:department._id,
             name:department.name,

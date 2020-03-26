@@ -1,9 +1,11 @@
+var Objectid = require('mongodb').ObjectID;
 const Course = require('../models/Course');
+const Folder = require('../models/Folder');
+const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 const Department = require('../models/Department');
-const Folder = require('../models/Folder');
 const getFunction = require('./getFunction');
-var Objectid = require('mongodb').ObjectID;
+
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
@@ -11,13 +13,16 @@ function makeJson(type,msg){
 }
 
 //check if code has already existed
-async function existed(id,code){
-    const course=await Course.findOne({courseCode:code});    
+async function existed(id,code,url){
+    var existed=0;
+    var courseByCode=await Course.findOne({courseCode:code});
+    var courseByUrl=await Course.findOne({courseURL:url});
     //if no course was found. Or a course was found but code is unchanged
-    if (course==null || course._id==id.toString()) {
-        return 0;
+    if ((courseByCode!=null && courseByCode._id!=id.toString())
+       ||(courseByUrl!=null && courseByUrl._id!=id.toString())) {
+        existed=1;
     }
-    return 1;
+    return existed;
 };
 
 async function invalidDepartment(departments){
@@ -39,6 +44,15 @@ async function invalidDepartment(departments){
 //remove this course from every teacher
 async function removeCourseFromTeacher(id){
     await Teacher.updateMany(
+        {},
+        {$pull: {courses:id}},
+        {safe: true, upsert: true}
+    );
+};
+
+//remove this course from every teacher
+async function removeCourseFromStudent(id){
+    await Student.updateMany(
         {},
         {$pull: {courses:id}},
         {safe: true, upsert: true}
@@ -82,16 +96,18 @@ exports.deleteCourse = async function(id){
     }
     var course=await Course.findById(id);
     if (course==null||course=='') return makeJson('error','ID not found');
-    await Folder.updateOne({courseID:course._id},{courseID:''});
+    //when delete course. unlink every folder to this course
+    await Folder.updateMany({courseID:course._id},{courseID:''});
     await Course.deleteOne({_id:id});
     await removeCourseFromTeacher(id);
+    await removeCourseFromStudent(id);
     return makeJson('success','Delete successfully');
 };
 
 //create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
-    if (await existed(0,code)) {
-        return makeJson('error','Course code existed');
+    if (await existed(0,code,url)) {
+        return makeJson('error','New code or url already existed');
     }
     if (await invalidDepartment(departments)) return makeJson('error','Department not found');
     var course = new Course({
@@ -105,13 +121,6 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
         teachers: teachers
     });
     await course.save();
-
-    var folder = new Folder({
-        courseID: course._id,
-        courseName: name,
-        courseCode: code
-    });
-    await folder.save();
 
     await addCourseToTeacher(course._id,teachers);
     var result = {
@@ -129,14 +138,15 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     }catch{
         return makeJson('error','Course ID not correct');
     }
-    if (await existed(id,code)) {
-        return makeJson('error','Course code existed');
+    if (await existed(id,code,url)) {
+        return makeJson('error','New code or url already existed');
     }
     if (await invalidDepartment(departments)) return makeJson('error','Department not found');
     var course=await Course.findById(id);
 
+    //update all folder name and code link to this course
     if (course.courseCode!=code||course.courseName!=name)
-        await Folder.updateOne({courseID:course._id},{courseCode:code,courseName:name});
+        await Folder.updateMany({courseID:course._id},{courseCode:code,courseName:name});
 
     if (course==null||course=='') return makeJson('error','ID not found');
     await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});

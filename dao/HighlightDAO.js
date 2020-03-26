@@ -1,8 +1,8 @@
-const Highlight = require('../models/Highlight');
-const Student = require('../models/Student');
-const Folder = require('../models/Folder');
-const getFunction = require('./getFunction');
 var Objectid = require('mongodb').ObjectID;
+const Folder = require('../models/Folder');
+const Student = require('../models/Student');
+const Highlight = require('../models/Highlight');
+const getFunction = require('./getFunction');
 
 function makeJson(type,msg){
     var newObject = '{"'+type+'":"'+msg+'"}';
