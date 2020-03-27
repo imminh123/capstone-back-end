@@ -111,3 +111,8 @@ exports.getCourseOfDepartment = async function(id){
     if (department==null||department=='') return makeJson('error','departmentID not found');
     return await Course.find({departments:department.name});
 }
+
+exports.searchDepartment = async function(text){
+    return await Department.find({name:{$regex:text,$options:"i"}}
+                                ,{description:{$regex:text,$options:"i"}});
+}
