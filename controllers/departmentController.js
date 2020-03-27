@@ -45,3 +45,8 @@ exports.getCourseOfDepartment=async(req,res)=>{
     var id=req.params['id'];
     res.send(await departmentDAO.getCourseOfDepartment(id));
 }
+
+exports.searchDepartment=async(req,res)=>{
+    var text=req.params['text'];
+    res.send(await departmentDAO.searchDepartment(text));
+}

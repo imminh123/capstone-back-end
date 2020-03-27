@@ -292,6 +292,7 @@ app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
 app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
+app.get('/searchDepartment/:text', departmentController.searchDepartment);
 
 /**
  * Course

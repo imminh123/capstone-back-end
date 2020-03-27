@@ -83,22 +83,6 @@ exports.updateDepartment = async function(id,name,description){
     };
     return result;
 }
-//change course
-exports.getAllDepartment = async function(){
-    var departments=await Department.find().sort({_id:-1});
-    var result=[],course,newOb;
-    for (department of departments){
-        course = await Course.find({departments:department.name}).populate('teachers');
-        newOb = {
-            _id:department._id,
-            name:department.name,
-            description:department.description,
-            courses:course
-        }
-        result.push(newOb);
-    }
-    return result;
-}
 
 exports.getCourseOfDepartment = async function(id){
     try {
@@ -112,7 +96,28 @@ exports.getCourseOfDepartment = async function(id){
     return await Course.find({departments:department.name});
 }
 
+departmentDetail = async function(departments){
+    var result=[],course;
+    for (department of departments){
+        course = await Course.find({departments:department.name}).populate('teachers');
+        newOb = {
+            _id:department._id,
+            name:department.name,
+            description:department.description,
+            courses:course
+        }
+        result.push(newOb);
+    }
+    return result;
+}
+
+exports.getAllDepartment = async function(){
+    var departments=await Department.find().sort({_id:-1});
+    return await departmentDetail(departments);
+}
+
 exports.searchDepartment = async function(text){
-    return await Department.find({name:{$regex:text,$options:"i"}}
-                                ,{description:{$regex:text,$options:"i"}});
+    var departments = await Department.find({$or:[{name:{$regex:text,$options:"i"}}
+    ,{description:{$regex:text,$options:"i"}}]});
+    return await departmentDetail(departments);
 }
