@@ -9,8 +9,10 @@ var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 function makeJson(type,msg){
+
     var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
+    
 }
 
 exports.createUser = async function(email,google,tokens,role,profile, password){
@@ -64,12 +66,11 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 }
 
 exports.getUserByID = async function(id){
-    try{
-        id=Objectid(id);
-    }catch{
-        return makeJson('error','userID not correct');
-    }
+
+    id=Objectid(id);
     var user=await User.findById(id).populate('profile');
     if (user==null||user=='') return makeJson('error','userID not found');
+
     return user;
+
 }
