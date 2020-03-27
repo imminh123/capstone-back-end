@@ -156,7 +156,7 @@ exports.closeAsk=async function(askID,rating){
     
     var ask=await Ask.findById(askID);
     if (ask==null) return makeJson('error','askID not found');
-    Ask.updateOne({_id:askID},{status:'closed'});
+    Ask.updateOne({_id:askID},{status:'closed',rating:rating});
     var teacher=await Teacher.findById(ask.teacher);
     switch (rating){
         case 1: teacher.rating.star_1=teacher.rating.star_1+1;teacher.save();break;
