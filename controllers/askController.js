@@ -10,6 +10,12 @@ function msgEmpty(){
     return JSON.parse(newObject);
 }
 
+exports.closeAsk=async(req,res)=>{
+    var askID=req.params['id'];
+    var rating=req.params['rating'];
+    res.send(await AskDAO.closeAsk(askID,rating));
+}
+
 exports.createAsk = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var askContent=req.body.askContent;
@@ -17,7 +23,7 @@ exports.createAsk = async (req,res) => {
     var teacher=req.body.teacher;
     var courseURL=req.body.courseURL;
     //check if all fields are filled
-    if (isEmpty(scannedContent)||isEmpty(askContent)||isEmpty(student)||isEmpty(teacher)||isEmpty(courseURL))
+    if (isEmpty(scannedContent)||isEmpty(askContent)||isEmpty(student)||isEmpty(teacher))
                 res.send(msgEmpty()); 
         else {
             res.send(await AskDAO.createAsk(scannedContent,askContent,student,teacher,courseURL));                    
@@ -25,8 +31,9 @@ exports.createAsk = async (req,res) => {
 }
 
 exports.getAskByID = async (req,res) => {
-    var noteID=req.params['id'];
-    res.send(await AskDAO.getAskByID(noteID));
+    var userID=req.params['userID'];
+    var askID=req.params['askID'];
+    res.send(await AskDAO.getAskByID(userID,askID));
 }
 
 exports.allAskOfStudent = async (req,res) => {

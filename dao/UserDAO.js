@@ -1,17 +1,18 @@
 const User = require('../models/User');
+var Objectid = require('mongodb').ObjectID;
 const AdminDAO = require('../dao/AdminDAO');
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
-const getFunction = require('../dao/getFunction');
 var bcrypt = require('bcrypt');
-// const getFunction = require('./getFunction');
-var Objectid = require('mongodb').ObjectID;
+
 
 const saltRounds = 10;
 
 function makeJson(type,msg){
+
     var newObject = '{"'+type+'":"'+msg+'"}';
     return JSON.parse(newObject);
+    
 }
 
 exports.createUser = async function(email,google,tokens,role,profile, password){
@@ -65,12 +66,11 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 }
 
 exports.getUserByID = async function(id){
-    try{
-        id=Objectid(id);
-    }catch{
-        return makeJson('error','userID not correct');
-    }
+
+    id=Objectid(id);
     var user=await User.findById(id).populate('profile');
     if (user==null||user=='') return makeJson('error','userID not found');
+
     return user;
+
 }

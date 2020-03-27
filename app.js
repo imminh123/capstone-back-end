@@ -191,7 +191,7 @@ app.post('/login', (req, res, next) => {
       }
       if (!user) {
           res.status(401).send(JSON.stringify({
-              err: "Username or Password is incorrect"
+              error: "Username or Password is incorrect"
           }));
       } 
       if (user) {
@@ -292,6 +292,7 @@ app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
 app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
+app.get('/searchDepartment/:text', departmentController.searchDepartment);
 
 /**
  * Course
@@ -344,23 +345,25 @@ app.get('/getRecentNote/:studentID/:limit', noteController.getRecentNote);
  * Folder
  */
 app.get('/getAllFolder/', folderController.getAllFolder);
-app.get('/getFolderNote/:id', folderController.getFolderNote);
-app.get('/getFolderHighlight/:id', folderController.getFolderHighlight);
-app.get('/getHighlightByFolderID/:studentID/:folderID', folderController.getHighlightByFolderID);
-app.delete('/deleteHighlightByFolderID/:studentID/:folderID', folderController.deleteHighlightByFolderID);
-app.get('/getNoteByFolderID/:studentID/:folderID', folderController.getNoteByFolderID);
-app.delete('/deleteNoteByFolderID/:studentID/:folderID', folderController.deleteNoteByFolderID);
+app.get('/getFolderByStudentID/:id', folderController.getFolderByStudentID);
+app.get('/getHighlightByFolderID/:folderID', folderController.getHighlightByFolderID);
+app.delete('/deleteHighlightByFolderID/:folderID', folderController.deleteHighlightByFolderID);
+app.get('/getNoteByFolderID/:folderID', folderController.getNoteByFolderID);
+app.delete('/deleteNoteByFolderID/:folderID', folderController.deleteNoteByFolderID);
+app.post('/createFolder/', folderController.createFolder);
+app.delete('/deleteFolderByID/:id', folderController.deleteFolder)
 
 /**
  * Ask and comment
  */
 app.post('/createask', askController.createAsk);
 app.get('/allask', askController.allAsk);
-app.get('/getaskbyid/:id', askController.getAskByID);
+app.get('/getAsk/:userID/:askID', askController.getAskByID);
 app.get('/allaskofstudent/:id', askController.allAskOfStudent);
 app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
+app.put('/closeAsk/:id/:rating', askController.closeAsk);
 
 /**
  * Student
