@@ -11,7 +11,9 @@ const askSchema = new Schema({
     rating: {type:Number},
     dateModified: {type: String, require: true},
     dateCreated: {type: String, required:true},
-    status: {type:String}
+    studentStatus: {type:String},
+    teacherStatus: {type:String},
+    isClosed: {type:Boolean}
 });
 
 const Ask = mongoose.model('ask', askSchema);

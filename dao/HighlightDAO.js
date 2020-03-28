@@ -101,14 +101,24 @@ exports.getHighlightByUrl = async function(studentID,url){
     
 }
 
-exports.searchHighlight = async function(scannedContent,studentID){
+exports.searchHighlight = async function(scannedContent,studentID,folderID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
     
-    var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},studentID:studentID});
-    
+    if (folderID.toString=='all') {
+
+        var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
+        studentID:studentID});
+
+    } else {
+
+        var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
+        studentID:studentID,folderID:Objectid(folderID)});
+        
+    }
+
     return result;
 }
 

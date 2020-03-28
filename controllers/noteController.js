@@ -66,8 +66,9 @@ exports.allNoteOfStudent = async (req,res) => {
 
 exports.searchNote = async (req,res) => {
     var studentID=req.params['studentID'];
-    var detail=req.params['detail'];
-    res.send(await NoteDAO.searchNote(studentID,detail));
+    var folderID=req.params['folderID'];
+    var text=req.params['text'];
+    res.send(await NoteDAO.searchNote(studentID,folderID,text));
 }
 
 exports.getRecentNote = async (req,res) => {

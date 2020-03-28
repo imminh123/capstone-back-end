@@ -22,6 +22,8 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     var folder = await Folder.findOne({_id:folderID});
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
+    if (studentID!=folder.studentID) return makeJson('error','input studentID and folder.studentID not match');
+
     var note = new Note({
         studentID:studentID,
         folderID:folderID,
@@ -118,18 +120,31 @@ exports.getAllNoteByStudentID = async function(studentID){
    
 }
 
-exports.searchNote = async function(studentID,detail){
+exports.searchNote = async function(studentID,folderID,text){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    var result = await Note.find({
+    if (folderID.toString()=='all') {
+
+        var result = await Note.find({
             studentID:studentID,
-            $or:[{scannedContent:{$regex:detail,$options:"i"}},
-                  {description:{$regex:detail,$options:"i"}}
+            $or:[{scannedContent:{$regex:text,$options:"i"}},
+                  {description:{$regex:text,$options:"i"}}
                 ]
         });
+
+    } else {
+
+        var result = await Note.find({
+            studentID:studentID,folderID:Objectid(folderID),
+            $or:[{scannedContent:{$regex:text,$options:"i"}},
+                  {description:{$regex:text,$options:"i"}}
+                ]
+        });
+
+    }
 
     return result;
 
