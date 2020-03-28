@@ -12,7 +12,7 @@ function makeJson(type,msg){
 }
 
 //create a note
-exports.createNote = async function(studentID,folderID,scannedContent,description,url,index){
+exports.createNote = async function(studentID,folderID,scannedContent,description,url){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
@@ -30,7 +30,6 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
         scannedContent:scannedContent,
         description:description,
         url:url,
-        index:index,
         dateModified: getFunction.today()
     });
     await note.save();
@@ -40,7 +39,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 }
 
 //changenote
-exports.updateNote = async function(noteID,folderID,scannedContent,description,url,index,isPinned){
+exports.updateNote = async function(noteID,folderID,scannedContent,description,url,isPinned){
     
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
@@ -50,7 +49,7 @@ exports.updateNote = async function(noteID,folderID,scannedContent,description,u
     var folder = await Folder.findOne({_id:folderID});
     if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    await Note.updateOne({_id:noteID},{folderID:folderID,scannedContent:scannedContent,description:description,url:url,index:index,isPinned:isPinned,dateModified:getFunction.today()});
+    await Note.updateOne({_id:noteID},{folderID:folderID,scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()});
     
     note=await Note.findById(noteID);
     var result = {
@@ -63,7 +62,6 @@ exports.updateNote = async function(noteID,folderID,scannedContent,description,u
             scannedContent:note.scannedContent,
             description:note.description,
             url:note.url,
-            index:note.index,
             dateModified:note.dateModified,
         }
     }

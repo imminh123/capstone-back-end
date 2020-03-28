@@ -16,12 +16,11 @@ exports.createNote = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
-    var index=req.body.index;
     //check if all fields are filled
-    if (isEmpty(studentID)||isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index))
+    if (isEmpty(studentID)||isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url))
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url,index));                    
+            res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url));                    
         }
 }
 
@@ -32,13 +31,12 @@ exports.updateNoteByID = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
-    var index=req.body.index;
     var isPinned=req.body.isPinned;
     //check if all fields are filled
-    if (isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isEmpty(index)||isPinned==undefined||isPinned.toString()=='')
+    if (isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isPinned==undefined||isPinned.toString()=='')
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.updateNote(noteID,folderID,scannedContent,description,url,index,isPinned));                    
+            res.send(await NoteDAO.updateNote(noteID,folderID,scannedContent,description,url,isPinned));                    
         }
 }
 
