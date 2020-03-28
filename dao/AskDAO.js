@@ -179,6 +179,7 @@ exports.searchAsk = async function(userID,text){
         var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher');
     }
 
+    //this is a slower way. best to find a query to handle this in one go
     if (role=='student') {
         var asks = asks.filter(function(value, index, arr){
 
