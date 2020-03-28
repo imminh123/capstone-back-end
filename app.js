@@ -197,7 +197,7 @@ app.post('/login', (req, res, next) => {
       if (user) {
         jwt.sign({user: user}, 'tinhanhem', (err, token) => {
           if(err) console.log(err)
-          res.status(200).json({err,token});
+          res.status(200).json({error: err,token});
         })
       }
   })(req, res, next);
