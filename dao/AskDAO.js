@@ -13,6 +13,24 @@ function makeJson(type,msg){
 
 }
 
+function newAsk(ask,status){
+    var result = {
+        _id:ask._id,
+        comments:ask.comments,
+        scannedContent:ask.scannedContent,
+        askContent:ask.askContent,
+        student:ask.student,
+        teacher:ask.teacher,
+        courseURL:ask.courseURL,
+        dateModified:ask.dateModified,
+        dateCreated:ask.dateCreated,
+        status:status,
+        rating:ask.rating,
+        isClosed:ask.isClosed
+    }
+    return result;
+}
+
 //create new ask
 exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,courseURL){
 
@@ -35,6 +53,10 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
         comments:[],
         dateModified: today,
         dateCreated: today,
+        studentStatus: 'seen',
+        teacherStatus: 'new',
+        rating: 0,
+        isClosed: false
     });
 
     await ask.save();
@@ -68,7 +90,7 @@ exports.deleteAsk = async function(id){
 
 }
 
-//get an ask by id
+//get an ask by userid and askid
 exports.getAskByID = async function(userID,askID){
 
     askID=Objectid(askID);
@@ -76,9 +98,30 @@ exports.getAskByID = async function(userID,askID){
     if (ask==null||ask=='') return makeJson('error','askID not found');
 
     //check userID is teacher or student then update status accordingly
-    //not done
+    if (userID==ask.teacher._id) {
 
-    return ask;
+        if (ask.teacherStatus=='new') {
+            await Ask.updateOne({_id:askID},{teacherStatus:'seen'});
+            ask.teacherStatus='seen';
+        }
+
+        var result = newAsk(ask,ask.teacherStatus);
+
+    } else if (userID==ask.student._id) {
+
+        if (ask.studentStatus=='new') {
+            await Ask.updateOne({_id:askID},{studentStatus:'seen'});
+            ask.studentStatus='seen';
+        }
+
+        var result = newAsk(ask,ask.studentStatus);
+
+    } else {
+        return makeJson('error','userID not match');
+    }
+
+    return result;
+
 }
 
 //return all ask of a student by id
@@ -88,8 +131,16 @@ exports.allAskOfStudent = async function(studentID){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    return await Ask.find({student:studentID}).populate('student').populate('teacher');
+    var asks = await Ask.find({student:studentID}).populate('student').populate('teacher');
     
+    var result=[];
+
+    for (ask of asks){
+        result.push(newAsk(ask,ask.studentStatus));
+    }
+
+    return result;
+
 }
 
 //return all ask of a teacher by id
@@ -99,8 +150,16 @@ exports.allAskOfTeacher = async function(teacherID){
     var teacher=await Teacher.findById(teacherID);
     if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
 
-    return await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
+    var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
     
+    var result=[];
+
+    for (ask of asks){
+        result.push(newAsk(ask,ask.teacherStatus));
+    }
+
+    return result;
+
 }
 
 //return all ask
@@ -129,9 +188,23 @@ exports.addComment = async function(askID,userID,message){
     });
     await comment.save();
 
-    //push comment to ask
-    await Ask.updateOne({_id: askID}, 
-        {$addToSet:{comments:comment._id},dateModified:getFunction.today()},{safe:true,upsert:true});
+    //push comment to ask and update user status
+    if (userID==ask.student._id) {
+        await Ask.updateOne({_id: askID}, 
+            {$addToSet:{comments:comment._id},
+            dateModified:getFunction.today(),
+            studentStatus:'replied',
+            teacherStatus:'new'},
+            {safe:true,upsert:true});
+    } else {
+        await Ask.updateOne({_id: askID}, 
+            {$addToSet:{comments:comment._id},
+            dateModified:getFunction.today(),
+            teacherStatus:'replied',
+            studentStatus:'new'},
+            {safe:true,upsert:true});
+    }
+    
 
     return {comment};
 
@@ -158,4 +231,44 @@ exports.closeAsk=async function(askID,rating){
 
     return makeJson('success','Close question successfully');
     
+}
+
+exports.searchAsk = async function(userID,text){
+
+    userID=Objectid(userID);
+    var role='student';
+    
+    var user=await Student.findById(userID);
+    if (user==null) {
+        user=await Teacher.findById(userID);
+        if (user==null) return makeJson('error','userID not found');
+        role='teacher';
+    }
+
+    if (role=='student'){
+        var asks = await Ask.find({student:userID}).populate('student').populate('teacher');
+    } else {
+        //teacher
+        var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher');
+    }
+
+    //this is a slower way. best to find a query to handle this in one go
+    if (role=='student') {
+        var asks = asks.filter(function(value, index, arr){
+
+            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+                || getFunction.change_alias(value.teacher.name).includes(text.toLowerCase());
+
+        });
+    } else {
+        var asks = asks.filter(function(value, index, arr){
+
+            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+                || getFunction.change_alias(value.student.name).includes(text.toLowerCase());
+
+                });
+    }
+
+    return asks;
+
 }
