@@ -12,7 +12,7 @@ function makeJson(type,msg){
 }
 
 //create a highlight
-exports.createHighlight = async function(studentID,scannedContent,index,color,url,tags,folderID){
+exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
@@ -29,7 +29,6 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
         color: color,
         dateModified: getFunction.today(),
         url : url,
-        tags: tags,
         folderID:folderID
     });
     await highlight.save();
@@ -74,7 +73,7 @@ exports.deleteHighlight = async function(id){
 }
 
 //update a highlight
-exports.updateHighlight = async function(highlightID,folderID,scannedContent,index,color,tags){
+exports.updateHighlight = async function(highlightID,folderID,scannedContent,index,color){
     
     highlightID=Objectid(highlightID);
     var highlight=await Highlight.findById(highlightID);
@@ -84,7 +83,7 @@ exports.updateHighlight = async function(highlightID,folderID,scannedContent,ind
     var folder=await Folder.findById(folderID);
     if (folder==null||folder=='') return makeJson('error','folderID not found');
    
-    await Highlight.updateOne({_id:highlightID},{folderID:folderID,scannedContent:scannedContent,index:index,color:color,tags:tags,dateModified:getFunction.today()});
+    await Highlight.updateOne({_id:highlightID},{folderID:folderID,scannedContent:scannedContent,index:index,color:color,dateModified:getFunction.today()});
     
     return makeJson('success','Update successfully');
 

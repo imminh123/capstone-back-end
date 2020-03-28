@@ -7,7 +7,6 @@ const noteSchema = new Schema({
     scannedContent: {type:String},
     description: {type: String},
     url: {type:String, required:true},
-    index: {type:Number, required:true},
     dateModified: {type:String},
     isPinned: {type: Boolean, default: false}
 });

@@ -8,8 +8,7 @@ const highlightSchema = new Schema({
     index: {type: Number,required: true},
     color: {type: String, required: true},
     dateModified: {type: String, require:true},
-    url: {type: String, require:true},
-    tags: [{type:String}]
+    url: {type: String, require:true}
 });
 
 const Highlight = mongoose.model('highlight', highlightSchema);
