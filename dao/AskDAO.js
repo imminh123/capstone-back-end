@@ -159,3 +159,28 @@ exports.closeAsk=async function(askID,rating){
     return makeJson('success','Close question successfully');
     
 }
+
+exports.searchAsk = async function(userID,text){
+
+    userID=Objectid(userID);
+    var role='student';
+    
+    var user=await Student.findById(userID);
+    if (user==null) {
+        user=await Teacher.findById(userID);
+        if (user==null) return makeJson('error','userID not found');
+        role='teacher';
+    }
+    if (role=='student'){
+
+        var result = await Ask.find({
+            student:userID,
+            $or:[{askContent:{$regex:text,$options:"i"}},
+                  {teacher:{$regex:text,$options:"i"}}
+                ]
+        });
+
+    }
+
+
+}

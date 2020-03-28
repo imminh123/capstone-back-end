@@ -62,3 +62,9 @@ exports.deleteAskByID = async (req,res) => {
     var askID=req.params['id'];
     res.send(await AskDAO.deleteAsk(askID));
 }
+
+exports.searchAsk = async (req,res) => {
+    var userID=req.params['userID'];
+    var text=req.params['text'];
+    res.send(await AskDAO.searchAsk(userID,text));
+}

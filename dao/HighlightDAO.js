@@ -106,8 +106,8 @@ exports.searchHighlight = async function(scannedContent,studentID,folderID){
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
-    
-    if (folderID.toString=='all') {
+
+    if (folderID.toString()=='all') {
 
         var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
         studentID:studentID});
@@ -116,7 +116,7 @@ exports.searchHighlight = async function(scannedContent,studentID,folderID){
 
         var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
         studentID:studentID,folderID:Objectid(folderID)});
-        
+
     }
 
     return result;
