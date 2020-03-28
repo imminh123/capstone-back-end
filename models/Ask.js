@@ -8,11 +8,11 @@ const askSchema = new Schema({
     teacher: {type:Schema.Types.ObjectId, ref: 'teacher'}, 
     courseURL: {type: String},
     comments: [{type:Schema.Types.ObjectId, ref: 'comment'}],
-    rating: {type:Number},
     dateModified: {type: String, require: true},
     dateCreated: {type: String, required:true},
     studentStatus: {type:String},
     teacherStatus: {type:String},
+    rating: {type:Number},
     isClosed: {type:Boolean}
 });
 
