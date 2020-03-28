@@ -171,16 +171,30 @@ exports.searchAsk = async function(userID,text){
         if (user==null) return makeJson('error','userID not found');
         role='teacher';
     }
+
     if (role=='student'){
-
-        var result = await Ask.find({
-            student:userID,
-            $or:[{askContent:{$regex:text,$options:"i"}},
-                  {teacher:{$regex:text,$options:"i"}}
-                ]
-        });
-
+        var asks = await Ask.find({student:userID}).populate('student').populate('teacher');
+    } else {
+        //teacher
+        var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher');
     }
 
+    if (role=='student') {
+        var asks = asks.filter(function(value, index, arr){
+
+            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+                || getFunction.change_alias(value.teacher.name).includes(text.toLowerCase());
+
+        });
+    } else {
+        var asks = asks.filter(function(value, index, arr){
+
+            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+                || getFunction.change_alias(value.student.name).includes(text.toLowerCase());
+
+                });
+    }
+
+    return asks;
 
 }

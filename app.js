@@ -364,6 +364,7 @@ app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
 app.put('/closeAsk/:id/:rating', askController.closeAsk);
+app.get('/searchAsk/:userID/:text', askController.searchAsk);
 
 /**
  * Student
