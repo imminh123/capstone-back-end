@@ -1,7 +1,6 @@
 const AskDAO = require('../dao/AskDAO');
 
 module.exports = function(wss, websocket) { 
-
     wss.on('connection', function connection(ws) {
         ws.on('message', async function incoming(data) {
             const {message, user, askID } = JSON.parse(data);
