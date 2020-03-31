@@ -55,9 +55,9 @@ exports.getHighlightByUrl = async (req,res) => {
 }
 
 exports.searchHighLight = async (req,res) => {
-    var studentID=req.params['studentID'];
-    var folderID=req.params['folderID'];
-    var scannedContent=req.params['text'];
+    var studentID=req.query.studentID;
+    var folderID=req.query.folderID;
+    var scannedContent=req.query.text;
     res.send(await hlDAO.searchHighlight(scannedContent,studentID,folderID));
 }
 

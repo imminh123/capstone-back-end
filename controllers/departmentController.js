@@ -47,6 +47,14 @@ exports.getCourseOfDepartment=async(req,res)=>{
 }
 
 exports.searchDepartment=async(req,res)=>{
-    var text=req.params['text'];
+    var text=req.query.text;
     res.send(await departmentDAO.searchDepartment(text));
 }
+
+// exports.searchDepartments = async(req,res) => {
+//     var page=req.query.page;
+//     var perPage=req.query.limit;
+//     var detail=req.query.detail;
+//     if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
+//     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
+// }

@@ -11,18 +11,15 @@ function msgEmpty(){
 }
 
 exports.getAllCourse = async (req, res) => {
-    // res.setHeader("Content-Type", "application/json");
     res.send(await CourseDAO.getAllCourse());
 };
 
 exports.getCourseByID = async (req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await CourseDAO.getCourseByID(id));
 };
 
 exports.createCourse = async (req, res) => {
-    // res.setHeader("Content-Type", "application/json");
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
     var departments=req.body.departments;
@@ -39,7 +36,6 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.updateCourse = async (req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var courseName=req.body.courseName;
     var courseCode=req.body.courseCode;
@@ -57,28 +53,17 @@ exports.updateCourse = async (req,res) => {
 };
 
 exports.deleteCourse =async (req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await CourseDAO.deleteCourse(id));
 };
 
 exports.searchCourse = async(req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var page=req.query.page;
     var perPage=req.query.limit;
     var detail=req.query.detail;
     if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await CourseDAO.searchCourse(page,perPage,detail));
 };
-
-exports.searchDepartments = async(req,res) => {
-    // res.setHeader("Content-Type", "application/json");
-    var page=req.query.page;
-    var perPage=req.query.limit;
-    var detail=req.query.detail;
-    if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
-    res.send(await CourseDAO.searchDepartments(page,perPage,detail));
-}
 
 exports.getCourseByUrl=async(req,res)=>{
     var url=req.params['url'];

@@ -256,17 +256,20 @@ exports.searchAsk = async function(userID,text){
     if (role=='student') {
         var asks = asks.filter(function(value, index, arr){
 
-            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
-                || getFunction.change_alias(value.teacher.name).includes(text.toLowerCase());
+            // return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+            //     || getFunction.change_alias(value.teacher.name).includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text.toLowerCase())
+                || value.teacher.name.toLowerCase().includes(text.toLowerCase());
 
         });
     } else {
         var asks = asks.filter(function(value, index, arr){
 
-            return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
-                || getFunction.change_alias(value.student.name).includes(text.toLowerCase());
-
-                });
+            // return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
+            //     || getFunction.change_alias(value.student.name).includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text.toLowerCase())
+            || value.student.name.toLowerCase().includes(text.toLowerCase());
+        });
     }
 
     return asks;

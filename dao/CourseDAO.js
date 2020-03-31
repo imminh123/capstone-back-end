@@ -6,7 +6,6 @@ const Teacher = require('../models/Teacher');
 const Department = require('../models/Department');
 const getFunction = require('./getFunction');
 
-
 function makeJson(type,msg){
 
     var newObject = '{"'+type+'":"'+msg+'"}';
@@ -204,28 +203,6 @@ exports.searchCourse = async function(page,perPage,detail){
 
     return result;
 
-}
-
-//search for departments
-exports.searchDepartments = async function(page,perPage,detail){
-
-    var result,size;
-    
-    result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers');
-
-    if (page==0) size=1; else size=Math.ceil(result.length/perPage);
-
-    //result in a page
-    if (page!=0){
-        result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers')
-                                .skip(perPage*(page-1))
-                                .limit(Number(perPage));
-    }
-
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-
-    return result;
 }
 
 exports.getCourseByUrl=async function(url){
