@@ -1,9 +1,9 @@
 var Objectid = require('mongodb').ObjectID;
 const Note = require('../models/Note');
+const Course = require('../models/Course');
 const Folder = require('../models/Folder');
 const Student = require('../models/Student');
 const Highlight = require('../models/Highlight');
-
 
 function makeJson(type,msg){
 
@@ -127,10 +127,16 @@ exports.deleteFolder=async function(folderID){
     
 }
 
-exports.getFolderByURL=async function(url){
+exports.getFolderByURL=async function(studentID,url){
 
-    var course=await Course.findOne({courseURL:url});
+    var courses = await Course.find();
+    for (course of courses){
+        if (url.includes(course.courseURL)) {
+            var courseOfFolder=course;
+            break;
+        }
+    }
 
-    return await Course.findOne({courseURL:url}).populate('teachers');
+    return await Folder.findOne({studentID:studentID,courseID:courseOfFolder._id});
     
 }

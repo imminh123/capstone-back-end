@@ -351,7 +351,7 @@ app.get('/getNoteByFolderID/:folderID', folderController.getNoteByFolderID);
 app.delete('/deleteNoteByFolderID/:folderID', folderController.deleteNoteByFolderID);
 app.post('/createFolder/', folderController.createFolder);
 app.delete('/deleteFolderByID/:id', folderController.deleteFolder);
-app.get('/getFolderByUrl/:url', folderController.getFolderByURL);
+app.get('/getFolderByUrl/:studentID/:url', folderController.getFolderByURL);
 
 /**
  * Ask and comment

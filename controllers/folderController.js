@@ -42,6 +42,7 @@ exports.deleteFolder=async(req,res)=>{
 }
 
 exports.getFolderByURL=async(req,res)=>{
+    var studentID=req.params['studentID'];
     var url=req.params['url'];
-    res.send(await folderDAO.getFolderByURL(url));
+    res.send(await folderDAO.getFolderByURL(studentID,url));
 }
