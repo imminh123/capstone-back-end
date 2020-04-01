@@ -26,6 +26,7 @@ exports.getFolderByStudentID = async function(studentID){
 
     var folders = await Folder.find({studentID:studentID}).lean();
     var result=[];
+    
     for (folder of folders){
         folder.isStudying=false;
 
@@ -117,6 +118,7 @@ exports.deleteFolder=async function(folderID){
     
     await Highlight.deleteMany({folderID:folderID});
     await Note.deleteMany({folderID:folderID});
+    
     if (folder.courseID!=''){
         var student=await Student.findById(folder.studentID);
         if (!student.courses.includes(folder.courseID)) 
@@ -130,6 +132,7 @@ exports.deleteFolder=async function(folderID){
 exports.getFolderByURL=async function(studentID,url){
 
     var courses = await Course.find();
+
     for (course of courses){
         if (url.includes(course.courseURL)) {
             var courseOfFolder=course;
