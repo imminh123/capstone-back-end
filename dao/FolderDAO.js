@@ -104,7 +104,8 @@ exports.deleteFolder=async function(folderID){
     
     await Highlight.deleteMany({folderID:folderID});
     await Note.deleteMany({folderID:folderID});
-    await Folder.deleteOne({_id:folderID});
+    if (folder.courseID=='')
+        await Folder.deleteOne({_id:folderID});
 
     return makeJson('success','Delete successfully');
     
