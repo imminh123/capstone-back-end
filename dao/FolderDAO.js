@@ -24,7 +24,20 @@ exports.getFolderByStudentID = async function(studentID){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    return await Folder.find({studentID:studentID});
+    var folders = await Folder.find({studentID:studentID}).lean();
+    var result=[];
+    for (folder of folders){
+        folder.isStudying=false;
+
+        if (folder.courseID!='')
+            if (student.courses.includes(folder.courseID))
+                folder.isStudying=true;
+
+        result.push(folder);
+
+    }
+
+    return result;
 
 }
 
@@ -111,5 +124,13 @@ exports.deleteFolder=async function(folderID){
     }
 
     return makeJson('success','Delete successfully');
+    
+}
+
+exports.getFolderByURL=async function(url){
+
+    var course=await Course.findOne({courseURL:url});
+
+    return await Course.findOne({courseURL:url}).populate('teachers');
     
 }
