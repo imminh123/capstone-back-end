@@ -139,7 +139,7 @@ exports.getFolderByURL=async function(studentID,url){
             break;
         }
     }
-    if (courseURL==undefined) return makeJson('error','This URL does not have course');
+    if (courseURL==undefined) return makeJson('error','No information found');
     var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
     var result = {
         courseOfURL,
