@@ -66,7 +66,7 @@ async function reportOfCourse(course,teacherID,asks,teacher,allAnswered,allUnans
         answered:answered,
         unanswered:count-answered,
     }
-    console.log(newOb);
+
     return newOb;
 
 }
