@@ -204,9 +204,3 @@ exports.searchCourse = async function(page,perPage,detail){
     return result;
 
 }
-
-exports.getCourseByUrl=async function(url){
-
-    return await Course.findOne({courseURL:url}).populate('teachers');
-    
-}

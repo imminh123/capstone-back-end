@@ -2,7 +2,6 @@ var Objectid = require('mongodb').ObjectID;
 const Ask = require('../models/Ask');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
-const Folder = require('../models/Folder');
 const Teacher = require('../models/Teacher');
 
 function makeJson(type,msg){
@@ -40,61 +39,94 @@ exports.getAllNumber = async function () {
 
 }
 
-function averageRating(asks){
+async function reportOfCourse(course,teacherID,asks,teacher,allAnswered,allUnanswered,averageRating){
 
-    var rating=0,count=0;
+    var rating=0,answered=0,count=0;
 
+    //get average rating of this course
     for (ask of asks) {
-        if (ask.isClosed) {
-            rating+=ask.rating;
+        if (ask.courseID==course._id) {
             count++;
+            if (ask.isClosed) {
+                rating+=ask.rating;
+                answered++;
+            }
         }
     }
 
-    return rating/asks.length;
+    rating=rating/answered;
 
-}
+    var newOb={
+        teacherName:teacher.name,
+        teacherEmail:teacher.email,
+        allAnswered:allAnswered,
+        allUnanswered:allUnanswered,
+        averageRating:averageRating,
+        courseName:course.courseName,
+        courseCode:course.courseCode,
+        averageOfCourse:rating,
+        answered:answered,
+        unanswered:count-answered,
+    }
 
-function reportOfCourse(courseID,asks){
-
-
+    return newOb;
 
 }
 
 exports.getReport = async function(teachers,courses,startDate,endDate){
-    var result=[],newOb;
 
+    var result=[];
+    
+    var coursesdetail=[];
+
+    //check courseID exists or not
     for (courseID of courses) {
-        if (courseID!='Other') {
-            var course = await Course.findById(courseID);
-            if (course==null||course=='') return makeJson('error','courseID not found');
+        if (courseID!='') {
+            var course=await Course.findById(courseID).select('courseName courseCode');
+            if (course==null||course=='') return makeJson('error','courseID not found');    
+            coursesdetail.push(course);
+            }
+        else {
+            coursesdetail.push({
+                _id:'',
+                courseName:'Other',
+                courseCode:'Other'
+            })
         }
     }
+
+    //filter ask only of all chosen teachers
+    var asks=await Ask.find({teacher:teachers});
+    asks = asks.filter(function(value, index, arr){
+        return Date.parse(value.dateCreated)>=Date.parse(startDate)
+                && Date.parse(value.dateCreated)<=Date.parse(endDate) 
+                && courses.includes(value.courseID);
+    });
 
     for (teacherID of teachers) {
 
         var teacher = await Teacher.findById(teacherID);
-        var asks=await Ask.find({teacher:teachers,isClosed:true});
-
-        asks = asks.filter(function(value, index, arr){
-            return Date.parse(value.dateModified)>=Date.parse(startDate)
-                    && Date.parse(value.dateModified)<=Date.parse(endDate);
+        var answered=0,rating=0;
+        
+        //filter ask of only this teacher
+        var teacherasks=asks.filter(function(value){
+            return value.teacher==teacherID;
         });
 
-        newOb={
-            teacherName:teacher.name,
-            teacherEmail:teacher.mail,
-            numberOfAsk:asks.length,
-            avarageRating:averageRating(asks),
-            courses:[]
+        //get average rating and number of answered question
+        for (ask of teacherasks){
+            if (ask.isClosed) {
+                answered++;
+                rating+=ask.rating;
+            }
         }
+        rating=rating/answered;
   
-        for (course of courses) {
-                newOb.courses.push(reportOfCourse(course,asks));
+        //get detail of teacher.course
+        for (course of coursesdetail) {
+                result.push(await reportOfCourse(course,teacherID,teacherasks,teacher,answered,teacherasks.length-answered,rating));
         }
 
-        result.push(newOb);
-    
     }
 
     return result;

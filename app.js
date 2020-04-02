@@ -304,7 +304,6 @@ app.get('/getcourse/:id', courseController.getCourseByID);
 app.post('/createcourse/', courseController.createCourse);
 app.put('/updatecourse/:id',courseController.updateCourse);
 app.delete('/deletecourse/:id',courseController.deleteCourse);
-app.get('/getCourseByUrl/:url', courseController.getCourseByUrl);
 app.get('/searchcourse', courseController.searchCourse);
 
 /**
@@ -353,7 +352,7 @@ app.get('/getNoteByFolderID/:folderID', folderController.getNoteByFolderID);
 app.delete('/deleteNoteByFolderID/:folderID', folderController.deleteNoteByFolderID);
 app.post('/createFolder/', folderController.createFolder);
 app.delete('/deleteFolderByID/:id', folderController.deleteFolder);
-app.get('/getFolderByUrl/:studentID/:url', folderController.getFolderByURL);
+app.get('/getUrlInformation/:studentID/:url', folderController.getFolderByURL);
 
 /**
  * Ask and comment
