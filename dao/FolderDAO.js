@@ -132,14 +132,14 @@ exports.deleteFolder=async function(folderID){
 exports.getFolderByURL=async function(studentID,url){
 
     var courses = await Course.find().populate('teachers');
-    var courseURL;
+    var courseOfURL;
     for (course of courses){
         if (url.includes(course.courseURL)) {
             courseOfURL=course;
             break;
         }
     }
-    if (courseURL==undefined) return makeJson('error','No information found');
+    if (courseOfURL==undefined) return makeJson('error','No information found');
     var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
     var result = {
         courseOfURL,
