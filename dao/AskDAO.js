@@ -22,6 +22,7 @@ function newAsk(ask,status){
         askContent:ask.askContent,
         student:ask.student,
         teacher:ask.teacher,
+        courseID:ask.courseID,
         url:ask.url,
         dateModified:ask.dateModified,
         dateCreated:ask.dateCreated,
