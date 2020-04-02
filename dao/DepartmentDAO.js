@@ -133,24 +133,3 @@ exports.searchDepartment = async function(text){
     return await departmentDetail(departments);
 
 }
-
-// exports.searchDepartments = async function(page,perPage,detail){
-
-//     var result,size;
-    
-//     result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers');
-
-//     if (page==0) size=1; else size=Math.ceil(result.length/perPage);
-
-//     //result in a page
-//     if (page!=0){
-//         result = await Course.find({departments:{$regex:detail,$options:"i"}}).populate('teachers')
-//                                 .skip(perPage*(page-1))
-//                                 .limit(Number(perPage));
-//     }
-
-//     result=JSON.stringify(result);
-//     result='{"totalPage":'+size+',"result":'+result+'}';
-
-//     return result;
-// }

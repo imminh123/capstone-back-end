@@ -1,9 +1,9 @@
 var Objectid = require('mongodb').ObjectID;
 const Note = require('../models/Note');
+const Course = require('../models/Course');
 const Folder = require('../models/Folder');
 const Student = require('../models/Student');
 const Highlight = require('../models/Highlight');
-
 
 function makeJson(type,msg){
 
@@ -24,7 +24,21 @@ exports.getFolderByStudentID = async function(studentID){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    return await Folder.find({studentID:studentID});
+    var folders = await Folder.find({studentID:studentID}).lean();
+    var result=[];
+    
+    for (folder of folders){
+        folder.isStudying=false;
+
+        if (folder.courseID!='')
+            if (student.courses.includes(folder.courseID))
+                folder.isStudying=true;
+
+        result.push(folder);
+
+    }
+
+    return result;
 
 }
 
@@ -104,8 +118,28 @@ exports.deleteFolder=async function(folderID){
     
     await Highlight.deleteMany({folderID:folderID});
     await Note.deleteMany({folderID:folderID});
-    await Folder.deleteOne({_id:folderID});
+    
+    if (folder.courseID!=''){
+        var student=await Student.findById(folder.studentID);
+        if (!student.courses.includes(folder.courseID)) 
+            await Folder.deleteOne({_id:folderID});
+    }
 
     return makeJson('success','Delete successfully');
+    
+}
+
+exports.getFolderByURL=async function(studentID,url){
+
+    var courses = await Course.find();
+
+    for (course of courses){
+        if (url.includes(course.courseURL)) {
+            var courseOfFolder=course;
+            break;
+        }
+    }
+
+    return await Folder.findOne({studentID:studentID,courseID:courseOfFolder._id});
     
 }

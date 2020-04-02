@@ -44,6 +44,7 @@ const studentController = require('./controllers/studentController');
 const departmentController = require('./controllers/departmentController');
 const myUserController = require('./controllers/userController');
 const folderController = require('./controllers/folderController');
+const savedAskController = require('./controllers/savedAskController');
 
 /**
  * API keys and Passport configuration.
@@ -282,6 +283,7 @@ socketIOController(wss, WebSocket);
  * Admin
  */
 app.get('/getStatisticNumber', adminController.getAllNumber);
+app.get('/getReport', adminController.getReport);
 
 /**
  * Department
@@ -350,7 +352,8 @@ app.delete('/deleteHighlightByFolderID/:folderID', folderController.deleteHighli
 app.get('/getNoteByFolderID/:folderID', folderController.getNoteByFolderID);
 app.delete('/deleteNoteByFolderID/:folderID', folderController.deleteNoteByFolderID);
 app.post('/createFolder/', folderController.createFolder);
-app.delete('/deleteFolderByID/:id', folderController.deleteFolder)
+app.delete('/deleteFolderByID/:id', folderController.deleteFolder);
+app.get('/getFolderByUrl/:studentID/:url', folderController.getFolderByURL);
 
 /**
  * Ask and comment
@@ -364,6 +367,11 @@ app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
 app.put('/closeAsk/:id/:rating', askController.closeAsk);
 app.get('/searchAsk', askController.searchAsk);
+
+app.get('/getSavedAskOfTeacher/:id',savedAskController.getSavedAskByTeacherID);
+app.put('/addSavedAsk/:teacherID/:askID', savedAskController.addSavedAsk);
+app.put('/removeSavedAsk/:teacherID/:askID', savedAskController.removeSavedAsk);
+
 
 /**
  * Student

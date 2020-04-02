@@ -14,6 +14,7 @@ function makeJson(type,msg){
 }
 
 function newAsk(ask,status){
+
     var result = {
         _id:ask._id,
         comments:ask.comments,
@@ -28,6 +29,7 @@ function newAsk(ask,status){
         rating:ask.rating,
         isClosed:ask.isClosed
     }
+    
     return result;
 }
 
@@ -217,7 +219,7 @@ exports.closeAsk=async function(askID,rating){
     if (ask==null) return makeJson('error','askID not found');
 
     //update ask status and rating
-    Ask.updateOne({_id:askID},{status:'closed',rating:rating});
+    await Ask.updateOne({_id:askID},{isClosed:true,rating:rating,dateModified:getFunction.today()});
 
     //find teacher and update rating
     var teacher=await Teacher.findById(ask.teacher);
@@ -256,8 +258,6 @@ exports.searchAsk = async function(userID,text){
     if (role=='student') {
         var asks = asks.filter(function(value, index, arr){
 
-            // return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
-            //     || getFunction.change_alias(value.teacher.name).includes(text.toLowerCase());
             return value.askContent.toLowerCase().includes(text.toLowerCase())
                 || value.teacher.name.toLowerCase().includes(text.toLowerCase());
 
@@ -265,10 +265,9 @@ exports.searchAsk = async function(userID,text){
     } else {
         var asks = asks.filter(function(value, index, arr){
 
-            // return getFunction.change_alias(value.askContent).includes(text.toLowerCase())
-            //     || getFunction.change_alias(value.student.name).includes(text.toLowerCase());
             return value.askContent.toLowerCase().includes(text.toLowerCase())
             || value.student.name.toLowerCase().includes(text.toLowerCase());
+
         });
     }
 

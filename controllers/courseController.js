@@ -45,6 +45,7 @@ exports.updateCourse = async (req,res) => {
     var courseURL=req.body.courseURL;
     var teachers=req.body.teachers;
     //check all fields are filled
+    // console.log(courseName+' '+courseCode+' '+departments+' '+shortDes+' '+fullDes+' '+courseURL+' '+teachers)
     if (isEmpty(courseName)||isEmpty(courseCode)||isEmpty(shortDes)||isEmpty(fullDes)||isEmpty(courseURL))
                 res.send(msgEmpty()); 
         else {
