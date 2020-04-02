@@ -65,8 +65,3 @@ exports.searchCourse = async(req,res) => {
     if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
     res.send(await CourseDAO.searchCourse(page,perPage,detail));
 };
-
-exports.getCourseByUrl=async(req,res)=>{
-    var url=req.params['url'];
-    res.send(await CourseDAO.getCourseByUrl(url));
-}

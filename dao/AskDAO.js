@@ -34,7 +34,7 @@ function newAsk(ask,status){
 }
 
 //create new ask
-exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,url){
+exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,courseID,url){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
@@ -51,6 +51,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
         askContent:askContent,
         student:studentID,
         teacher:teacherID,
+        courseID:courseID,
         url:url,
         comments:[],
         dateModified: today,

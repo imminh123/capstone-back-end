@@ -131,15 +131,21 @@ exports.deleteFolder=async function(folderID){
 
 exports.getFolderByURL=async function(studentID,url){
 
-    var courses = await Course.find();
+    var courses = await Course.find().populate('teachers');
 
     for (course of courses){
         if (url.includes(course.courseURL)) {
-            var courseOfFolder=course;
+            var courseOfURL=course;
             break;
         }
     }
 
-    return await Folder.findOne({studentID:studentID,courseID:courseOfFolder._id});
+    var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
+    var result = {
+        courseOfURL,
+        folder
+    }
+
+    return result;
     
 }
