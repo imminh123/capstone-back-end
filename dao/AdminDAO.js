@@ -43,6 +43,7 @@ async function reportOfCourse(course,teacherID,asks,teacher,allAnswered,allUnans
 
     var rating=0,answered=0,count=0;
 
+    //get average rating of this course
     for (ask of asks) {
         if (ask.courseID==course._id) {
             count++;
@@ -54,6 +55,7 @@ async function reportOfCourse(course,teacherID,asks,teacher,allAnswered,allUnans
     }
 
     rating=rating/answered;
+
     var newOb={
         teacherName:teacher.name,
         teacherEmail:teacher.email,
@@ -77,6 +79,7 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
     
     var coursesdetail=[];
 
+    //check courseID exists or not
     for (courseID of courses) {
         if (courseID!='') {
             var course=await Course.findById(courseID).select('courseName courseCode');
@@ -92,6 +95,7 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
         }
     }
 
+    //filter ask only of all chosen teachers
     var asks=await Ask.find({teacher:teachers});
     asks = asks.filter(function(value, index, arr){
         return Date.parse(value.dateCreated)>=Date.parse(startDate)
@@ -104,10 +108,12 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
         var teacher = await Teacher.findById(teacherID);
         var answered=0,rating=0;
         
+        //filter ask of only this teacher
         var teacherasks=asks.filter(function(value){
             return value.teacher==teacherID;
         });
 
+        //get average rating and number of answered question
         for (ask of teacherasks){
             if (ask.isClosed) {
                 answered++;
@@ -116,6 +122,7 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
         }
         rating=rating/answered;
   
+        //get detail of teacher.course
         for (course of coursesdetail) {
                 result.push(await reportOfCourse(course,teacherID,teacherasks,teacher,answered,teacherasks.length-answered,rating));
         }
