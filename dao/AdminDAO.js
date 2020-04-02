@@ -86,7 +86,6 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
 
     var result=[],newOb;
     
-    var courseIDlist=await Course.find();
     var coursesdetail=[];
 
     for (courseID of courses) {
