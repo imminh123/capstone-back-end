@@ -39,27 +39,12 @@ exports.getAllNumber = async function () {
 
 }
 
-function averageRating(teacherID,asks){
-
-    var rating=0,count=0;
-
-    for (ask of asks) {
-        if (ask.isClosed && ask.teacher==teacherID) {
-            rating+=ask.rating;
-            count++;
-        }
-    }
-
-    return rating/count;
-
-}
-
-async function reportOfCourse(course,teacherID,asks){
+async function reportOfCourse(course,teacherID,asks,teacher,allAnswered,allUnanswered,averageRating){
 
     var rating=0,answered=0,count=0;
 
     for (ask of asks) {
-        if (ask.courseID==course._id && ask.teacher==teacherID) {
+        if (ask.courseID==course._id) {
             count++;
             if (ask.isClosed) {
                 rating+=ask.rating;
@@ -69,22 +54,26 @@ async function reportOfCourse(course,teacherID,asks){
     }
 
     rating=rating/answered;
-
-    var reportOfCourse = {
+    var newOb={
+        teacherName:teacher.name,
+        teacherEmail:teacher.email,
+        allAnswered:allAnswered,
+        allUnanswered:allUnanswered,
+        averageRating:averageRating,
         courseName:course.courseName,
         courseCode:course.courseCode,
-        averageRating:rating,
+        averageOfCourse:rating,
         answered:answered,
-        unanswered:count-answered
+        unanswered:count-answered,
     }
-
-    return reportOfCourse;
+    console.log(newOb);
+    return newOb;
 
 }
 
 exports.getReport = async function(teachers,courses,startDate,endDate){
 
-    var result=[],newOb;
+    var result=[];
     
     var coursesdetail=[];
 
@@ -104,33 +93,33 @@ exports.getReport = async function(teachers,courses,startDate,endDate){
     }
 
     var asks=await Ask.find({teacher:teachers});
+    asks = asks.filter(function(value, index, arr){
+        return Date.parse(value.dateCreated)>=Date.parse(startDate)
+                && Date.parse(value.dateCreated)<=Date.parse(endDate) 
+                && courses.includes(value.courseID);
+    });
 
     for (teacherID of teachers) {
 
         var teacher = await Teacher.findById(teacherID);
-        var answered=0;
-        asks = asks.filter(function(value, index, arr){
-            if (value.isClosed) answered++;
-            return Date.parse(value.dateCreated)>=Date.parse(startDate)
-                    && Date.parse(value.dateCreated)<=Date.parse(endDate) 
-                    && courses.includes(value.courseID);
+        var answered=0,rating=0;
+        
+        var teacherasks=asks.filter(function(value){
+            return value.teacher==teacherID;
         });
 
-        newOb={
-            teacherName:teacher.name,
-            teacherEmail:teacher.mail,
-            answered:answered,
-            unanswered:asks.length-answered,
-            avarageRating:averageRating(teacherID,asks),
-            courses:[]
+        for (ask of teacherasks){
+            if (ask.isClosed) {
+                answered++;
+                rating+=ask.rating;
+            }
         }
+        rating=rating/answered;
   
         for (course of coursesdetail) {
-                newOb.courses.push(await reportOfCourse(course,teacherID,asks));
+                result.push(await reportOfCourse(course,teacherID,teacherasks,teacher,answered,teacherasks.length-answered,rating));
         }
 
-        result.push(newOb);
-    
     }
 
     return result;
