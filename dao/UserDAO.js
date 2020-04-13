@@ -42,6 +42,7 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 
     const newUser = new User({
         email:email,
+        name: profile.name,
         password: password,
         google:google,
         tokens:tokens,
