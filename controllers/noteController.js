@@ -17,7 +17,7 @@ exports.createNote = async (req,res) => {
     var description=req.body.description;
     var url=req.body.url;
     //check if all fields are filled
-    if (isEmpty(studentID)||isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url))
+    if (isEmpty(studentID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url))
                 res.send(msgEmpty()); 
         else {
             res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url));                    
