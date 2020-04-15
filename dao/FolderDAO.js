@@ -124,7 +124,8 @@ exports.deleteFolder=async function(folderID){
         if (!student.courses.includes(folder.courseID)) 
             await Folder.deleteOne({_id:folderID});
     }
-
+    else await Folder.deleteOne({_id:folderID});
+    
     return makeJson('success','Delete successfully');
     
 }
