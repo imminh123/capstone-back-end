@@ -1,4 +1,5 @@
 var Objectid = require('mongodb').ObjectID;
+const Ask = require('../models/Ask');
 const Course = require('../models/Course');
 const Folder = require('../models/Folder');
 const Student = require('../models/Student');
@@ -110,6 +111,7 @@ exports.deleteCourse = async function(id){
 
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
+    await Ask.updateMany({courseID:course._id},{courseID:''});
 
     await Course.deleteOne({_id:id});
 

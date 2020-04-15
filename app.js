@@ -380,6 +380,7 @@ app.put('/updatestudentcourse/:id', studentController.updateStudentCourse);
 app.get('/allStudent', studentController.allStudent);
 app.get('/getStudentStatistic/:id', studentController.getStudentStatistic);
 app.get('/getCourseOfStudent/:id', studentController.getCourseOfStudent);
+app.put('/exitCourse/:studentID/:courseID', studentController.exitCourse);
 
 /**
  * User
