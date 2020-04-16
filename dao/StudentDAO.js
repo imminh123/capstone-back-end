@@ -126,6 +126,6 @@ exports.exitCourse = async function(studentID,courseID) {
 
     student= await Student.findById(studentID).populate('courses');
 
-    return student.courses;
+    return student;
 
 }

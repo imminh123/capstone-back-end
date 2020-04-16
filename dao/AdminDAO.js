@@ -61,8 +61,8 @@ function getOneReport(teacher,course,asks){
         teacherAvatar:teacher.avatar,
         courseName:course.courseName,
         courseCode:course.courseCode,
-        answered:answered,
-        unanswered:count-answered,
+        closed:answered,
+        open:count-answered,
         rating:rating
     }
 
@@ -165,7 +165,7 @@ exports.getReport = async function(teacherID,courseID,from,to){
         }
         if (courseID=='') {
             report=getOneReport(teacher,{_id:'',courseName:'Other',courseCode:'Other'},asks);
-            if (report.answered!=0 || report.unanswered!=0) result.push(report);
+            if (report.closed!=0 || report.open!=0) result.push(report);
         }
             
     }
