@@ -160,10 +160,14 @@ exports.getReport = async function(teacherID,courseID,from,to){
 
     for (teacher of teachers) {
         for (course of courses) {
-            result.push(getOneReport(teacher,course,asks));
+            if (teacher.courses.includes(course._id))
+                result.push(getOneReport(teacher,course,asks));
         }
-        if (courseID=='')
-            result.push(getOneReport(teacher,{_id:'',courseName:'Other',courseCode:'Other'},asks));
+        if (courseID=='') {
+            report=getOneReport(teacher,{_id:'',courseName:'Other',courseCode:'Other'},asks);
+            if (report.answered!=0 || report.unanswered!=0) result.push(report);
+        }
+            
     }
 
     return result;
