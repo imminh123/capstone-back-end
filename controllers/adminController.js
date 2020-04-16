@@ -6,9 +6,9 @@ exports.getAllNumber = async (req, res) => {
 };
 
 exports.getReport = async (req,res)=>{
-    var teachers=req.query.teachers;
-    var courses=req.query.courses;
-    var startDate=req.query.startDate;
-    var endDate=req.query.endDate;
-    res.send(await adminDAO.getReport(teachers,courses,startDate,endDate));
+    var teacher=req.query.teacher;
+    var course=req.query.course;
+    var from=req.query.from;
+    var to=req.query.to;
+    res.send(await adminDAO.getReport(teacher,course,from,to));
 }

@@ -18,9 +18,24 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    folderID=Objectid(folderID);
-    var folder=await Folder.findById(folderID);
-    if (folder==null||folder=='') return makeJson('error','folderID not found');
+    if (folderID!=''){
+        folderID=Objectid(folderID);
+        var folder=await Folder.findById(folderID);
+        if (folder==null||folder=='') return makeJson('error','folderID not found');
+    }
+    else {
+        var folder=await Folder.findOne({studentID:studentID,courseName:'Other',courseCode:'Other'});
+        if (folder==null||folder=='') {
+            var folder=new Folder({
+                studentID:studentID,
+                courseID:'',
+                courseCode:'Other',
+                courseName:'Other'
+            });
+            await folder.save();
+        }
+        folderID=folder._id;
+    }    
     
     var highlight = new Highlight({
         studentID: studentID,

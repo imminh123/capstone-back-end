@@ -18,11 +18,24 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
-    folderID=Objectid(folderID);
-    var folder = await Folder.findOne({_id:folderID});
-    if (folder==null||folder=='') return makeJson('error','folderID not found');
-
-    if (studentID!=folder.studentID) return makeJson('error','input studentID and folder.studentID not match');
+    if (folderID!=''){
+        folderID=Objectid(folderID);
+        var folder = await Folder.findOne({_id:folderID});
+        if (folder==null||folder=='') return makeJson('error','folderID not found');
+    }
+    else {
+        var folder=await Folder.findOne({studentID:studentID,courseName:'Other',courseCode:'Other'});
+        if (folder==null||folder=='') {
+            folder=new Folder({
+                studentID:studentID,
+                courseID:'',
+                courseCode:'Other',
+                courseName:'Other'
+            });
+            await folder.save();
+        }
+        folderID=folder._id;
+    }
 
     var note = new Note({
         studentID:studentID,

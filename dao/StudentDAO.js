@@ -111,3 +111,21 @@ exports.allCourseOfStudent = async function(studentID){
     return student.courses;
     
 }
+
+exports.exitCourse = async function(studentID,courseID) {
+
+    studentID=Objectid(studentID);
+    var student= await Student.findById(studentID);
+    if (student==null||student=='') return makeJson('error','studentID not found');
+
+    await Student.updateOne(
+        {_id:studentID},
+        {$pull: {courses:courseID}},
+        {safe: true, upsert: true}
+    );
+
+    student= await Student.findById(studentID).populate('courses');
+
+    return student.courses;
+
+}

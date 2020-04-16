@@ -143,6 +143,10 @@ exports.allAskOfStudent = async function(studentID){
         result.push(newAsk(ask,ask.studentStatus));
     }
 
+    result.sort(function(a,b){
+        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+    });
+
     return result;
 
 }
@@ -161,6 +165,10 @@ exports.allAskOfTeacher = async function(teacherID){
     for (ask of asks){
         result.push(newAsk(ask,ask.teacherStatus));
     }
+
+    result.sort(function(a,b){
+        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+    });
 
     return result;
 

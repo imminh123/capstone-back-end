@@ -24,3 +24,9 @@ exports.getCourseOfStudent = async (req,res) => {
     var studentID=req.params['id'];
     res.send(await StudentDAO.allCourseOfStudent(studentID));
 }
+
+exports.exitCourse = async (req,res) => {
+    var studentID=req.params['studentID'];
+    var courseID=req.params['courseID'];
+    res.send(await StudentDAO.exitCourse(studentID,courseID));
+}

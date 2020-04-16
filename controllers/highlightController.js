@@ -18,7 +18,7 @@ exports.createHighlight = async (req, res, next) => {
     var url=req.body.url;
     var folderID=req.body.folderID;
     //check if all fields are filled
-    if (isEmpty(studentid)||isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(url)||isEmpty(folderID))
+    if (isEmpty(studentid)||isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(url))
                 res.send(msgEmpty());
     res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,folderID));               
 };

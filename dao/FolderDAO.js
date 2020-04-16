@@ -93,6 +93,11 @@ exports.createFolder=async function(studentID,courseCode,courseName){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return makeJson('error','studentID not found');
 
+    var folders=await Folder.find({studentID:studentID});
+    for (folder of folders){
+        if (folder.courseName==courseName && folder.courseCode==courseCode) return makeJson('error','Folder existed');
+    }
+
     var folder=new Folder({
         studentID:studentID,
         courseID:'',
@@ -124,7 +129,8 @@ exports.deleteFolder=async function(folderID){
         if (!student.courses.includes(folder.courseID)) 
             await Folder.deleteOne({_id:folderID});
     }
-
+    else await Folder.deleteOne({_id:folderID});
+    
     return makeJson('success','Delete successfully');
     
 }
