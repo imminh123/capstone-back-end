@@ -69,3 +69,8 @@ exports.searchAsk = async (req,res) => {
     var text=req.query.text;
     res.send(await AskDAO.searchAsk(userID,text));
 }
+
+exports.openAsk=async(req,res)=>{
+    var askID=req.params['id'];
+    res.send(await AskDAO.openAsk(askID));
+}
