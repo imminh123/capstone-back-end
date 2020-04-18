@@ -44,7 +44,7 @@ const studentController = require('./controllers/studentController');
 const departmentController = require('./controllers/departmentController');
 const myUserController = require('./controllers/userController');
 const folderController = require('./controllers/folderController');
-const savedAskController = require('./controllers/savedAskController');
+const faqController = require('./controllers/faqController');
 
 /**
  * API keys and Passport configuration.
@@ -365,11 +365,13 @@ app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
 app.post('/addcomment/:id', askController.addComment);
 app.put('/closeAsk/:id/:rating', askController.closeAsk);
+app.put('/openAsk/:id', askController.openAsk);
 app.get('/searchAsk', askController.searchAsk);
 
-app.get('/getSavedAskOfTeacher/:id',savedAskController.getSavedAskByTeacherID);
-app.put('/addSavedAsk/:teacherID/:askID', savedAskController.addSavedAsk);
-app.put('/removeSavedAsk/:teacherID/:askID', savedAskController.removeSavedAsk);
+app.get('/getFAQ/:id',faqController.getFAQ);
+app.get('/getFAQbyTeacherID/:id',faqController.getFAQbyTeacherID);
+app.post('/createFAQ/', faqController.createFAQ);
+app.delete('/removeFAQ/:id', faqController.removeFAQ);
 
 
 /**

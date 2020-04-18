@@ -1,7 +1,6 @@
 var Objectid = require('mongodb').ObjectID;
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
-const SavedAsk = require('../models/SavedAsk');
 
 function makeJson(type,msg){
 
@@ -42,12 +41,6 @@ exports.createTeacher = async function(name,email,gender,avatar){
         isActive:true
     });
     await teacher.save();
-
-    var savedAsk = new SavedAsk({
-        teacherID:teacher._id,
-        askID:[]
-    });
-    await savedAsk.save();
 
     return teacher;
 

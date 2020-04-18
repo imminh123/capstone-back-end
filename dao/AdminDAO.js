@@ -40,20 +40,23 @@ exports.getAllNumber = async function () {
 
 function getOneReport(teacher,course,asks){
 
-    var rating=0,answered=0,count=0;
+    var rating=0,answered=0,count=0,haveRate=0;
 
     //get average rating of this course
     for (ask of asks) {
         if (ask.courseID==course._id && ask.teacher.toString()==teacher._id) {
             count++;
             if (ask.isClosed) {
-                rating+=ask.rating;
+                if (rating!=0) {
+                    rating+=ask.rating;
+                    haveRate++;
+                }
                 answered++;
             }
         }
     }
 
-    rating=rating/answered;
+    rating=rating/haveRate;
 
     var newOb={
         teacherName:teacher.name,

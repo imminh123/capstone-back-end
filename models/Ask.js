@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const askSchema = new Schema({
-    scannedContent: {type: String},
+    scannedContent: {type: String, required: true},
     askContent: {type: String, required: true},
     student: {type: Schema.Types.ObjectId, ref: 'student'},
     teacher: {type:Schema.Types.ObjectId, ref: 'teacher'},

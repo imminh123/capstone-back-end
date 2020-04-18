@@ -245,6 +245,29 @@ exports.closeAsk=async function(askID,rating){
     
 }
 
+exports.openAsk=async function(askID){
+
+    askID=Objectid(askID);  
+    var ask=await Ask.findById(askID);
+    if (ask==null) return makeJson('error','askID not found');
+    var rating=ask.rating;
+    //update ask status and rating
+    await Ask.updateOne({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
+
+    //find teacher and update rating
+    var teacher=await Teacher.findById(ask.teacher);
+    switch (rating){
+        case 1: teacher.rating.star_1=teacher.rating.star_1-1;teacher.save();break;
+        case 2: teacher.rating.star_2=teacher.rating.star_2-1;teacher.save();break;
+        case 3: teacher.rating.star_3=teacher.rating.star_3-1;teacher.save();break;
+        case 4: teacher.rating.star_4=teacher.rating.star_4-1;teacher.save();break;
+        case 5: teacher.rating.star_5=teacher.rating.star_5-1;teacher.save();break;
+    }
+
+    return makeJson('success','Open question successfully');
+    
+}
+
 exports.searchAsk = async function(userID,text){
 
     userID=Objectid(userID);
