@@ -93,3 +93,18 @@ exports.getFAQByNumber = async function(number){
     return await FAQ.findOne({number:number});
 
 }
+
+exports.searchFAQ = async function(detail){
+    
+    var result;
+
+    if (isNaN(detail))
+        result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
+                                ,{askContent:{$regex:detail,$options:"i"}}]});
+    else
+        result = await FAQ.find({$or:[{number:detail}
+                                ,{courseCode:{$regex:detail,$options:"i"}}
+                                ,{askContent:{$regex:detail,$options:"i"}}]});
+    return result;
+
+}

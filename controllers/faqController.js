@@ -34,3 +34,8 @@ exports.getFAQByNumber = async (req,res) => {
     var number=req.params['number'];
     res.send(await faqDAO.getFAQByNumber(number));
 }
+
+exports.searchFAQ = async(req,res) => {
+    var detail=req.query.detail;
+    res.send(await faqDAO.searchFAQ(detail));
+};
