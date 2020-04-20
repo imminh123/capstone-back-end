@@ -367,11 +367,16 @@ app.put('/closeAsk/:id/:rating', askController.closeAsk);
 app.put('/openAsk/:id', askController.openAsk);
 app.get('/searchAsk', askController.searchAsk);
 
+/**
+ * FAQ
+ */
+app.get('/getAllFAQ/',faqController.getAllFAQ);
 app.get('/getFAQ/:id',faqController.getFAQ);
 app.get('/getFAQbyTeacherID/:id',faqController.getFAQbyTeacherID);
+app.get('/getFAQbyCourse/:course',faqController.getFaqByCourse);
 app.post('/createFAQ/', faqController.createFAQ);
 app.delete('/removeFAQ/:id', faqController.removeFAQ);
-
+//search
 
 /**
  * Student

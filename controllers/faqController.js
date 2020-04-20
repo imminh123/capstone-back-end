@@ -1,12 +1,9 @@
 const faqDAO = require('../dao/FAQDAO');
 
 exports.createFAQ = async (req,res) => {
-    var teacherID=req.body.teacherID;
     var askID=req.body.askID;
-    var scannedContent=req.body.scannedContent;
-    var askContent=req.body.askContent;
     var answer=req.body.answer;
-    res.send(await faqDAO.createFAQ(teacherID,askID,scannedContent,askContent,answer));
+    res.send(await faqDAO.createFAQ(askID,answer));
 }
 
 exports.removeFAQ = async (req,res) => {
@@ -22,4 +19,18 @@ exports.getFAQbyTeacherID = async (req,res) => {
 exports.getFAQ = async (req,res) => {
     var id=req.params['id'];
     res.send(await faqDAO.getFAQ(id));
+}
+
+exports.getAllFAQ = async (req,res) => {
+    res.send(await faqDAO.getAllFAQ());
+}
+
+exports.getFaqByCourse = async (req,res) => {
+    var course=req.params['course'];
+    res.send(await faqDAO.getFAQByCourse(course));
+}
+
+exports.getFAQByNumber = async (req,res) => {
+    var number=req.params['number'];
+    res.send(await faqDAO.getFAQByNumber(number));
 }
