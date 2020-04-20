@@ -375,6 +375,7 @@ app.get('/getAllFAQ/',faqController.getAllFAQ);
 app.get('/getFAQ/:id',faqController.getFAQ);
 app.get('/getFAQbyTeacherID/:id',faqController.getFAQbyTeacherID);
 app.get('/getFAQbyCourse/:course',faqController.getFaqByCourse);
+app.get('/getFAQbyNumber/:number',faqController.getFAQByNumber);
 app.post('/createFAQ/', faqController.createFAQ);
 app.delete('/removeFAQ/:id', faqController.removeFAQ);
 //search

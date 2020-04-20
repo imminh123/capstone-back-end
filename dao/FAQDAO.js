@@ -90,6 +90,6 @@ exports.getFAQByCourse = async function(courseCode){
 
 exports.getFAQByNumber = async function(number){
 
-    return await FAQ.find({number:number});
+    return await FAQ.findOne({number:number});
 
 }
