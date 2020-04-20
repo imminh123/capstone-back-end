@@ -63,13 +63,13 @@ exports.getFAQByTeacherID = async function(teacherID){
     var teacher = await Teacher.findById(Objectid(teacherID));
     if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
 
-    return await FAQ.find({teacherID:teacherID});
+    return await FAQ.find({teacherID:teacherID}).populate('teacherID');
 
 }
 
 exports.getFAQ = async function(id){
 
-    var faq = await FAQ.findById(Objectid(id));
+    var faq = await FAQ.findById(Objectid(id)).populate('teacherID');
     if (faq==null||faq=='') return makeJson('error','FAQ not found');
 
     return faq;
@@ -78,18 +78,33 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(){
 
-    return await FAQ.find();
+    return await FAQ.find().populate('teacherID');
 
 }
 
 exports.getFAQByCourse = async function(courseCode){
 
-    return await FAQ.find({courseCode:courseCode});
+    return await FAQ.find({courseCode:courseCode}).populate('teacherID');
 
 }
 
 exports.getFAQByNumber = async function(number){
 
-    return await FAQ.find({number:number});
+    return await FAQ.findOne({number:number}).populate('teacherID');
+
+}
+
+exports.searchFAQ = async function(detail){
+    
+    var result;
+
+    if (isNaN(detail))
+        result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+    else
+        result = await FAQ.find({$or:[{number:detail}
+                                ,{courseCode:{$regex:detail,$options:"i"}}
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+    return result;
 
 }
