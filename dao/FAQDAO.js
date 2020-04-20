@@ -3,6 +3,10 @@ const Ask = require('../models/Ask');
 const FAQ = require('../models/FAQ');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
+const FAQCounter = require('../models/FAQCounter');
+
+const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
+
 
 function makeJson(type,msg){
 
@@ -14,6 +18,7 @@ function makeJson(type,msg){
 exports.createFAQ = async function (askID,answer) {
 
     var ask= await Ask.findById(Objectid(askID));
+
     var courseCode;
     if (ask.courseID=='') {
         courseCode='Other';
@@ -23,8 +28,11 @@ exports.createFAQ = async function (askID,answer) {
         courseCode=course.courseCode;
     }
 
+    var faqcounter=await FAQCounter.findById(FAQCOUNTERID);;
+    await FAQCounter.updateOne({_id:FAQCOUNTERID},{number:faqcounter.number+1});
+
     var faq = new FAQ({
-        number:0,
+        number:faqcounter.number+1,
         askID:askID,
         courseCode:courseCode,
         teacherID:ask.teacher,  
