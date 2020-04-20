@@ -27,17 +27,16 @@ exports.createNote = async (req,res) => {
 exports.updateNoteByID = async (req,res) => {
     // res.setHeader("Content-Type", "application/json");
     var noteID=req.params['id'];
-    var folderID=req.body.folderID;
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
     var isPinned=req.body.isPinned;
     // console.log(noteID+' '+folderID+' '+scannedContent+' '+description+' '+url+' '+isPinned);
     //check if all fields are filled
-    if (isEmpty(folderID)||isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isPinned==undefined||isPinned.toString()=='')
+    if (isEmpty(scannedContent)||isEmpty(description)||isEmpty(url)||isPinned==undefined||isPinned.toString()=='')
                 res.send(msgEmpty()); 
         else {
-            res.send(await NoteDAO.updateNote(noteID,folderID,scannedContent,description,url,isPinned));                    
+            res.send(await NoteDAO.updateNote(noteID,scannedContent,description,url,isPinned));                    
         }
 }
 

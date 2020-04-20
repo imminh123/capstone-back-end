@@ -52,17 +52,13 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 }
 
 //changenote
-exports.updateNote = async function(noteID,folderID,scannedContent,description,url,isPinned){
+exports.updateNote = async function(noteID,scannedContent,description,url,isPinned){
     // console.log(noteID+' '+folderID+' '+scannedContent+' '+description+' '+url+' '+isPinned);
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
     if (note==null||note=='') return makeJson('error','noteID not found');
-    
-    folderID=Objectid(folderID);
-    var folder = await Folder.findOne({_id:folderID});
-    if (folder==null||folder=='') return makeJson('error','folderID not found');
 
-    await Note.updateOne({_id:noteID},{folderID:folderID,scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()});
+    await Note.updateOne({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()});
     
     note=await Note.findById(noteID);
     var result = {
