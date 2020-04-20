@@ -29,3 +29,8 @@ exports.getFaqByCourse = async (req,res) => {
     var course=req.params['course'];
     res.send(await faqDAO.getFAQByCourse(course));
 }
+
+exports.getFAQByNumber = async (req,res) => {
+    var number=req.params['number'];
+    res.send(await faqDAO.getFAQByNumber(number));
+}

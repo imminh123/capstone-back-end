@@ -79,3 +79,9 @@ exports.getFAQByCourse = async function(courseCode){
     return await FAQ.find({courseCode:courseCode});
 
 }
+
+exports.getFAQByNumber = async function(number){
+
+    return await FAQ.find({number:number});
+
+}
