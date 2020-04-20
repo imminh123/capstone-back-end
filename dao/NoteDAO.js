@@ -53,7 +53,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 
 //changenote
 exports.updateNote = async function(noteID,folderID,scannedContent,description,url,isPinned){
-    
+    // console.log(noteID+' '+folderID+' '+scannedContent+' '+description+' '+url+' '+isPinned);
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
     if (note==null||note=='') return makeJson('error','noteID not found');
