@@ -372,9 +372,9 @@ app.get('/searchAsk', askController.searchAsk);
  */
 app.get('/getAllFAQ/',faqController.getAllFAQ);
 app.get('/getFAQ/:id',faqController.getFAQ);
-app.get('/getFAQbyTeacherID/:id',faqController.getFAQbyTeacherID);
-app.get('/getFAQbyCourse/:course',faqController.getFaqByCourse);
-app.get('/getFAQbyNumber/:number',faqController.getFAQByNumber);
+app.get('/getFAQbyTeacherID/',faqController.getFAQbyTeacherID);
+app.get('/getFAQbyCourse/',faqController.getFaqByCourse);
+app.get('/getFAQbyNumber/',faqController.getFAQByNumber);
 app.post('/createFAQ/', faqController.createFAQ);
 app.delete('/removeFAQ/:id', faqController.removeFAQ);
 app.get('/searchFAQ/', faqController.searchFAQ);

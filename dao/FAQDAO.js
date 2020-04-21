@@ -5,6 +5,9 @@ const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const FAQCounter = require('../models/FAQCounter');
 
+const getFunction = require('./getFunction');
+
+const PERPAGE=10;
 const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
 
 
@@ -38,7 +41,8 @@ exports.createFAQ = async function (askID,answer) {
         teacherID:ask.teacher,  
         scannedContent:ask.scannedContent,
         askContent:ask.askContent,
-        answer:answer
+        answer:answer,
+        date:getFunction.today()
     });
 
     await faq.save();
@@ -58,12 +62,14 @@ exports.removeFAQ = async function (faqID) {
 
 }
 
-exports.getFAQByTeacherID = async function(teacherID){
+exports.getFAQByTeacherID = async function(teacherID,page){
 
     var teacher = await Teacher.findById(Objectid(teacherID));
     if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
 
-    return await FAQ.find({teacherID:teacherID}).populate('teacherID');
+    return await FAQ.find({teacherID:teacherID}).populate('teacherID')
+                                        .skip(PERPAGE*(page-1))
+                                        .limit(Number(PERPAGE));
 
 }
 
@@ -76,15 +82,19 @@ exports.getFAQ = async function(id){
 
 }
 
-exports.getAllFAQ = async function(){
+exports.getAllFAQ = async function(page){
 
-    return await FAQ.find().populate('teacherID');
+    return await FAQ.find().populate('teacherID')
+                        .skip(PERPAGE*(page-1))
+                        .limit(Number(PERPAGE));
 
 }
 
-exports.getFAQByCourse = async function(courseCode){
+exports.getFAQByCourse = async function(courseCode,page){
 
-    return await FAQ.find({courseCode:courseCode}).populate('teacherID');
+    return await FAQ.find({courseCode:courseCode}).populate('teacherID')
+                    .skip(PERPAGE*(page-1))
+                    .limit(Number(PERPAGE));
 
 }
 
@@ -94,17 +104,21 @@ exports.getFAQByNumber = async function(number){
 
 }
 
-exports.searchFAQ = async function(detail){
+exports.searchFAQ = async function(detail,page){
     
     var result;
 
     if (isNaN(detail))
         result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID')
+                                .skip(PERPAGE*(page-1))
+                                .limit(Number(PERPAGE));
     else
         result = await FAQ.find({$or:[{number:detail}
                                 ,{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID')
+                                .skip(PERPAGE*(page-1))
+                                .limit(Number(PERPAGE));
     return result;
 
 }

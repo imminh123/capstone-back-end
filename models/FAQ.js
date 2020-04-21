@@ -8,7 +8,8 @@ const FAQSchema = new Schema({
     teacherID: {type: Schema.Types.ObjectId, ref: 'teacher'},
     scannedContent: {type: String, required: true},
     askContent: {type: String, required: true},
-    answer: {type: String, required: true}
+    answer: {type: String, required: true},
+    date: {type:String}
 });
 
 const faq = mongoose.model('faq', FAQSchema);

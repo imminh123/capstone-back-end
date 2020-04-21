@@ -252,7 +252,8 @@ exports.openAsk=async function(askID){
     if (ask==null) return makeJson('error','askID not found');
     var rating=ask.rating;
     //update ask status and rating
-    await Ask.updateOne({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
+    await Ask.findOneAndUpdate({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
+    // ask=await Ask.findById(askID);
 
     //find teacher and update rating
     var teacher=await Teacher.findById(ask.teacher);
@@ -263,6 +264,11 @@ exports.openAsk=async function(askID){
         case 4: teacher.rating.star_4=teacher.rating.star_4-1;teacher.save();break;
         case 5: teacher.rating.star_5=teacher.rating.star_5-1;teacher.save();break;
     }
+
+    // var result = {
+    //     'success':'Open question successfully',
+    //     ask
+    // }
 
     return makeJson('success','Open question successfully');
     
