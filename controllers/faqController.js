@@ -12,8 +12,9 @@ exports.removeFAQ = async (req,res) => {
 }
 
 exports.getFAQbyTeacherID = async (req,res) => {
-    var teacherID=req.params['id'];
-    res.send(await faqDAO.getFAQByTeacherID(teacherID));
+    var teacherID=req.query.teacherID;
+    var page=req.query.page;
+    res.send(await faqDAO.getFAQByTeacherID(teacherID,page));
 }
 
 exports.getFAQ = async (req,res) => {
@@ -22,12 +23,14 @@ exports.getFAQ = async (req,res) => {
 }
 
 exports.getAllFAQ = async (req,res) => {
-    res.send(await faqDAO.getAllFAQ());
+    var page=req.query.page;
+    res.send(await faqDAO.getAllFAQ(page));
 }
 
 exports.getFaqByCourse = async (req,res) => {
-    var course=req.params['course'];
-    res.send(await faqDAO.getFAQByCourse(course));
+    var course=req.query.course;
+    var page=req.query.page;
+    res.send(await faqDAO.getFAQByCourse(course,page));
 }
 
 exports.getFAQByNumber = async (req,res) => {
@@ -37,5 +40,6 @@ exports.getFAQByNumber = async (req,res) => {
 
 exports.searchFAQ = async(req,res) => {
     var detail=req.query.detail;
-    res.send(await faqDAO.searchFAQ(detail));
+    var page=req.query.page;
+    res.send(await faqDAO.searchFAQ(detail,page));
 };
