@@ -114,12 +114,9 @@ exports.exitCourse = async function(studentID,courseID) {
 
     await Student.findOneAndUpdate(
         {_id:studentID}
-        ,{$pull: {courses:courseID}}
-        ,{returnOriginal: false}
-        ,function(err,doc){
-            if (err) return err;
-            student=doc;
-        }).populate('courses');
+        ,{$pull: {courses:courseID}});
+
+    student = await Student.findById(studentID).populate('courses');
 
     return student;
 
