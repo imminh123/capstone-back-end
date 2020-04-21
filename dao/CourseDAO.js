@@ -58,7 +58,7 @@ async function removeCourseFromTeacher(id){
     await Teacher.updateMany(
         {},
         {$pull: {courses:id}},
-        {safe: true, upsert: true}
+        {safe: true}
     );
 
 };
@@ -69,7 +69,7 @@ async function removeCourseFromStudent(id){
     await Student.updateMany(
         {},
         {$pull: {courses:id}},
-        {safe: true, upsert: true}
+        {safe: true}
     );
 
 };
@@ -80,7 +80,7 @@ async function addCourseToTeacher(courseid,teachers){
     teachers.forEach(async function (data) {
             var teacherid = Objectid(data);
             await Teacher.updateOne({ _id: teacherid }, { $addToSet: { courses: courseid } }
-                        , { safe: true, upsert: true });
+                        , { safe: true });
         });
 
 };
@@ -173,12 +173,18 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         
     if (course==null||course=='') return makeJson('error','ID not found');
 
-    await Course.updateOne({_id:id},{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers});
+    await Course.findOneAndUpdate({_id:id}
+        ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}
+        ,{returnOriginal: false}
+        ,function(err,doc){
+            if (err) return err;
+            course=doc;
+        });
     
     await removeCourseFromTeacher(id);
     await addCourseToTeacher(id,teachers);
 
-    course=await Course.findById(id);
+    // course=await Course.findById(id);
     var result = {
         'success':'Update successfully',
         course

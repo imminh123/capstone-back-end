@@ -58,9 +58,13 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     var note=await Note.findById(noteID);
     if (note==null||note=='') return makeJson('error','noteID not found');
 
-    await Note.updateOne({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()});
+    await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
+        ,{returnOriginal: false}
+            ,function(err,doc){
+                if (err) return err;
+                note=doc;
+            });
     
-    note=await Note.findById(noteID);
     var result = {
         success:'Update successfully',
         note:{

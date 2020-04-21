@@ -54,7 +54,7 @@ exports.deleteDepartmentByID = async function(id){
     await Course.updateMany(
         {},
         {$pull: {departments:department.name}},
-        {safe: true, upsert: true}
+        {safe: true}
     );
     await Department.deleteOne({_id:id});
 
@@ -76,13 +76,17 @@ exports.updateDepartment = async function(id,name,description){
         //change all courses have department old name to new name
         await Course.updateMany({departments:oldName},{$set:{'departments.$':name}});
     }
-
-    await Department.updateOne({_id:id},{name:name,description:description});
-    var result = await Department.findById(id);
+    
+    await Department.findOneAndUpdate({_id:id},{name:name,description:description}
+        ,{returnOriginal: false}
+        ,function(err,doc){
+            if (err) return err;
+            departmentByID=doc;
+        });
 
     result = {
         'success':'Update successfully',
-        result
+        departmentByID
     };
 
     return result;

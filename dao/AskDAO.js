@@ -207,14 +207,14 @@ exports.addComment = async function(askID,userID,message){
             dateModified:getFunction.today(),
             studentStatus:'replied',
             teacherStatus:'new'},
-            {safe:true,upsert:true});
+            {safe:true});
     } else {
         await Ask.updateOne({_id: askID}, 
             {$addToSet:{comments:comment._id},
             dateModified:getFunction.today(),
             teacherStatus:'replied',
             studentStatus:'new'},
-            {safe:true,upsert:true});
+            {safe:true});
     }
     
 
