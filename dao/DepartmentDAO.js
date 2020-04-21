@@ -1,19 +1,12 @@
 var Objectid = require('mongodb').ObjectID;
 const Course = require('../models/Course');
 const Department = require('../models/Department');
-
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-}
+const getFunction = require('./getFunction');
 
 exports.createDepartment = async function(name,description){
 
     var department = await Department.findOne({name:name});
-    if (!(department==null||department=='')) return makeJson('error','Department name already existed');
+    if (!(department==null||department=='')) return getFunction.makeJson('error','Department name already existed');
 
     department = new Department({
         name: name,

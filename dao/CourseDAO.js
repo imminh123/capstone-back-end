@@ -8,13 +8,6 @@ const Teacher = require('../models/Teacher');
 const Department = require('../models/Department');
 const getFunction = require('./getFunction');
 
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-}
-
 //check if code has already existed
 async function existed(id,code,url){
 
@@ -97,7 +90,7 @@ exports.getCourseByID = async function(id){
 
     id=Objectid(id);
     var course = await Course.find({_id:id}).populate('teachers');
-    if (course==null||course=='') return makeJson('error','Course ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','Course ID not found');
 
     return course;
 
@@ -108,7 +101,7 @@ exports.deleteCourse = async function(id){
 
     id=Objectid(id);
     var course=await Course.findById(id);
-    if (course==null||course=='') return makeJson('error','ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
 
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
@@ -120,7 +113,7 @@ exports.deleteCourse = async function(id){
     await removeCourseFromTeacher(id);
     await removeCourseFromStudent(id);
 
-    return makeJson('success','Delete successfully');
+    return getFunction.makeJson('success','Delete successfully');
 
 };
 
@@ -128,9 +121,9 @@ exports.deleteCourse = async function(id){
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
 
     if (await existed(0,code,url)) {
-        return makeJson('error','New code or url already existed');
+        return getFunction.makeJson('error','New code or url already existed');
     }
-    if (await invalidDepartment(departments)) return makeJson('error','Department not found');
+    if (await invalidDepartment(departments)) return getFunction.makeJson('error','Department not found');
 
     var course = new Course({
         courseName: name,
@@ -158,10 +151,10 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
 
     if (await existed(id,code,url)) {
-        return makeJson('error','New code or url already existed');
+        return getFunction.makeJson('error','New code or url already existed');
     }
 
-    if (await invalidDepartment(departments)) return makeJson('error','Department not found');
+    if (await invalidDepartment(departments)) return getFunction.makeJson('error','Department not found');
     id=Objectid(id);
     var course=await Course.findById(id);
 
@@ -171,7 +164,7 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         await FAQ.updateMany({courseCode:course.courseCode},{courseCode:code});
     }
         
-    if (course==null||course=='') return makeJson('error','ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
 
     await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}

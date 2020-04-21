@@ -7,6 +7,13 @@ exports.today = function(){
 
 }
 
+exports.makeJson = function(type,msg){
+
+    var newObject = '{"'+type+'":"'+msg+'"}';
+    return JSON.parse(newObject);
+
+}
+
 exports.change_alias = function(alias) {
 
     var str = alias;
