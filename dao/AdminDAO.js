@@ -2,18 +2,12 @@ const Ask = require('../models/Ask');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-    
-}
+const getFunction = require('./getFunction');
 
 exports.createAdmin = async function(adminName,email,gender,avatar){
 
     var admin=await Admin.findOne({email:email});
-    if (!(admin==null||admin=='')) return makeJson('error','Email already existed');
+    if (!(admin==null||admin=='')) return getFunction.makeJson('error','Email already existed');
 
     admin = new Admin({
         name:adminName,
@@ -91,7 +85,7 @@ async function getCourseOfReport(courseID){
     }
     else {
         var courses=await Course.find({_id:courseID}).lean();
-        if (courses=='') return makeJson('error','Course not found');
+        if (courses=='') return getFunction.makeJson('error','Course not found');
     }
 
     return courses;

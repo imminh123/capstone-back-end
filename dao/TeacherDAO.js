@@ -1,19 +1,13 @@
 var Objectid = require('mongodb').ObjectID;
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-}
+const getFunction = require('./getFunction');
 
 exports.allTeacherByCourse=async function(courseID){
 
     courseID=Objectid(courseID);
     var course=await Course.findById(courseID);
-    if (course==null||course=='') return makeJson('error','ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
 
     return await Teacher.find({courses:courseID});
 
@@ -23,7 +17,7 @@ exports.allTeacherByCourse=async function(courseID){
 exports.createTeacher = async function(name,email,gender,avatar){
 
     var teacher=await Teacher.findOne({email:email});
-    if (!(teacher==null||teacher=='')) return makeJson('error','Email already existed');
+    if (!(teacher==null||teacher=='')) return getFunction.makeJson('error','Email already existed');
     
     teacher = new Teacher({
         name:name,
@@ -58,7 +52,7 @@ exports.getTeacherByID = async function(id){
 
     id = Objectid(id);
     var teacher = await Teacher.findOne({_id:id}).populate('courses');
-    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
 
     return teacher;
 
@@ -69,11 +63,11 @@ exports.updateTeacher = async function(id,name,email,isActive){
 
     id=Objectid(id);
     var teacher = await Teacher.find({_id:id});
-    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
 
     await Teacher.updateOne({_id:id},{name:name,email:email,isActive:isActive});
 
-    return makeJson('success','Update successfully');
+    return getFunction.makeJson('success','Update successfully');
 
 };
 
@@ -81,11 +75,11 @@ exports.changeteacherisactive = async function(id,isActive){
 
     id=Objectid(id);
     var teacher=await Teacher.find({_id:id});
-    if (teacher==null||teacher=='') return makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
 
     await Teacher.updateOne({_id:id},{isActive:isActive});
 
-    return makeJson('success','Update successfully');
+    return getFunction.makeJson('success','Update successfully');
 }
 
 //search teacher name and email

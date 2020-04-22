@@ -3,24 +3,18 @@ var Objectid = require('mongodb').ObjectID;
 const AdminDAO = require('../dao/AdminDAO');
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
+const getFunction = require('./getFunction');
 var bcrypt = require('bcrypt');
 
 
 const saltRounds = 10;
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-    
-}
 
 exports.createUser = async function(email,google,tokens,role,profile, password){
     var user = await User.findOne({email:email});
     var newProfile = null;
     var error,status;
     
-    if (!(user==null||user=='')) return makeJson('error','User Email already existed');
+    if (!(user==null||user=='')) return getFunction.makeJson('error','User Email already existed');
 
     if (role=='admin') {
         newProfile = await AdminDAO.createAdmin(profile.name,email,profile.gender,profile.avatar);
@@ -33,10 +27,10 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 
     }
     else
-        return makeJson('error','Role not correct [admin,teacher,student]');
+        return getFunction.makeJson('error','Role not correct [admin,teacher,student]');
         
 
-    if (newProfile.error) return makeJson('error',newProfile.error);
+    if (newProfile.error) return getFunction.makeJson('error',newProfile.error);
 
 
 
@@ -70,7 +64,7 @@ exports.getUserByID = async function(id){
 
     id=Objectid(id);
     var user=await User.findById(id).populate('profile');
-    if (user==null||user=='') return makeJson('error','userID not found');
+    if (user==null||user=='') return getFunction.makeJson('error','userID not found');
 
     return user;
 

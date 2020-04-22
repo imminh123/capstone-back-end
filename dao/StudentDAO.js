@@ -5,13 +5,7 @@ const Course = require('../models/Course');
 const Folder = require('../models/Folder');
 const Student = require('../models/Student');
 const Highlight = require('../models/Highlight');
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-} 
+const getFunction = require('./getFunction');
 
 exports.createStudent = async function(name,email,gender,avatar){
 
@@ -36,7 +30,7 @@ exports.getStudentByID = async function(id){
 
     id=Objectid(id);
     var student=await Student.findById(id).populate('courses');
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     return student;
     
@@ -52,13 +46,13 @@ exports.updateCourseOfStudent = async function(id,courses){
 
     id=Objectid(id);
     var student=Student.findById(id);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
-    if (courses==null||courses==undefined) return makeJson('error','Courses null or underfined');
+    if (courses==null||courses==undefined) return getFunction.makeJson('error','Courses null or underfined');
 
     for (courseID of courses){
         var course=await Course.findById(courseID);
-        if (course==null) return makeJson('error','courseID not found');
+        if (course==null) return getFunction.makeJson('error','courseID not found');
     }
 
     await Student.updateOne({_id:id},{courses:courses});
@@ -78,7 +72,7 @@ exports.updateCourseOfStudent = async function(id,courses){
         }
     }
 
-    return makeJson('success','Update successfuly');
+    return getFunction.makeJson('success','Update successfuly');
 
 }
 
@@ -86,7 +80,7 @@ exports.getStudentStatistic=async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     var notes=await Note.find({studentID:studentID});
     var hls=await Highlight.find({studentID:studentID});
@@ -106,7 +100,7 @@ exports.allCourseOfStudent = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID).populate('courses');
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     return student.courses;
     
@@ -116,15 +110,13 @@ exports.exitCourse = async function(studentID,courseID) {
 
     studentID=Objectid(studentID);
     var student= await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
-    await Student.updateOne(
-        {_id:studentID},
-        {$pull: {courses:courseID}},
-        {safe: true, upsert: true}
-    );
+    await Student.findOneAndUpdate(
+        {_id:studentID}
+        ,{$pull: {courses:courseID}});
 
-    student= await Student.findById(studentID).populate('courses');
+    student = await Student.findById(studentID).populate('courses');
 
     return student;
 

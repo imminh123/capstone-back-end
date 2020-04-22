@@ -5,14 +5,6 @@ const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 const getFunction = require('./getFunction');
 
-
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-}
-
 function newAsk(ask,status){
 
     var result = {
@@ -39,11 +31,11 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
     
     teacherID=Objectid(teacherID);
     var teacher=await Student.findById(studentID);
-    if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
 
     var today=getFunction.today();
 
@@ -64,7 +56,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
     });
 
     await ask.save();
-    return makeJson('success','Create successfully');
+    return getFunction.makeJson('success','Create successfully');
 }
 
 //delete a comment
@@ -82,7 +74,7 @@ exports.deleteAsk = async function(id){
 
     id=Objectid(id);
     var ask=await Ask.findById(id);
-    if (ask==null||ask=='') return makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
     
     //delete all comments
     await deleteComments(ask.comments);
@@ -90,7 +82,7 @@ exports.deleteAsk = async function(id){
     //delete ask
     await Ask.deleteOne({_id:id});
 
-    return makeJson('success','Delete successfully');
+    return getFunction.makeJson('success','Delete successfully');
 
 }
 
@@ -99,7 +91,7 @@ exports.getAskByID = async function(userID,askID){
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
 
     //check userID is teacher or student then update status accordingly
     if (userID==ask.teacher._id) {
@@ -121,7 +113,7 @@ exports.getAskByID = async function(userID,askID){
         var result = newAsk(ask,ask.studentStatus);
 
     } else {
-        return makeJson('error','userID not match');
+        return getFunction.makeJson('error','userID not match');
     }
 
     return result;
@@ -133,7 +125,7 @@ exports.allAskOfStudent = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     var asks = await Ask.find({student:studentID}).populate('student').populate('teacher');
     
@@ -156,7 +148,7 @@ exports.allAskOfTeacher = async function(teacherID){
 
     teacherID=Objectid(teacherID);
     var teacher=await Teacher.findById(teacherID);
-    if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
 
     var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
     
@@ -186,10 +178,10 @@ exports.addComment = async function(askID,userID,message){
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
 
     //check input userID 
-    if (userID!=ask.student._id && userID!=ask.teacher._id) return makeJson('error','UserID isnt match');
+    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','UserID isnt match');
 
     //create new comment
     var comment = new Comment({
@@ -207,14 +199,14 @@ exports.addComment = async function(askID,userID,message){
             dateModified:getFunction.today(),
             studentStatus:'replied',
             teacherStatus:'new'},
-            {safe:true,upsert:true});
+            {safe:true});
     } else {
         await Ask.updateOne({_id: askID}, 
             {$addToSet:{comments:comment._id},
             dateModified:getFunction.today(),
             teacherStatus:'replied',
             studentStatus:'new'},
-            {safe:true,upsert:true});
+            {safe:true});
     }
     
 
@@ -226,7 +218,7 @@ exports.closeAsk=async function(askID,rating){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return makeJson('error','askID not found');
+    if (ask==null) return getFunction.makeJson('error','askID not found');
 
     //update ask status and rating
     await Ask.updateOne({_id:askID},{isClosed:true,rating:rating,dateModified:getFunction.today()});
@@ -241,7 +233,7 @@ exports.closeAsk=async function(askID,rating){
         case 5: teacher.rating.star_5=teacher.rating.star_5+1;teacher.save();break;
     }
 
-    return makeJson('success','Close question successfully');
+    return getFunction.makeJson('success','Close question successfully');
     
 }
 
@@ -249,7 +241,7 @@ exports.openAsk=async function(askID){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return makeJson('error','askID not found');
+    if (ask==null) return getFunction.makeJson('error','askID not found');
     var rating=ask.rating;
     //update ask status and rating
     await Ask.findOneAndUpdate({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
@@ -270,7 +262,7 @@ exports.openAsk=async function(askID){
     //     ask
     // }
 
-    return makeJson('success','Open question successfully');
+    return getFunction.makeJson('success','Open question successfully');
     
 }
 
@@ -282,7 +274,7 @@ exports.searchAsk = async function(userID,text){
     var user=await Student.findById(userID);
     if (user==null) {
         user=await Teacher.findById(userID);
-        if (user==null) return makeJson('error','userID not found');
+        if (user==null) return getFunction.makeJson('error','userID not found');
         role='teacher';
     }
 

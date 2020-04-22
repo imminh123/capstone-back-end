@@ -4,24 +4,17 @@ const Folder = require('../models/Folder');
 const Student = require('../models/Student');
 const getFunction = require('./getFunction');
 
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
-}
-
 //create a note
 exports.createNote = async function(studentID,folderID,scannedContent,description,url){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     if (folderID!=''){
         folderID=Objectid(folderID);
         var folder = await Folder.findOne({_id:folderID});
-        if (folder==null||folder=='') return makeJson('error','folderID not found');
+        if (folder==null||folder=='') return getFunction.makeJson('error','folderID not found');
     }
     else {
         var folder=await Folder.findOne({studentID:studentID,courseName:'Other',courseCode:'Other'});
@@ -47,7 +40,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     });
     await note.save();
 
-    return makeJson('success','Create successfully');
+    return getFunction.makeJson('success','Create successfully');
 
 }
 
@@ -56,11 +49,15 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     // console.log(noteID+' '+folderID+' '+scannedContent+' '+description+' '+url+' '+isPinned);
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
-    if (note==null||note=='') return makeJson('error','noteID not found');
+    if (note==null||note=='') return getFunction.makeJson('error','noteID not found');
 
-    await Note.updateOne({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()});
+    await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
+        ,{returnOriginal: false}
+            ,function(err,doc){
+                if (err) return err;
+                note=doc;
+            });
     
-    note=await Note.findById(noteID);
     var result = {
         success:'Update successfully',
         note:{
@@ -84,11 +81,11 @@ exports.changeIsPinned = async function(id,isPinned){
 
     id=Objectid(id);
     var note=await Note.find({_id:id});
-    if (note==null||note=='') return makeJson('error','NoteID not found');
+    if (note==null||note=='') return getFunction.makeJson('error','NoteID not found');
 
     await Note.updateOne({_id:id},{isPinned:isPinned});
 
-    return makeJson('success','Update successfully');
+    return getFunction.makeJson('success','Update successfully');
 
 }
 
@@ -97,11 +94,11 @@ exports.deleteNote = async function(noteID){
 
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
-    if (note==null||note=='') return makeJson('error','noteID not found');
+    if (note==null||note=='') return getFunction.makeJson('error','noteID not found');
 
     await Note.deleteOne({_id:noteID});
 
-    return makeJson('success','Delete successfully');
+    return getFunction.makeJson('success','Delete successfully');
 
 }
 
@@ -110,7 +107,7 @@ exports.getNote = async function(noteID){
 
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
-    if (note==null||note=='') return makeJson('error','noteID not found');
+    if (note==null||note=='') return getFunction.makeJson('error','noteID not found');
 
     return note;
     
@@ -121,7 +118,7 @@ exports.getAllNoteByStudentID = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     return await Note.find({studentID:studentID});
    
@@ -131,7 +128,7 @@ exports.searchNote = async function(studentID,folderID,text){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     if (folderID.toString()=='all') {
 
@@ -161,7 +158,7 @@ exports.getRecentNote = async function(studentID,limit){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
     var notes = await Note.find({studentID:studentID});
 

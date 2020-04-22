@@ -10,12 +10,11 @@ const getFunction = require('./getFunction');
 const PERPAGE=10;
 const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
 
+function getResultWithTotalPage(result,page){
+    var size=Math.ceil(result.length/PERPAGE);
+    result=JSON.stringify(result.slice((page-1)*PERPAGE,page*PERPAGE));
 
-function makeJson(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
+    return JSON.parse('{"totalPage":'+size+',"result":'+result+'}');
 }
 
 exports.createFAQ = async function (askID,answer) {
@@ -47,7 +46,7 @@ exports.createFAQ = async function (askID,answer) {
 
     await faq.save();
 
-    return makeJson('success','Create successfully');
+    return getFunction.makeJson('success','Create successfully');
 
 }
 
@@ -55,28 +54,17 @@ exports.removeFAQ = async function (faqID) {
 
     faqID=Objectid(faqID);
     var faq = await FAQ.findById(faqID);
-    if (faq==null||faq=='') return makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
     await FAQ.deleteOne({_id:faqID});
 
-    return makeJson('success','Remove FAQ successfully');
-
-}
-
-exports.getFAQByTeacherID = async function(teacherID,page){
-
-    var teacher = await Teacher.findById(Objectid(teacherID));
-    if (teacher==null||teacher=='') return makeJson('error','teacherID not found');
-
-    return await FAQ.find({teacherID:teacherID}).populate('teacherID')
-                                        .skip(PERPAGE*(page-1))
-                                        .limit(Number(PERPAGE));
+    return getFunction.makeJson('success','Remove FAQ successfully');
 
 }
 
 exports.getFAQ = async function(id){
 
     var faq = await FAQ.findById(Objectid(id)).populate('teacherID');
-    if (faq==null||faq=='') return makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
 
     return faq;
 
@@ -84,17 +72,23 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(page){
 
-    return await FAQ.find().populate('teacherID')
-                        .skip(PERPAGE*(page-1))
-                        .limit(Number(PERPAGE));
+    return getResultWithTotalPage(await FAQ.find().populate('teacherID'),page);
+
+}
+
+exports.getFAQByTeacherID = async function(teacherID,page){
+
+    var teacher = await Teacher.findById(Objectid(teacherID));
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
+
+    return getResultWithTotalPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
 
 }
 
 exports.getFAQByCourse = async function(courseCode,page){
 
-    return await FAQ.find({courseCode:courseCode}).populate('teacherID')
-                    .skip(PERPAGE*(page-1))
-                    .limit(Number(PERPAGE));
+    return getResultWithTotalPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
+                    
 
 }
 
@@ -110,15 +104,11 @@ exports.searchFAQ = async function(detail,page){
 
     if (isNaN(detail))
         result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID')
-                                .skip(PERPAGE*(page-1))
-                                .limit(Number(PERPAGE));
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
     else
         result = await FAQ.find({$or:[{number:detail}
                                 ,{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID')
-                                .skip(PERPAGE*(page-1))
-                                .limit(Number(PERPAGE));
-    return result;
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+    return getResultWithTotalPage(result,page);
 
 }
