@@ -17,10 +17,12 @@ exports.createHighlight = async (req, res, next) => {
     var color=req.body.color;
     var url=req.body.url;
     var folderID=req.body.folderID;
+    var startOffSet=req.body.startOffSet;
+    var endOffSet=req.body.endOffSet;
     //check if all fields are filled
     if (isEmpty(studentid)||isEmpty(scannedContent)||isEmpty(index)||isEmpty(color)||isEmpty(url))
                 res.send(msgEmpty());
-    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,folderID));               
+    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,folderID,startOffSet,endOffSet));               
 };
 
 exports.getHighlightByID = async (req,res) => {

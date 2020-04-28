@@ -5,7 +5,7 @@ const Highlight = require('../models/Highlight');
 const getFunction = require('./getFunction');
 
 //create a highlight
-exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID){
+exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID,startOffSet,endOffSet){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
@@ -37,7 +37,9 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
         color: color,
         dateModified: getFunction.today(),
         url : url,
-        folderID:folderID
+        folderID:folderID,
+        startOffSet:startOffSet,
+        endOffSet:endOffSet
     });
     await highlight.save();
 
