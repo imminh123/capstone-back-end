@@ -31,6 +31,7 @@ exports.createAsk = async (req,res) => {
         }
 }
 
+//tra ve da co faq chua
 exports.getAskByID = async (req,res) => {
     var userID=req.params['userID'];
     var askID=req.params['askID'];

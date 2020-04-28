@@ -10,7 +10,7 @@ const getFunction = require('./getFunction');
 const PERPAGE=10;
 const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
 
-function getResultWithTotalPage(result,page){
+function getResultOfPage(result,page){
     var size=Math.ceil(result.length/PERPAGE);
     result=JSON.stringify(result.slice((page-1)*PERPAGE,page*PERPAGE));
 
@@ -18,6 +18,10 @@ function getResultWithTotalPage(result,page){
 }
 
 exports.createFAQ = async function (askID,answer) {
+
+    var existedFAQ=await FAQ.findOne({askID:askID});
+    if (existedFAQ!=null || existedFAQ!='') 
+        return getFunction.makeJson('error','This question has been added to FAQ');
 
     var ask= await Ask.findById(Objectid(askID));
 
@@ -72,7 +76,7 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(page){
 
-    return getResultWithTotalPage(await FAQ.find().populate('teacherID'),page);
+    return getResultOfPage(await FAQ.find().populate('teacherID'),page);
 
 }
 
@@ -81,13 +85,13 @@ exports.getFAQByTeacherID = async function(teacherID,page){
     var teacher = await Teacher.findById(Objectid(teacherID));
     if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
 
-    return getResultWithTotalPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
+    return getResultOfPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
 
 }
 
 exports.getFAQByCourse = async function(courseCode,page){
 
-    return getResultWithTotalPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
+    return getResultOfPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
                     
 
 }
@@ -109,6 +113,6 @@ exports.searchFAQ = async function(detail,page){
         result = await FAQ.find({$or:[{number:detail}
                                 ,{courseCode:{$regex:detail,$options:"i"}}
                                 ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
-    return getResultWithTotalPage(result,page);
+    return getResultOfPage(result,page);
 
 }
