@@ -53,6 +53,9 @@ exports.createFAQ = async function (askID,answer) {
 
     await faq.save();
 
+    var faqs=await FAQ.find({number:faq.number});
+    if (faqs.length!=1) FAQ.deleteOne({number:faq.number});
+
     return getFunction.makeJson('success','Create successfully');
 
 }
