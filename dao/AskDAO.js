@@ -61,7 +61,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     await ask.save();
 
-    // getFunction.sendEmail(teacher,'You got a new question',askContent);
+    // getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
 
     return getFunction.makeJson('success','Create successfully');
 
@@ -237,7 +237,7 @@ exports.addComment = async function(askID,userID,message){
             studentStatus:'replied',
             teacherStatus:'new'}
         );
-        // getFunction.sendEmail(ask.teacher,'Student has replied to your answer',message);   
+        // getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
     } else {
         var newask=await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
@@ -245,7 +245,7 @@ exports.addComment = async function(askID,userID,message){
             teacherStatus:'replied',
             studentStatus:'new'}
         );
-        getFunction.sendEmail(ask.student,'Teacher has replied to your question',message);
+        getFunction.sendEmail('teacher',ask.student,'Teacher has replied to your question',askID);
     }
 
     return {comment};

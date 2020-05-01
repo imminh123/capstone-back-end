@@ -18,11 +18,15 @@ exports.makeJson = function(type,msg){
 }
 
 //send email
-exports.sendEmail = function(to,subject,text){
+exports.sendEmail = function(from,to,subject,id){
 
     const USER='icebolt1996@gmail.com';
     const PASSWORD='hovatenTQT001';
 
+    if (from=='student') text = 'http://noteitfu.herokuapp.com/tutor/compose/'+id;
+    else
+      text = 'http://noteitfu.herokuapp.com/ask/compose/'+id;
+      
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -35,7 +39,7 @@ exports.sendEmail = function(to,subject,text){
         from: USER,
         to: to.email,
         subject: subject,
-        html: text
+        html: 'Click on this link read more: '+text
     };
       
     transporter.sendMail(mailOptions, function(error, info){
