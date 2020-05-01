@@ -3,7 +3,7 @@
  */
 const express = require('express');
 const http = require('http');
-const https = require('http');
+const https = require('https');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
@@ -77,10 +77,10 @@ mongoose.connection.once('open', function () {
 
 //solution for cors error
 
-var corsOptions = {
-  origin: '*',
-  credentials: true };
-app.use(cors(corsOptions));
+// var corsOptions = {
+//   origin: '*',
+//   credentials: true };
+// app.use(cors(corsOptions));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -251,7 +251,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //SocketIO
-const { createServer } = require("https");
+const { createServer } = require("http");
 const WebSocket = require("ws");
 const server = createServer(app);
 
