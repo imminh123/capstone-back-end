@@ -42,7 +42,7 @@ exports.sendEmail = function(to,subject,text){
         if (error) {
           console.log(error);
         } else {
-          console.log('Email sent: ' + info.response);
+          console.log('Email sent to:' + to.email + ' with info '+info.response);
         }
     });
     
