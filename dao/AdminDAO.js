@@ -115,7 +115,7 @@ function getReportStartDate(from){
     if (from=='') {
         from = 'Wednesday, 1 January 2020 00:00:00 GMT+07:00';
     } else {
-        from=from+' 00:00:00 GMT+07:00';
+        from=from+' 00:00:00 GMT+0700';
     }
     return from;
 
@@ -127,7 +127,7 @@ function getReportEndDate(to){
         to=new Date();
         to.setHours(23,59,59);
     } else {
-        to=to+' 23:59:59 GMT+07:00';
+        to=to+' 23:59:59 GMT+0700';
     }
     return to;
 
@@ -147,13 +147,10 @@ exports.getReport = async function(teacherID,courseID,from,to){
 
     to=getReportEndDate(to);
 
-    console.log('from '+from+' is number '+Date.parse(from));
-    console.log('to '+to+' is number '+Date.parse(to));
-
     //filter ask only of all chosen teachers
     var asks=await Ask.find({teacher:teachers,courseID:courseIDlist});
 
-    //filter by date
+    //filter by created date
     asks = asks.filter(function(value, index, arr){
         return Date.parse(value.dateCreated)>=Date.parse(from)
                 && Date.parse(value.dateCreated)<=Date.parse(to);
