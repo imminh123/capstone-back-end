@@ -251,7 +251,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //SocketIO
-const { createServer } = require("http");
+const { createServer } = require("https");
 const WebSocket = require("ws");
 const server = createServer(app);
 
