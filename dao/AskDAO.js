@@ -188,6 +188,7 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
+    console.log(userID);
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
     if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
