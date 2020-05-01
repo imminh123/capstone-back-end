@@ -103,7 +103,7 @@ app.use(sass({
   dest: path.join(__dirname, 'public')
 }));
 app.use(logger('dev'));
-app.use(bodyParser.json({limit:'32mb',extended:true}));
+app.use(bodyParser.json({limit:'10mb',extended:true}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   resave: true,
