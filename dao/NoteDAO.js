@@ -53,7 +53,9 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     if (note==null||note=='') return getFunction.makeJson('error','Note not found');
 
     note=await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
-        ,{returnOriginal: false});
+        ,{returnOriginal: false}, function(error){
+            if (error) console.log(error);
+        });
     
     var result = {
         success:'Update successfully',
