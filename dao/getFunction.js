@@ -35,7 +35,7 @@ exports.sendEmail = function(to,subject,text){
         from: USER,
         to: to.email,
         subject: subject,
-        text: text
+        html: text
     };
       
     transporter.sendMail(mailOptions, function(error, info){
