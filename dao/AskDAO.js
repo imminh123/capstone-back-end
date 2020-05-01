@@ -13,6 +13,7 @@ function newAsk(ask,status,answer){
         _id:ask._id,
         scannedContent:ask.scannedContent,
         askContent:ask.askContent,
+        comments:ask.comments,
         student:ask.student,
         teacher:ask.teacher,
         courseID:ask.courseID,
@@ -179,9 +180,11 @@ exports.allAskOfTeacher = async function(teacherID){
     for (ask of asks){
         newResult=newAsk(ask,ask.teacherStatus);
         date='';
+        
         for (comment of ask.comments.reverse()) {
             if (comment.userID!=teacherID) {
-                date=comment.dateCreated;
+                date=comment.dateCreated;console.log(ask.comments.reverse());
+                console.log(ask.askContent+' on '+date);
                 break;
             }
         }
