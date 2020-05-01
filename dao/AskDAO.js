@@ -11,7 +11,6 @@ function newAsk(ask,status,answer){
 
     var result = {
         _id:ask._id,
-        comments:ask.comments,
         scannedContent:ask.scannedContent,
         askContent:ask.askContent,
         student:ask.student,
@@ -23,7 +22,8 @@ function newAsk(ask,status,answer){
         status:status,
         rating:ask.rating,
         isClosed:ask.isClosed,
-        answer:answer
+        answer:answer,
+        date:ask.dateCreated
     }
     
     return result;
@@ -139,17 +139,26 @@ exports.allAskOfStudent = async function(studentID){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return getFunction.makeJson('error','Student not found');
 
-    var asks = await Ask.find({student:studentID}).populate('student').populate('teacher');
+    var asks = await Ask.find({student:studentID}).populate('student').populate('teacher').populate('comments').lean();
     
-    var result=[];
+    var result=[],date,newResult;
 
     for (ask of asks){
-        result.push(newAsk(ask,ask.studentStatus));
+        newResult=newAsk(ask,ask.studentStatus);
+        date='';
+        for (comment of ask.comments.reverse()) {
+            if (comment.userID!=studentID) {
+                date=comment.dateCreated;
+                break;
+            }
+        }
+        if (date!='') newResult.date=date;
+        result.push(newResult);
     }
 
     //sort by recent date
     result.sort(function(a,b){
-        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+        return Date.parse(b.date)-Date.parse(a.date);
     });
 
     return result;
@@ -163,17 +172,26 @@ exports.allAskOfTeacher = async function(teacherID){
     var teacher=await Teacher.findById(teacherID);
     if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
 
-    var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
+    var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher').populate('comments');
     
-    var result=[];
+    var result=[],date,newResult;
 
     for (ask of asks){
-        result.push(newAsk(ask,ask.teacherStatus));
+        newResult=newAsk(ask,ask.teacherStatus);
+        date='';
+        for (comment of ask.comments.reverse()) {
+            if (comment.userID!=teacherID) {
+                date=comment.dateCreated;
+                break;
+            }
+        }
+        if (date!='') newResult.date=date;
+        result.push(newResult);
     }
-
+    
     //sort by recent date
     result.sort(function(a,b){
-        return Date.parse(b.dateModified)-Date.parse(a.dateModified);
+        return Date.parse(b.date)-Date.parse(a.date);
     });
 
     return result;
