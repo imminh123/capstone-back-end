@@ -3,6 +3,7 @@
  */
 const express = require('express');
 const http = require('http');
+const https = require('https');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
@@ -249,7 +250,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //SocketIO
-const { createServer } = require("http");
+const { createServer } = require("*");
 const WebSocket = require("ws");
 const server = createServer(app);
 
