@@ -64,7 +64,7 @@ exports.getUserByID = async function(id){
 
     id=Objectid(id);
     var user=await User.findById(id).populate('profile');
-    if (user==null||user=='') return getFunction.makeJson('error','userID not found');
+    if (user==null||user=='') return getFunction.makeJson('error','User not found');
 
     return user;
 

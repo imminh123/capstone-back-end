@@ -86,7 +86,7 @@ exports.getAllFAQ = async function(page){
 exports.getFAQByTeacherID = async function(teacherID,page){
 
     var teacher = await Teacher.findById(Objectid(teacherID));
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
 
     return getResultOfPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
 

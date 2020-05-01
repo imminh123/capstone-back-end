@@ -34,11 +34,11 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
     
     teacherID=Objectid(teacherID);
     var teacher=await Student.findById(studentID);
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
 
     var today=getFunction.today();
 
@@ -79,7 +79,7 @@ exports.deleteAsk = async function(id){
 
     id=Objectid(id);
     var ask=await Ask.findById(id);
-    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
     
     //delete all comments
     await deleteComments(ask.comments);
@@ -96,7 +96,7 @@ exports.getAskByID = async function(userID,askID){
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
 
     //if this ask had faq, return its answer, or else return empty answer
     var faq=await FAQ.findOne({askID:askID});
@@ -123,7 +123,7 @@ exports.getAskByID = async function(userID,askID){
         var result = newAsk(ask,ask.studentStatus,answer);
 
     } else {
-        return getFunction.makeJson('error','Access denied');
+        return getFunction.makeJson('error','You are not allow to view this question');
     }
 
     return result;
@@ -135,7 +135,7 @@ exports.allAskOfStudent = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
+    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
 
     var asks = await Ask.find({student:studentID}).populate('student').populate('teacher');
     
@@ -159,7 +159,7 @@ exports.allAskOfTeacher = async function(teacherID){
 
     teacherID=Objectid(teacherID);
     var teacher=await Teacher.findById(teacherID);
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
 
     var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher');
     
@@ -188,38 +188,37 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
-    console.log(userID);
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return getFunction.makeJson('error','askID not found');
+    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
 
     //check input userID 
-    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','UserID isnt match');
+    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','You are not allow to comment on this question');
+
+    var now=getFunction.today();
 
     //create new comment
     var comment = new Comment({
         userID: userID,
         ask: askID,
         message: message,
-        dateCreated: getFunction.today()
+        dateCreated: now
     });
     await comment.save();
 
     //push comment to ask and update user status
     if (userID==ask.student._id) {
-        await Ask.updateOne({_id: askID}, 
+        var newask=await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
-            dateModified:getFunction.today(),
+            dateModified:now,
             studentStatus:'replied',
-            teacherStatus:'new'},
-            {safe:true});
+            teacherStatus:'new'});
     } else {
-        await Ask.updateOne({_id: askID}, 
+        var newask=await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
-            dateModified:getFunction.today(),
+            dateModified:now,
             teacherStatus:'replied',
-            studentStatus:'new'},
-            {safe:true});
+            studentStatus:'new'});
     }
 
     return {comment};
@@ -230,7 +229,7 @@ exports.closeAsk=async function(askID,rating){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return getFunction.makeJson('error','askID not found');
+    if (ask==null) return getFunction.makeJson('error','Question not found');
 
     //update ask status and rating
     await Ask.updateOne({_id:askID},{isClosed:true,rating:rating,dateModified:getFunction.today()});
@@ -253,7 +252,7 @@ exports.openAsk=async function(askID){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return getFunction.makeJson('error','askID not found');
+    if (ask==null) return getFunction.makeJson('error','Question not found');
     if (!ask.isClosed) return getFunction.makeJson('error','Question was open already');
 
     var rating=ask.rating;
@@ -283,7 +282,7 @@ exports.searchAsk = async function(userID,text){
     var user=await Student.findById(userID);
     if (user==null) {
         user=await Teacher.findById(userID);
-        if (user==null) return getFunction.makeJson('error','userID not found');
+        if (user==null) return getFunction.makeJson('error','User not found');
         role='teacher';
     }
 

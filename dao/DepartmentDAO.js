@@ -27,7 +27,7 @@ exports.getDepartmentByID = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','departmentID not found');
+    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
 
     var result = {
         numberOfCourse:(await Course.find({departments:department.name})).length,
@@ -42,7 +42,7 @@ exports.deleteDepartmentByID = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','departmentID not found');
+    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
 
     await Course.updateMany(
         {},
@@ -58,7 +58,7 @@ exports.updateDepartment = async function(id,name,description){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','departmentID not found');
+    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
 
     var oldName=department.name;
     if (oldName!=name){
@@ -86,7 +86,7 @@ exports.getCourseOfDepartment = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','departmentID not found');
+    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
 
     return await Course.find({departments:department.name});
 

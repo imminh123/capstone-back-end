@@ -90,7 +90,7 @@ exports.getCourseByID = async function(id){
 
     id=Objectid(id);
     var course = await Course.find({_id:id}).populate('teachers');
-    if (course==null||course=='') return getFunction.makeJson('error','Course ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','Course not found');
 
     return course;
 
@@ -101,7 +101,7 @@ exports.deleteCourse = async function(id){
 
     id=Objectid(id);
     var course=await Course.findById(id);
-    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','Course not found');
 
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
@@ -164,7 +164,7 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         await FAQ.updateMany({courseCode:course.courseCode},{courseCode:code});
     }
         
-    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
+    if (course==null||course=='') return getFunction.makeJson('error','Course not found');
 
     course=await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}
