@@ -359,11 +359,11 @@ app.get('/getUrlInformation/:studentID/:url', folderController.getFolderByURL);
  */
 app.post('/createask', askController.createAsk);
 app.get('/allask', askController.allAsk);
-app.get('/getAsk/:userID/:askID', askController.getAskByID);
+app.get('//getAsk/:userID/:askID', askController.getAskByID);
 app.get('/allaskofstudent/:id', askController.allAskOfStudent);
 app.get('/allaskofteacher/:id', askController.allAskOfTeacher);
 app.delete('/deleteask/:id', askController.deleteAskByID);
-app.post('/addcomment/:id', askController.addComment);
+app.post('//addcomment/:id', askController.addComment);
 app.put('/closeAsk/:id/:rating', askController.closeAsk);
 app.put('/openAsk/:id', askController.openAsk);
 app.get('/searchAsk', askController.searchAsk);
