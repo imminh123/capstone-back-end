@@ -216,7 +216,7 @@ exports.addComment = async function(askID,userID,message){
             studentStatus:'replied',
             teacherStatus:'new'}
         );
-        getFunction.sendEmail(ask.teacher,'Teacher has replied to your question',message);   
+        // getFunction.sendEmail(ask.teacher,'Student has replied to your answer',message);   
     } else {
         var newask=await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
@@ -224,7 +224,7 @@ exports.addComment = async function(askID,userID,message){
             teacherStatus:'replied',
             studentStatus:'new'}
         );
-        // getFunction.sendEmail(ask.student,'Student has replied to your answer',message);
+        getFunction.sendEmail(ask.student,'Teacher has replied to your question',message);
     }
 
     return {comment};
