@@ -60,6 +60,8 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     await ask.save();
 
+    // getFunction.sendEmail(teacher,'You got a new question',askContent);
+
     return getFunction.makeJson('success','Create successfully');
 
 }
@@ -123,7 +125,7 @@ exports.getAskByID = async function(userID,askID){
         var result = newAsk(ask,ask.studentStatus,answer);
 
     } else {
-        return getFunction.makeJson('error','You are not allow to view this question');
+        return getFunction.makeJson('error','You are not allowed to view this question');
     }
 
     return result;
@@ -193,7 +195,7 @@ exports.addComment = async function(askID,userID,message){
     if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
 
     //check input userID 
-    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','You are not allow to comment on this question');
+    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','You are not allowed to comment on this question');
 
     var now=getFunction.today();
 
@@ -212,13 +214,17 @@ exports.addComment = async function(askID,userID,message){
             {$addToSet:{comments:comment._id},
             dateModified:now,
             studentStatus:'replied',
-            teacherStatus:'new'});
+            teacherStatus:'new'}
+        );
+        getFunction.sendEmail(ask.teacher,'Teacher has replied to your question',message);   
     } else {
         var newask=await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
             dateModified:now,
             teacherStatus:'replied',
-            studentStatus:'new'});
+            studentStatus:'new'}
+        );
+        // getFunction.sendEmail(ask.student,'Student has replied to your answer',message);
     }
 
     return {comment};
