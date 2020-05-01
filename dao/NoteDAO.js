@@ -52,11 +52,17 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     var note=await Note.findById(noteID);
     if (note==null||note=='') return getFunction.makeJson('error','Note not found');
 
+    var err='';
     note=await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
         ,{returnOriginal: false}, function(error){
-            if (error) console.log(error);
+            if (error) {
+                // console.log(error);
+                err=error;
+            }
         });
     
+    if (err!='') return getFunction.makeJson('error',err);
+
     var result = {
         success:'Update successfully',
         note:{
