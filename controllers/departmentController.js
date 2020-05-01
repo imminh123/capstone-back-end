@@ -37,7 +37,7 @@ exports.updateDepartment = async (req,res) => {
     var id=req.params['id'];
     var name=req.body.name;
     var description=req.body.description;
-    if (isEmpty(name)||isEmpty(description));
+    if (isEmpty(name)||isEmpty(description))  res.send(msgEmpty());
     res.send(await departmentDAO.updateDepartment(id,name,description));
 }
 

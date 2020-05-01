@@ -21,6 +21,7 @@ exports.getFolderByStudentID = async function(studentID){
     var folders = await Folder.find({studentID:studentID}).lean();
     var result=[];
     
+    //return result with folder status of course is being studied or not
     for (folder of folders){
         folder.isStudying=false;
 
@@ -87,10 +88,9 @@ exports.createFolder=async function(studentID,courseCode,courseName){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
-    var folders=await Folder.find({studentID:studentID});
-    for (folder of folders){
-        if (folder.courseName==courseName && folder.courseCode==courseCode) return getFunction.makeJson('error','Folder existed');
-    }
+    //check if folder existed
+    var existedFolder=await Folder.findOne({studentID:studentID,courseCode:courseCode,courseName:courseName});
+    if (existedFolder!=null && existedFolder!='') return getFunction.makeJson('error','Folder already existed');
 
     var folder=new Folder({
         studentID:studentID,
@@ -131,6 +131,9 @@ exports.deleteFolder=async function(folderID){
 
 exports.getFolderByURL=async function(studentID,url){
 
+    var student=await Student.findById(Objectid(studentID));
+    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+
     var courses = await Course.find().populate('teachers');
     var courseOfURL;
     for (course of courses){
@@ -139,7 +142,8 @@ exports.getFolderByURL=async function(studentID,url){
             break;
         }
     }
-    if (courseOfURL==undefined) return getFunction.makeJson('error','No information found');
+    if (courseOfURL==undefined) return getFunction.makeJson('error','No course with this url was found');
+    
     var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
     var result = {
         courseOfURL,

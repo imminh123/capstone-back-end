@@ -11,6 +11,7 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     var student=await Student.findById(studentID);
     if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
+    //if has folder then check. if not then create new or get default folder
     if (folderID!=''){
         folderID=Objectid(folderID);
         var folder=await Folder.findById(folderID);
@@ -41,6 +42,7 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
         startOffSet:startOffSet,
         endOffSet:endOffSet
     });
+
     await highlight.save();
 
     return getFunction.makeJson('success','Create successfully');

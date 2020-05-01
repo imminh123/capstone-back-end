@@ -292,7 +292,6 @@ app.get('/getDepartment/:id', departmentController.getDepartment);
 app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
-app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 app.get('/searchDepartment/', departmentController.searchDepartment);
 
 /**
@@ -304,6 +303,8 @@ app.post('/createcourse/', courseController.createCourse);
 app.put('/updatecourse/:id',courseController.updateCourse);
 app.delete('/deletecourse/:id',courseController.deleteCourse);
 app.get('/searchcourse', courseController.searchCourse);
+
+app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 
 /**
  * Teacher

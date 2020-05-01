@@ -166,13 +166,9 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         
     if (course==null||course=='') return getFunction.makeJson('error','ID not found');
 
-    await Course.findOneAndUpdate({_id:id}
+    course=await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}
-        ,{returnOriginal: false}
-        ,function(err,doc){
-            if (err) return err;
-            course=doc;
-        });
+        ,{returnOriginal: false});
     
     await removeCourseFromTeacher(id);
     await addCourseToTeacher(id,teachers);

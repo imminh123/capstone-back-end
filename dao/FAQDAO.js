@@ -20,11 +20,13 @@ function getResultOfPage(result,page){
 exports.createFAQ = async function (askID,answer) {
 
     var existedFAQ=await FAQ.findOne({askID:askID});
-    if (existedFAQ!=null || existedFAQ!='') 
-        return getFunction.makeJson('error','This question has been added to FAQ');
+    //find no faq of this ask
+    if (existedFAQ!=null && existedFAQ!='') 
+        return getFunction.makeJson('error','This question has been added to FAQ already');
 
     var ask= await Ask.findById(Objectid(askID));
 
+    //check if faq.course was deleted
     var courseCode;
     if (ask.courseID=='') {
         courseCode='Other';
@@ -34,6 +36,7 @@ exports.createFAQ = async function (askID,answer) {
         courseCode=course.courseCode;
     }
 
+    //update faq counter
     var faqcounter=await FAQCounter.findById(FAQCOUNTERID);;
     await FAQCounter.updateOne({_id:FAQCOUNTERID},{number:faqcounter.number+1});
 

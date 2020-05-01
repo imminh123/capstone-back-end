@@ -11,6 +11,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     var student=await Student.findById(studentID);
     if (student==null||student=='') return getFunction.makeJson('error','studentID not found');
 
+    //if has folder then check. if not then create new or get default folder
     if (folderID!=''){
         folderID=Objectid(folderID);
         var folder = await Folder.findOne({_id:folderID});
@@ -46,17 +47,13 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 
 //changenote
 exports.updateNote = async function(noteID,scannedContent,description,url,isPinned){
-    // console.log(noteID+' '+folderID+' '+scannedContent+' '+description+' '+url+' '+isPinned);
+
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
     if (note==null||note=='') return getFunction.makeJson('error','noteID not found');
 
-    await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
-        ,{returnOriginal: false}
-            ,function(err,doc){
-                if (err) return err;
-                note=doc;
-            });
+    note=await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
+        ,{returnOriginal: false});
     
     var result = {
         success:'Update successfully',

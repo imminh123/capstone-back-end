@@ -57,10 +57,10 @@ exports.deleteDepartmentByID = async function(id){
 exports.updateDepartment = async function(id,name,description){
 
     id=Objectid(id);
-    var departmentByID=await Department.findById(id);
-    if (departmentByID==null||departmentByID=='') return getFunction.makeJson('error','departmentID not found');
+    var department=await Department.findById(id);
+    if (department==null||department=='') return getFunction.makeJson('error','departmentID not found');
 
-    var oldName=departmentByID.name;
+    var oldName=department.name;
     if (oldName!=name){
         var allDep=await Department.find();
         for (const dep of allDep){
@@ -70,16 +70,12 @@ exports.updateDepartment = async function(id,name,description){
         await Course.updateMany({departments:oldName},{$set:{'departments.$':name}});
     }
     
-    await Department.findOneAndUpdate({_id:id},{name:name,description:description}
-        ,{returnOriginal: false}
-        ,function(err,doc){
-            if (err) return err;
-            departmentByID=doc;
-        });
+    department=await Department.findOneAndUpdate({_id:id},{name:name,description:description}
+        ,{returnOriginal: false});
 
     result = {
         'success':'Update successfully',
-        departmentByID
+        department
     };
 
     return result;
