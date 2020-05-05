@@ -12,6 +12,11 @@ const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
 
 function getResultOfPage(result,page){
     var size=Math.ceil(result.length/PERPAGE);
+
+    result.sort(function(a,b){
+        return a.courseCode.localeCompare(b.courseCode);
+    });
+
     result=JSON.stringify(result.slice((page-1)*PERPAGE,page*PERPAGE));
 
     return JSON.parse('{"totalPage":'+size+',"result":'+result+'}');

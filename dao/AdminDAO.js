@@ -140,6 +140,7 @@ exports.getReport = async function(teacherID,courseID,from,to){
     var teachers=await getTeacherOfReport(teacherID);
 
     var courses=await getCourseOfReport(courseID);
+    if (courses.error=='Course not found') return courses;
 
     var courseIDlist=getCourseIDList(courseID,courses);
 
