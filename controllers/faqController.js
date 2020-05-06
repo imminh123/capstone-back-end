@@ -11,10 +11,11 @@ exports.removeFAQ = async (req,res) => {
     res.send(await faqDAO.removeFAQ(id));
 }
 
-exports.getFAQbyTeacherID = async (req,res) => {
+exports.getFAQByFilter = async (req,res) => {
     var teacherID=req.query.teacherID;
+    var courseCode=req.query.courseCode;
     var page=req.query.page;
-    res.send(await faqDAO.getFAQByTeacherID(teacherID,page));
+    res.send(await faqDAO.getFAQByFilter(teacherID,courseCode,page));
 }
 
 exports.getFAQ = async (req,res) => {
@@ -25,17 +26,6 @@ exports.getFAQ = async (req,res) => {
 exports.getAllFAQ = async (req,res) => {
     var page=req.query.page;
     res.send(await faqDAO.getAllFAQ(page));
-}
-
-exports.getFaqByCourse = async (req,res) => {
-    var course=req.query.course;
-    var page=req.query.page;
-    res.send(await faqDAO.getFAQByCourse(course,page));
-}
-
-exports.getFAQByNumber = async (req,res) => {
-    var number=req.params['number'];
-    res.send(await faqDAO.getFAQByNumber(number));
 }
 
 exports.searchFAQ = async(req,res) => {

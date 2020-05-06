@@ -78,7 +78,7 @@ exports.removeFAQ = async function (faqID) {
 
 exports.getFAQ = async function(id){
 
-    var faq = await FAQ.findById(Objectid(id)).populate('teacherID');
+    var faq = await FAQ.findById(Objectid(id));
     if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
 
     return faq;
@@ -87,28 +87,31 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(page){
 
-    return getResultOfPage(await FAQ.find().populate('teacherID'),page);
+    return getResultOfPage(await FAQ.find(),page);
 
 }
 
-exports.getFAQByTeacherID = async function(teacherID,page){
+exports.getFAQByFilter = async function(teacherID,courseCode,page){
+   
+    var faqs=await FAQ.find(),result=faqs;
 
-    var teacher = await Teacher.findById(Objectid(teacherID));
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+    if (teacherID!='')
+    {
+        var teacher = await Teacher.findById(Objectid(teacherID));
+        if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+        result=faqs.filter(function(value){
+            return value.teacherID==teacherID;
+        });
+    }
 
-    return getResultOfPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
+    if (courseCode!='')
+    {
+        result=result.filter(function(value){
+            return value.courseCode==courseCode;
+        });
+    }
 
-}
-
-exports.getFAQByCourse = async function(courseCode,page){
-
-    return getResultOfPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
-                    
-}
-
-exports.getFAQByNumber = async function(number){
-
-    return await FAQ.findOne({number:number}).populate('teacherID');
+    return getResultOfPage(result,page);
 
 }
 
@@ -118,11 +121,11 @@ exports.searchFAQ = async function(detail,page){
 
     if (isNaN(detail))
         result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+                                ,{askContent:{$regex:detail,$options:"i"}}]});
     else
         result = await FAQ.find({$or:[{number:detail}
                                 ,{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+                                ,{askContent:{$regex:detail,$options:"i"}}]});
     return getResultOfPage(result,page);
 
 }
