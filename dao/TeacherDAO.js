@@ -95,6 +95,8 @@ exports.updateTeacher = async function(id,name,email,isActive){
 
 exports.changeteacherisactive = async function(id,isActive){
 
+    if (getFunction.isEmpty(isActive)) return {error:'All field must be filled'}
+
     id=Objectid(id);
     var teacher=await Teacher.find({_id:id});
     if (teacher==null||teacher=='') return {error:'Teacher not found'};
@@ -106,6 +108,8 @@ exports.changeteacherisactive = async function(id,isActive){
 
 //search teacher name and email
 exports.searchTeacher = async function(page,perPage,detail){
+
+    if (getFunction.isEmpty(page,perPage)) return {error:'All field must be filled'}
 
     var result,size;
     result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}).populate('courses');

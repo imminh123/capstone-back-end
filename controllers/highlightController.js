@@ -32,7 +32,6 @@ exports.updateHighlight = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var index=req.body.index;
     var color=req.body.color;
-    var folderID=req.body.folderID;
     res.send(await hlDAO.updateHighlight(id,folderID,scannedContent,index,color));
 }
 

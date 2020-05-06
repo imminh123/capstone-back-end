@@ -5,6 +5,8 @@ const getFunction = require('./getFunction');
 
 exports.createDepartment = async function(name,description){
 
+    if (getFunction.isEmpty(name,description)) return {error:'All field must be filled'}
+
     var department = await Department.findOne({name:name});
     if (!(department==null||department=='')) return {error:'Department name already existed'};
 
@@ -51,6 +53,8 @@ exports.deleteDepartmentByID = async function(id){
 }
 
 exports.updateDepartment = async function(id,name,description){
+
+    if (getFunction.isEmpty(name,description)) return {error:'All field must be filled'}
 
     id=Objectid(id);
     var department=await Department.findById(id);

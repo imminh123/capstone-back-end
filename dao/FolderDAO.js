@@ -86,6 +86,8 @@ exports.deleteNoteByFolderID= async function(folderID){
 
 exports.createFolder=async function(studentID,courseCode,courseName){
 
+    if (getFunction.isEmpty(studentID)) return {error:'All field must be filled'}
+
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
@@ -130,6 +132,8 @@ exports.deleteFolder=async function(folderID){
 }
 
 exports.getFolderByURL=async function(studentID,url){
+
+    if (getFunction.isEmpty(studentID,url)) return {error:'All field must be filled'}
 
     var student=await Student.findById(Objectid(studentID));
     if (student==null||student=='') return {error:'Student not found'};

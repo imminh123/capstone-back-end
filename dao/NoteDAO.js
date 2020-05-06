@@ -7,6 +7,8 @@ const getFunction = require('./getFunction');
 //create a note
 exports.createNote = async function(studentID,folderID,scannedContent,description,url){
 
+    if (getFunction.isEmpty(studentID,scannedContent,url)) return {error:'All field must be filled'}
+
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
@@ -46,7 +48,9 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 }
 
 //changenote
-exports.updateNote = async function(noteID,scannedContent,description,url,isPinned){
+exports.updateNote = async function(scannedContent,description,url,isPinned){
+
+    if (getFunction.isEmpty(scannedContent,url,isPinned,description)) return {error:'All field must be filled'}
 
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
@@ -81,6 +85,8 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
 
 //change active of teacher
 exports.changeIsPinned = async function(id,isPinned){
+
+    if (getFunction.isEmpty(id,isPinned)) return {error:'All field must be filled'}
 
     id=Objectid(id);
     var note=await Note.find({_id:id});
@@ -128,6 +134,8 @@ exports.getAllNoteByStudentID = async function(studentID){
 }
 
 exports.searchNote = async function(studentID,folderID,text){
+
+    if (getFunction.isEmpty(studentID,folderID)) return {error:'All field must be filled'}
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);

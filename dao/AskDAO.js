@@ -33,6 +33,8 @@ function newAsk(ask,status,answer,faqid){
 //create new ask
 exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,courseID,url){
 
+    if (getFunction.isEmpty(scannedContent,askContent,studentID,teacherID,courseID)) return {error:'All field must be filled'}
+
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
@@ -82,7 +84,6 @@ async function deleteComments(comments){
 //delete ask and all its comments
 exports.deleteAsk = async function(id){
 
-    id=Objectid(id);
     var ask=await Ask.findById(id);
     if (ask==null||ask=='') return {error:'Question not found'};
     
@@ -182,7 +183,7 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
-    if (getFunction.isEmpty(askID,userID,message)) return {error:'Field empty'};
+    if (getFunction.isEmpty(askID,userID,message)) return {error:'Message cannot be empty'};
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
@@ -234,17 +235,21 @@ exports.closeAsk=async function(askID,rating){
     var ask=await Ask.findById(askID);
     if (ask==null) return {error:'Question not found'};
 
+    if (ask.isClosed) return {error:'Question was closed already'}
+
     //update ask status and rating
     await Ask.updateOne({_id:askID},{isClosed:true,rating:rating,dateModified:getFunction.today()});
 
     //find teacher and update rating
     var teacher=await Teacher.findById(ask.teacher);
+
     switch (rating){
-        case 1: teacher.rating.star_1=teacher.rating.star_1+1;teacher.save();break;
-        case 2: teacher.rating.star_2=teacher.rating.star_2+1;teacher.save();break;
-        case 3: teacher.rating.star_3=teacher.rating.star_3+1;teacher.save();break;
-        case 4: teacher.rating.star_4=teacher.rating.star_4+1;teacher.save();break;
-        case 5: teacher.rating.star_5=teacher.rating.star_5+1;teacher.save();break;
+        case '0': break;
+        case '1': teacher.rating.star_1=teacher.rating.star_1+1;teacher.save();break;
+        case '2': teacher.rating.star_2=teacher.rating.star_2+1;teacher.save();break;
+        case '3': teacher.rating.star_3=teacher.rating.star_3+1;teacher.save();break;
+        case '4': teacher.rating.star_4=teacher.rating.star_4+1;teacher.save();break;
+        case '5': teacher.rating.star_5=teacher.rating.star_5+1;teacher.save();break;
     }
 
     return {success:'Close question successfully'};
@@ -252,7 +257,7 @@ exports.closeAsk=async function(askID,rating){
 }
 
 exports.openAsk=async function(askID){
-
+    
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
     if (ask==null) return {error:'Question not found'};
@@ -260,11 +265,14 @@ exports.openAsk=async function(askID){
 
     var rating=ask.rating;
     //update ask status and rating
-    await Ask.findOneAndUpdate({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
+    if (rating!=0)
+        await Ask.updateOne({_id:askID},{isClosed:false,rating:0,dateModified:getFunction.today()});
 
     //find teacher and update rating
     var teacher=await Teacher.findById(ask.teacher);
+
     switch (rating){
+        case 0: break;
         case 1: teacher.rating.star_1=teacher.rating.star_1-1;teacher.save();break;
         case 2: teacher.rating.star_2=teacher.rating.star_2-1;teacher.save();break;
         case 3: teacher.rating.star_3=teacher.rating.star_3-1;teacher.save();break;
@@ -277,6 +285,8 @@ exports.openAsk=async function(askID){
 }
 
 exports.searchAsk = async function(userID,text){
+
+    if (getFunction.isEmpty(userID)) return {error:'All field must be filled'}
 
     //check if input user is student or teacher
     userID=Objectid(userID);

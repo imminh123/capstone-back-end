@@ -26,6 +26,8 @@ function getResultOfPage(result,page){
 
 exports.createFAQ = async function (askID,answer) {
 
+    if (getFunction.isEmpty(askID,answer)) return {error:'All field must be filled'}
+
     var existedFAQ=await FAQ.findOne({askID:askID});
     //find no faq of this ask
     if (existedFAQ!=null && existedFAQ!='') 
@@ -95,6 +97,8 @@ exports.getAllFAQ = async function(page){
 
 exports.getFAQByFilter = async function(teacherID,courseCode,page){
    
+    if (getFunction.isEmpty(page)) return {error:'All field must be filled'}
+
     var faqs=await FAQ.find(),result=faqs;
 
     if (teacherID!='')
@@ -119,6 +123,8 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
 
 exports.searchFAQ = async function(detail,courseCode,page){
     
+    if (getFunction.isEmpty(page)) return {error:'All field must be filled'}
+
     var result;
 
     if (isNaN(detail))

@@ -120,6 +120,8 @@ exports.deleteCourse = async function(id){
 //create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
 
+    if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
+
     if (await existed(0,code,url)) {
         return {error:'New code or url already existed'};
     }
@@ -148,6 +150,8 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 
 //update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
+
+    if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 
     if (await existed(id,code,url)) {
         return {error:'New code or url already existed'};
@@ -182,6 +186,8 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
 
 //seach for course
 exports.searchCourse = async function(page,perPage,detail){
+
+    if (getFunction.isEmpty(page,perPage)) return {error:'All field must be filled'}
 
     var result,size;
     
