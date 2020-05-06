@@ -7,7 +7,7 @@ const getFunction = require('./getFunction');
 exports.createAdmin = async function(adminName,email,gender,avatar){
 
     var admin=await Admin.findOne({email:email});
-    if (!(admin==null||admin=='')) return getFunction.makeJson('error','Email already existed');
+    if (!(admin==null||admin=='')) return {error:'Email already existed'};
 
     admin = new Admin({
         name:adminName,
@@ -84,7 +84,7 @@ async function getCourseOfReport(courseID){
     }
     else {
         var courses=await Course.find({_id:courseID}).lean();
-        if (courses=='') return getFunction.makeJson('error','Course not found');
+        if (courses=='') return {error:'Course not found'};
     }
 
     return courses;

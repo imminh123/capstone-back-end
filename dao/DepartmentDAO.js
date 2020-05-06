@@ -6,7 +6,7 @@ const getFunction = require('./getFunction');
 exports.createDepartment = async function(name,description){
 
     var department = await Department.findOne({name:name});
-    if (!(department==null||department=='')) return getFunction.makeJson('error','Department name already existed');
+    if (!(department==null||department=='')) return {error:'Department name already existed'};
 
     department = new Department({
         name: name,
@@ -25,7 +25,7 @@ exports.getDepartmentByID = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
+    if (department==null||department=='') return {error:'Department not found'};
 
     return {
         numberOfCourse:(await Course.find({departments:department.name})).length,
@@ -38,7 +38,7 @@ exports.deleteDepartmentByID = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
+    if (department==null||department=='') return {error:'Department not found'};
 
     await Course.updateMany(
         {},
@@ -47,20 +47,20 @@ exports.deleteDepartmentByID = async function(id){
     );
     await Department.deleteOne({_id:id});
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 }
 
 exports.updateDepartment = async function(id,name,description){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
+    if (department==null||department=='') return {error:'Department not found'};
 
     var oldName=department.name;
     if (oldName!=name){
         var allDep=await Department.find();
         for (const dep of allDep){
-            if (name==dep.name) return getFunction.makeJson('error','Department name already existed');
+            if (name==dep.name) return {error:'Department name already existed'};
         }
         //change all courses have department old name to new name
         await Course.updateMany({departments:oldName},{$set:{'departments.$':name}});
@@ -80,7 +80,7 @@ exports.getCourseOfDepartment = async function(id){
 
     id=Objectid(id);
     var department=await Department.findById(id);
-    if (department==null||department=='') return getFunction.makeJson('error','Department not found');
+    if (department==null||department=='') return {error:'Department not found'};
 
     return await Course.find({departments:department.name});
 

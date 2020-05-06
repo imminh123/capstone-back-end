@@ -9,13 +9,13 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     //if has folder then check. if not then create new or get default folder
     if (folderID!=''){
         folderID=Objectid(folderID);
         var folder=await Folder.findById(folderID);
-        if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+        if (folder==null||folder=='') return {error:'Folder not found'};
     }
     else {
         var folder=await Folder.findOne({studentID:studentID,courseName:'',courseCode:''});
@@ -45,7 +45,7 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
 
     await highlight.save();
 
-    return getFunction.makeJson('success','Create successfully');
+    return {success:'Create successfully'};
 
 }
 
@@ -54,7 +54,7 @@ exports.getHighlight = async function(id){
 
     id=Objectid(id);
     var highlight=await Highlight.findById(id);
-    if (highlight==null||highlight=='') return getFunction.makeJson('error','Highlight not found');
+    if (highlight==null||highlight=='') return {error:'Highlight not found'};
 
     return highlight;
     
@@ -65,7 +65,7 @@ exports.getAllHighlightByStudentID = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     return await Highlight.find({studentID:studentID});
    
@@ -76,11 +76,11 @@ exports.deleteHighlight = async function(id){
     
     id=Objectid(id);
     var highlight=await Highlight.findById(id);
-    if (highlight==null||highlight=='') return getFunction.makeJson('error','Highlight not found');
+    if (highlight==null||highlight=='') return {error:'Highlight not found'};
     
     await Highlight.deleteOne({_id:id});
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 
 }
 
@@ -89,15 +89,15 @@ exports.updateHighlight = async function(highlightID,folderID,scannedContent,ind
     
     highlightID=Objectid(highlightID);
     var highlight=await Highlight.findById(highlightID);
-    if (highlight==null||highlight=='') return getFunction.makeJson('error','Highlight not found');
+    if (highlight==null||highlight=='') return {error:'Highlight not found'};
 
     folderID=Objectid(folderID);
     var folder=await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
    
     await Highlight.updateOne({_id:highlightID},{folderID:folderID,scannedContent:scannedContent,index:index,color:color,dateModified:getFunction.today()});
     
-    return getFunction.makeJson('success','Update successfully');
+    return {success:'Update successfully'};
 
 }
 
@@ -106,7 +106,7 @@ exports.getHighlightByUrl = async function(studentID,url){
     
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     return await Highlight.find({studentID:studentID,url:url});
     
@@ -116,7 +116,7 @@ exports.searchHighlight = async function(scannedContent,studentID,folderID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     if (folderID.toString()=='all') {
 
@@ -137,11 +137,11 @@ exports.getHighlightByColor = async function(color,studentID,folderID){
     studentID=Objectid(studentID);
 
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
     
     folderID=Objectid(folderID);
     var folder=await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
 
     return await Highlight.find({studentID:studentID,folderID:folderID,color:color});
 }
@@ -150,7 +150,7 @@ exports.getRecentHighlight = async function(studentID,limit){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     var highlights = await Highlight.find({studentID:studentID});
     

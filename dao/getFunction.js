@@ -10,11 +10,11 @@ exports.today = function(){
 
 }
 
-exports.makeJson = function(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
+exports.isEmpty=function(...args){
+  for (value of args) {
+    if (value==null||value==undefined||value=='') return true;
+  }
+  return false;
 }
 
 //send email

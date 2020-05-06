@@ -16,7 +16,7 @@ exports.getFolderByStudentID = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     var folders = await Folder.find({studentID:studentID}).lean();
     var result=[];
@@ -43,7 +43,7 @@ exports.getHighlightByFolderID = async function(folderID){
 
     folderID=Objectid(folderID);
     var folder = await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
 
     return await Highlight.find({folderID:folderID});
 
@@ -53,11 +53,11 @@ exports.deleteHighlightByFolderID= async function(folderID){
 
     folderID=Objectid(folderID);
     var folder = await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
 
     await Highlight.deleteMany({folderID:folderID});
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 
 }
 
@@ -66,7 +66,7 @@ exports.getNoteByFolderID = async function(folderID){
 
     folderID=Objectid(folderID);
     var folder = await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
 
     return await Note.find({folderID:folderID});
 
@@ -76,11 +76,11 @@ exports.deleteNoteByFolderID= async function(folderID){
 
     folderID=Objectid(folderID);
     var folder = await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
 
     await Note.deleteMany({folderID:folderID});
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 
 }
 
@@ -88,11 +88,11 @@ exports.createFolder=async function(studentID,courseCode,courseName){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     //check if folder existed
     var existedFolder=await Folder.findOne({studentID:studentID,courseCode:courseCode,courseName:courseName});
-    if (existedFolder!=null && existedFolder!='') return getFunction.makeJson('error','Folder already existed');
+    if (existedFolder!=null && existedFolder!='') return {error:'Folder already existed'}
 
     var folder=new Folder({
         studentID:studentID,
@@ -113,7 +113,7 @@ exports.deleteFolder=async function(folderID){
 
     folderID=Objectid(folderID);
     var folder = await Folder.findById(folderID);
-    if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
+    if (folder==null||folder=='') return {error:'Folder not found'};
     
     await Highlight.deleteMany({folderID:folderID});
     await Note.deleteMany({folderID:folderID});
@@ -125,14 +125,14 @@ exports.deleteFolder=async function(folderID){
     }
     else await Folder.deleteOne({_id:folderID});
     
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
     
 }
 
 exports.getFolderByURL=async function(studentID,url){
 
     var student=await Student.findById(Objectid(studentID));
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     var courses = await Course.find().populate('teachers');
     var courseOfURL;
@@ -142,7 +142,7 @@ exports.getFolderByURL=async function(studentID,url){
             break;
         }
     }
-    if (courseOfURL==undefined) return getFunction.makeJson('error','No course with this url was found');
+    if (courseOfURL==undefined) return {error:'Course not found'}
     
     var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
 

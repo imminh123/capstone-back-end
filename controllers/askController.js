@@ -1,15 +1,5 @@
 const AskDAO = require('../dao/AskDAO');
 
-function isEmpty(str){
-    if (str==null||str==undefined||str=='') return 1;
-    return 0;
-}
-
-function msgEmpty(){
-    var newObject = '{"error":"All field must be filled"}';
-    return JSON.parse(newObject);
-}
-
 exports.closeAsk=async(req,res)=>{
     var askID=req.params['id'];
     var rating=req.params['rating'];
@@ -23,12 +13,7 @@ exports.createAsk = async (req,res) => {
     var teacher=req.body.teacher;
     var courseID=req.body.courseID;
     var url=req.body.url;
-    //check if all fields are filled
-    if (isEmpty(scannedContent)||isEmpty(askContent)||isEmpty(student)||isEmpty(teacher))
-                res.send(msgEmpty()); 
-        else {
-            res.send(await AskDAO.createAsk(scannedContent,askContent,student,teacher,courseID,url));                    
-        }
+    res.send(await AskDAO.createAsk(scannedContent,askContent,student,teacher,courseID,url));
 }
 
 //tra ve da co faq chua
@@ -56,7 +41,6 @@ exports.addComment = async (req,res) => {
     var askID=req.params['id'];
     var userID=req.body.userID;
     var message=req.body.message;
-    if (isEmpty(message)) res.send(msgEmpty());
     res.send(await AskDAO.addComment(askID,userID,message));
 }
 

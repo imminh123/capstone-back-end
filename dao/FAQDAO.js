@@ -29,7 +29,7 @@ exports.createFAQ = async function (askID,answer) {
     var existedFAQ=await FAQ.findOne({askID:askID});
     //find no faq of this ask
     if (existedFAQ!=null && existedFAQ!='') 
-        return getFunction.makeJson('error','This question has been added to FAQ already');
+        return {error:'This question has been added to FAQ already'};
 
     var ask= await Ask.findById(Objectid(askID));
 
@@ -63,7 +63,7 @@ exports.createFAQ = async function (askID,answer) {
     var faqs=await FAQ.find({number:faq.number});
     if (faqs.length!=1) FAQ.deleteOne({number:faq.number});
 
-    return getFunction.makeJson('success','Create successfully');
+    return {success:'Create successfully'};
 
 }
 
@@ -71,17 +71,17 @@ exports.removeFAQ = async function (faqID) {
 
     faqID=Objectid(faqID);
     var faq = await FAQ.findById(faqID);
-    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return {error:'FAQ not found'};
     await FAQ.deleteOne({_id:faqID});
 
-    return getFunction.makeJson('success','Remove FAQ successfully');
+    return {success:'Remove FAQ successfully'};
 
 }
 
 exports.getFAQ = async function(id){
 
     var faq = await FAQ.findById(Objectid(id));
-    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return {error:'FAQ not found'};
 
     return faq;
 
@@ -100,7 +100,7 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
     if (teacherID!='')
     {
         var teacher = await Teacher.findById(Objectid(teacherID));
-        if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+        if (teacher==null||teacher=='') return {error:'Teacher not found'};
         result=faqs.filter(function(value){
             return value.teacherID==teacherID;
         });

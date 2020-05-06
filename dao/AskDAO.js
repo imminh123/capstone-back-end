@@ -35,11 +35,11 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
     
     teacherID=Objectid(teacherID);
     var teacher=await Student.findById(studentID);
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     var today=getFunction.today();
 
@@ -65,7 +65,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     // getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
 
-    return getFunction.makeJson('success','Create successfully');
+    return {success:'Create successfully'};
 
 }
 
@@ -84,7 +84,7 @@ exports.deleteAsk = async function(id){
 
     id=Objectid(id);
     var ask=await Ask.findById(id);
-    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
+    if (ask==null||ask=='') return {error:'Question not found'};
     
     //delete all comments
     await deleteComments(ask.comments);
@@ -92,7 +92,7 @@ exports.deleteAsk = async function(id){
     //delete ask
     await Ask.deleteOne({_id:id});
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 
 }
 
@@ -101,7 +101,7 @@ exports.getAskByID = async function(userID,askID){
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
+    if (ask==null||ask=='') return {error:'Question not found'};
 
     //if this ask had faq, return its answer, or else return empty answer
     var faq=await FAQ.findOne({askID:askID});
@@ -131,7 +131,7 @@ exports.getAskByID = async function(userID,askID){
         return newAsk(ask,ask.studentStatus,answer,faqid);
 
     } else {
-        return getFunction.makeJson('error','You are not allowed to view this question');
+        return {error:'You are not allowed to view this question'};
     }
 
 }
@@ -141,7 +141,7 @@ exports.allAskOfStudent = async function(studentID){
 
     studentID=Objectid(studentID);
     var student=await Student.findById(studentID);
-    if (student==null||student=='') return getFunction.makeJson('error','Student not found');
+    if (student==null||student=='') return {error:'Student not found'};
 
     var asks = await Ask.find({student:studentID}).populate('student').populate('teacher').lean();
     
@@ -159,7 +159,7 @@ exports.allAskOfTeacher = async function(teacherID){
 
     teacherID=Objectid(teacherID);
     var teacher=await Teacher.findById(teacherID);
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher').lean();
     
@@ -182,12 +182,14 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
+    if (getFunction.isEmpty(askID,userID,message)) return {error:'Field empty'};
+
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
-    if (ask==null||ask=='') return getFunction.makeJson('error','Question not found');
+    if (ask==null||ask=='') return {error:'Question not found'};
 
     //check input userID 
-    if (userID!=ask.student._id && userID!=ask.teacher._id) return getFunction.makeJson('error','You are not allowed to comment on this question');
+    if (userID!=ask.student._id && userID!=ask.teacher._id) return {error:'You are not allowed to comment on this question'};
 
     var now=getFunction.today();
 
@@ -230,7 +232,7 @@ exports.closeAsk=async function(askID,rating){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return getFunction.makeJson('error','Question not found');
+    if (ask==null) return {error:'Question not found'};
 
     //update ask status and rating
     await Ask.updateOne({_id:askID},{isClosed:true,rating:rating,dateModified:getFunction.today()});
@@ -245,7 +247,7 @@ exports.closeAsk=async function(askID,rating){
         case 5: teacher.rating.star_5=teacher.rating.star_5+1;teacher.save();break;
     }
 
-    return getFunction.makeJson('success','Close question successfully');
+    return {success:'Close question successfully'};
     
 }
 
@@ -253,8 +255,8 @@ exports.openAsk=async function(askID){
 
     askID=Objectid(askID);  
     var ask=await Ask.findById(askID);
-    if (ask==null) return getFunction.makeJson('error','Question not found');
-    if (!ask.isClosed) return getFunction.makeJson('error','Question was open already');
+    if (ask==null) return {error:'Question not found'};
+    if (!ask.isClosed) return {error:'Question was open already'};
 
     var rating=ask.rating;
     //update ask status and rating
@@ -270,7 +272,7 @@ exports.openAsk=async function(askID){
         case 5: teacher.rating.star_5=teacher.rating.star_5-1;teacher.save();break;
     }
 
-    return getFunction.makeJson('success','Open question successfully');
+    return {success:'Open question successfully'}
     
 }
 
@@ -283,7 +285,7 @@ exports.searchAsk = async function(userID,text){
     var user=await Student.findById(userID);
     if (user==null) {
         user=await Teacher.findById(userID);
-        if (user==null) return getFunction.makeJson('error','User not found');
+        if (user==null) return {error:'User not found'};
         role='teacher';
     }
 
