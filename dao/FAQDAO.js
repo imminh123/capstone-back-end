@@ -104,7 +104,6 @@ exports.getFAQByCourse = async function(courseCode,page){
 
     return getResultOfPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
                     
-
 }
 
 exports.getFAQByNumber = async function(number){
