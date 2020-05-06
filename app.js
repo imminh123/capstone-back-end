@@ -77,10 +77,10 @@ mongoose.connection.once('open', function () {
 
 //solution for cors error
 
-// var corsOptions = {
-//   origin: '*',
-//   credentials: true };
-// app.use(cors(corsOptions));
+var corsOptions = {
+  origin: '*',
+  credentials: true };
+app.use(cors(corsOptions));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -168,9 +168,9 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
-/**
- * API examples routes.
- */
+// /**
+//  * API examples routes.
+//  */
 app.get('/api', apiController.getApi);
 app.get('/api/lastfm', apiController.getLastfm);
 app.get('/api/nyt', apiController.getNewYorkTimes);

@@ -7,7 +7,7 @@ const Teacher = require('../models/Teacher');
 const getFunction = require('./getFunction');
 
 //return ask with new status after user read an ask
-function newAsk(ask,status,answer){
+function newAsk(ask,status,answer,faqid){
 
     var result = {
         _id:ask._id,
@@ -24,6 +24,7 @@ function newAsk(ask,status,answer){
         rating:ask.rating,
         isClosed:ask.isClosed,
         answer:answer,
+        faqID:faqid,
         date:ask.dateCreated
     }
     
@@ -103,8 +104,11 @@ exports.getAskByID = async function(userID,askID){
 
     //if this ask had faq, return its answer, or else return empty answer
     var faq=await FAQ.findOne({askID:askID});
-    var answer='';
-    if (faq!=null && faq!='') answer=faq.answer;
+    var answer='',faqid='';
+    if (faq!=null && faq!='') {
+        answer=faq.answer;
+        faqid=faq._id;
+    }
 
     //check userID is teacher or student then update status accordingly
     if (userID==ask.teacher._id) {
@@ -114,7 +118,7 @@ exports.getAskByID = async function(userID,askID){
             ask.teacherStatus='seen';
         }
 
-        var result = newAsk(ask,ask.teacherStatus,answer);
+        var result = newAsk(ask,ask.teacherStatus,answer,faqid);
 
     } else if (userID==ask.student._id) {
 
@@ -123,7 +127,7 @@ exports.getAskByID = async function(userID,askID){
             ask.studentStatus='seen';
         }
 
-        var result = newAsk(ask,ask.studentStatus,answer);
+        var result = newAsk(ask,ask.studentStatus,answer,faqid);
 
     } else {
         return getFunction.makeJson('error','You are not allowed to view this question');
