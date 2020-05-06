@@ -143,7 +143,7 @@ exports.allAskOfStudent = async function(studentID){
     var student=await Student.findById(studentID);
     if (student==null||student=='') return getFunction.makeJson('error','Student not found');
 
-    var asks = await Ask.find({student:studentID}).populate('student').populate('teacher').populate('comments').lean();
+    var asks = await Ask.find({student:studentID}).populate('student').populate('teacher').lean();
     
     //sort by recent date
     asks.sort(function(a,b){
@@ -161,7 +161,7 @@ exports.allAskOfTeacher = async function(teacherID){
     var teacher=await Teacher.findById(teacherID);
     if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
 
-    var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher').populate('comments');
+    var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher').lean();
     
     //sort by recent date
     asks.sort(function(a,b){
