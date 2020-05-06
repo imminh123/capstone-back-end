@@ -21,7 +21,7 @@ function getResultOfPage(result,page){
         totalPage:size,
         result:result
     }
-    
+
 }
 
 exports.createFAQ = async function (askID,answer) {
@@ -140,7 +140,8 @@ exports.getCourseForFAQ = async function(){
     var courses=await Course.find().lean();
 
     var all = {
-        courseCode: ''
+        courseCode: '',
+        courseName: 'All'
     }
     courses.push(all);
 
