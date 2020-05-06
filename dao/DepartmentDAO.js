@@ -14,12 +14,10 @@ exports.createDepartment = async function(name,description){
     });
     await department.save();
 
-    var result = {
+    return {
         'success':'Create successfully',
         department
     };
-
-    return result;
 
 }
 
@@ -29,12 +27,10 @@ exports.getDepartmentByID = async function(id){
     var department=await Department.findById(id);
     if (department==null||department=='') return getFunction.makeJson('error','Department not found');
 
-    var result = {
+    return {
         numberOfCourse:(await Course.find({departments:department.name})).length,
         department
     }
-
-    return result;
 
 }
 
@@ -73,12 +69,10 @@ exports.updateDepartment = async function(id,name,description){
     department=await Department.findOneAndUpdate({_id:id},{name:name,description:description}
         ,{returnOriginal: false});
 
-    result = {
+    return {
         'success':'Update successfully',
         department
     };
-
-    return result;
 
 }
 

@@ -84,13 +84,11 @@ exports.getStudentStatistic=async function(studentID){
     var hls=await Highlight.find({studentID:studentID});
     var asks=await Ask.find({student:studentID});
 
-    var result={
+    return {
         noteNumber:notes.length,
         highlightNumber:hls.length,
         askNumber:asks.length
     }
-
-    return result;
 
 }
 

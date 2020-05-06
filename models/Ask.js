@@ -12,7 +12,9 @@ const askSchema = new Schema({
     dateModified: {type: String, require: true},
     dateCreated: {type: String, required:true},
     studentStatus: {type:String},
+    studentLastCommentAt : {type:String},
     teacherStatus: {type:String},
+    teacherLastCommentAt : {type:String},
     rating: {type:Number},
     isClosed: {type:Boolean}
 });

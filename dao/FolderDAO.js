@@ -26,9 +26,11 @@ exports.getFolderByStudentID = async function(studentID){
         folder.isStudying=false;
 
         if (folder.courseID!='')
-            if (student.courses.includes(folder.courseID))
-                folder.isStudying=true;
-
+            {if (student.courses.includes(folder.courseID))
+                folder.isStudying=true;}
+        else {
+            if (folder.courseName=='') folder.courseName='Other';
+        }
         result.push(folder);
 
     }
@@ -100,12 +102,10 @@ exports.createFolder=async function(studentID,courseCode,courseName){
     });
     await folder.save();
 
-    var result={
+    return {
         success:'Create successfully',
         folder
     }
-
-    return result;
 
 }
 
@@ -145,11 +145,10 @@ exports.getFolderByURL=async function(studentID,url){
     if (courseOfURL==undefined) return getFunction.makeJson('error','No course with this url was found');
     
     var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
-    var result = {
+
+    return {
         courseOfURL,
         folder
     }
-
-    return result;
     
 }

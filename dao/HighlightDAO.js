@@ -18,13 +18,13 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
         if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
     }
     else {
-        var folder=await Folder.findOne({studentID:studentID,courseName:'Other',courseCode:'Other'});
+        var folder=await Folder.findOne({studentID:studentID,courseName:'',courseCode:''});
         if (folder==null||folder=='') {
             var folder=new Folder({
                 studentID:studentID,
                 courseID:'',
-                courseCode:'Other',
-                courseName:'Other'
+                courseCode:'',
+                courseName:''
             });
             await folder.save();
         }
@@ -120,17 +120,16 @@ exports.searchHighlight = async function(scannedContent,studentID,folderID){
 
     if (folderID.toString()=='all') {
 
-        var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
+        return await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
         studentID:studentID});
 
     } else {
 
-        var result = await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
+        return await Highlight.find({scannedContent:{$regex:scannedContent,$options:"i"},
         studentID:studentID,folderID:Objectid(folderID)});
 
     }
 
-    return result;
 }
 
 exports.getHighlightByColor = async function(color,studentID,folderID){

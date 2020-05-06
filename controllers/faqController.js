@@ -30,6 +30,11 @@ exports.getAllFAQ = async (req,res) => {
 
 exports.searchFAQ = async(req,res) => {
     var detail=req.query.detail;
+    var courseCode=req.query.courseCode;
     var page=req.query.page;
-    res.send(await faqDAO.searchFAQ(detail,page));
-};
+    res.send(await faqDAO.searchFAQ(detail,courseCode,page));
+}
+
+exports.getCourseForFAQ = async (req,res) => {
+    res.send(await faqDAO.getCourseForFAQ());
+}

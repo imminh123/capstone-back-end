@@ -11,18 +11,20 @@ function msgEmpty(){
 }
 
 exports.getAllTeacher = async (req, res) => {
-    // res.setHeader("Content-Type", "application/json");
     res.send(await TeacherDAO.getAllTeacher());
 };
 
+exports.getTeacherDashboard = async (req, res) => {
+    var id=req.params['id'];
+    res.send(await TeacherDAO.getTeacherDashboard(id));
+};
+
 exports.getTeacherByID = async (req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     res.send(await TeacherDAO.getTeacherByID(id));
 };
 
 exports.updateTeacher = async (req,res) => {
-    // res.setHeader("Content-Type", "application/json");
     var id=req.params['id'];
     var name=req.body.name;
     var email=req.body.email;

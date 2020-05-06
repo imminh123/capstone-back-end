@@ -106,7 +106,7 @@ exports.deleteCourse = async function(id){
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
     await Ask.updateMany({courseID:course._id},{courseID:''});
-    await FAQ.updateMany({courseCode:'Other'});
+    await FAQ.updateMany({courseCode:course.courseCode},{courseCode:''});
 
     await Course.deleteOne({_id:id});
 
@@ -138,12 +138,11 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     await course.save();
 
     await addCourseToTeacher(course._id,teachers);
-    var result = {
+
+    return {
         'success':'Create successfully',
         course
     }
-
-    return result;
 
 };
 
@@ -174,12 +173,10 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     await addCourseToTeacher(id,teachers);
 
     // course=await Course.findById(id);
-    var result = {
+    return {
         'success':'Update successfully',
         course
     }
-
-    return result;
 
 };
 
@@ -199,9 +196,9 @@ exports.searchCourse = async function(page,perPage,detail){
                                 .limit(Number(perPage));
     }
 
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-
-    return result;
+    return {
+        totalPage:size,
+        result:result
+    };
 
 }

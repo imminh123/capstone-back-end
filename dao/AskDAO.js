@@ -9,7 +9,7 @@ const getFunction = require('./getFunction');
 //return ask with new status after user read an ask
 function newAsk(ask,status,answer,faqid){
 
-    var result = {
+    return {
         _id:ask._id,
         scannedContent:ask.scannedContent,
         askContent:ask.askContent,
@@ -27,8 +27,7 @@ function newAsk(ask,status,answer,faqid){
         faqID:faqid,
         date:ask.dateCreated
     }
-    
-    return result;
+
 }
 
 //create new ask
@@ -55,7 +54,9 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
         dateModified: today,
         dateCreated: today,
         studentStatus: 'seen',
+        studentLastCommentAt: today,
         teacherStatus: 'new',
+        teacherLastCommentAt: today,
         rating: 0,
         isClosed: false
     });
@@ -118,7 +119,7 @@ exports.getAskByID = async function(userID,askID){
             ask.teacherStatus='seen';
         }
 
-        var result = newAsk(ask,ask.teacherStatus,answer,faqid);
+        return newAsk(ask,ask.teacherStatus,answer,faqid);
 
     } else if (userID==ask.student._id) {
 
@@ -127,13 +128,11 @@ exports.getAskByID = async function(userID,askID){
             ask.studentStatus='seen';
         }
 
-        var result = newAsk(ask,ask.studentStatus,answer,faqid);
+        return newAsk(ask,ask.studentStatus,answer,faqid);
 
     } else {
         return getFunction.makeJson('error','You are not allowed to view this question');
     }
-
-    return result;
 
 }
 
@@ -146,27 +145,12 @@ exports.allAskOfStudent = async function(studentID){
 
     var asks = await Ask.find({student:studentID}).populate('student').populate('teacher').populate('comments').lean();
     
-    var result=[],date,newResult;
-
-    for (ask of asks){
-        newResult=newAsk(ask,ask.studentStatus);
-        date='';
-        for (comment of ask.comments.reverse()) {
-            if (comment.userID!=studentID) {
-                date=comment.dateCreated;
-                break;
-            }
-        }
-        if (date!='') newResult.date=date;
-        result.push(newResult);
-    }
-
     //sort by recent date
-    result.sort(function(a,b){
-        return Date.parse(b.date)-Date.parse(a.date);
+    asks.sort(function(a,b){
+        return Date.parse(b.teacherLastCommentAt)-Date.parse(a.teacherLastCommentAt);
     });
 
-    return result;
+    return asks;
 
 }
 
@@ -179,29 +163,12 @@ exports.allAskOfTeacher = async function(teacherID){
 
     var asks = await Ask.find({teacher:teacherID}).populate('student').populate('teacher').populate('comments');
     
-    var result=[],date,newResult;
-
-    for (ask of asks){
-        newResult=newAsk(ask,ask.teacherStatus);
-        date='';
-        
-        for (comment of ask.comments.reverse()) {
-            if (comment.userID!=teacherID) {
-                date=comment.dateCreated;console.log(ask.comments.reverse());
-                console.log(ask.askContent+' on '+date);
-                break;
-            }
-        }
-        if (date!='') newResult.date=date;
-        result.push(newResult);
-    }
-    
     //sort by recent date
-    result.sort(function(a,b){
-        return Date.parse(b.date)-Date.parse(a.date);
+    asks.sort(function(a,b){
+        return Date.parse(b.studentLastCommentAt)-Date.parse(a.studentLastCommentAt);
     });
 
-    return result;
+    return asks;
 
 }
 
@@ -235,19 +202,22 @@ exports.addComment = async function(askID,userID,message){
 
     //push comment to ask and update user status
     if (userID==ask.student._id) {
-        var newask=await Ask.findOneAndUpdate({_id: askID}, 
+        await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
             dateModified:now,
             studentStatus:'replied',
-            teacherStatus:'new'}
+            teacherStatus:'new',
+            studentLastCommentAt: now}
         );
         // getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
     } else {
-        var newask=await Ask.findOneAndUpdate({_id: askID}, 
+        await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
             dateModified:now,
             teacherStatus:'replied',
-            studentStatus:'new'}
+            studentStatus:'new',
+            teacherLastCommentAt: now
+        }
         );
         getFunction.sendEmail('teacher',ask.student,'Teacher has replied to your question',askID);
     }
@@ -318,20 +288,26 @@ exports.searchAsk = async function(userID,text){
     }
 
     if (role=='student'){
-        var asks = await Ask.find({student:userID}).populate('student').populate('teacher');
-        var asks = asks.filter(function(value, index, arr){
+        var asks = await Ask.find({student:userID}).populate('student').populate('teacher').lean();
+        var result = asks.filter(function(value, index, arr){
             return value.askContent.toLowerCase().includes(text.toLowerCase())
                 || value.teacher.name.toLowerCase().includes(text.toLowerCase());
         });
+        result.sort(function(a,b){
+            return Date.parse(b.teacherLastCommentAt)-Date.parse(a.teacherLastCommentAt);
+        });
     } else {
         //teacher
-        var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher');
-        var asks = asks.filter(function(value, index, arr){
+        var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher').lean();
+        var result = asks.filter(function(value, index, arr){
             return value.askContent.toLowerCase().includes(text.toLowerCase())
             || value.student.name.toLowerCase().includes(text.toLowerCase());
         });
+        result.sort(function(a,b){
+            return Date.parse(b.studentLastCommentAt)-Date.parse(a.studentLastCommentAt);
+        });
     }
 
-    return asks;
+    return result;
 
 }

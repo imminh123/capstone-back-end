@@ -1,7 +1,29 @@
 var Objectid = require('mongodb').ObjectID;
+const Ask = require('../models/Ask');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const getFunction = require('./getFunction');
+
+exports.getTeacherDashboard=async function(teacherID){
+
+    var teacher = await Teacher.findOne({_id:teacherID}).populate('courses');
+    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher not found');
+
+    var courses=teacher.courses;
+
+    var asks=await Ask.find({teacher:teacherID});
+    var total=asks.length,closed=0;
+    for (ask of asks) if (ask.isClosed) closed++;
+    var open=total-closed;
+
+    return {
+        totalQuestion: total,
+        openQuestion: open,
+        closedQuestion: closed,
+        courses: courses
+    }
+
+}
 
 exports.allTeacherByCourse=async function(courseID){
 
@@ -97,9 +119,9 @@ exports.searchTeacher = async function(page,perPage,detail){
                                 .limit(Number(perPage));
     }
 
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-
-    return result;
+    return {
+        totalPage:size,
+        result:result
+    };
     
 }

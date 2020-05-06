@@ -18,13 +18,13 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
         if (folder==null||folder=='') return getFunction.makeJson('error','Folder not found');
     }
     else {
-        var folder=await Folder.findOne({studentID:studentID,courseName:'Other',courseCode:'Other'});
+        var folder=await Folder.findOne({studentID:studentID,courseName:'',courseCode:''});
         if (folder==null||folder=='') {
             folder=new Folder({
                 studentID:studentID,
                 courseID:'',
-                courseCode:'Other',
-                courseName:'Other'
+                courseCode:'',
+                courseName:''
             });
             await folder.save();
         }
@@ -63,7 +63,7 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     
     if (err!='') return getFunction.makeJson('error',err);
 
-    var result = {
+    return {
         success:'Update successfully',
         note:{
             isPinned:note.isPinned,
@@ -76,8 +76,6 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
             dateModified:note.dateModified,
         }
     }
-
-    return result;
 
 }
 
@@ -137,7 +135,7 @@ exports.searchNote = async function(studentID,folderID,text){
 
     if (folderID.toString()=='all') {
 
-        var result = await Note.find({
+        return await Note.find({
             studentID:studentID,
             $or:[{scannedContent:{$regex:text,$options:"i"}},
                   {description:{$regex:text,$options:"i"}}
@@ -146,7 +144,7 @@ exports.searchNote = async function(studentID,folderID,text){
 
     } else {
 
-        var result = await Note.find({
+        return await Note.find({
             studentID:studentID,folderID:Objectid(folderID),
             $or:[{scannedContent:{$regex:text,$options:"i"}},
                   {description:{$regex:text,$options:"i"}}
@@ -154,8 +152,6 @@ exports.searchNote = async function(studentID,folderID,text){
         });
 
     }
-
-    return result;
 
 }
 

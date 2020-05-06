@@ -17,9 +17,11 @@ function getResultOfPage(result,page){
         return a.courseCode.localeCompare(b.courseCode);
     });
 
-    result=JSON.stringify(result.slice((page-1)*PERPAGE,page*PERPAGE));
-
-    return JSON.parse('{"totalPage":'+size+',"result":'+result+'}');
+    return {
+        totalPage:size,
+        result:result
+    }
+    
 }
 
 exports.createFAQ = async function (askID,answer) {
@@ -34,7 +36,7 @@ exports.createFAQ = async function (askID,answer) {
     //check if faq.course was deleted
     var courseCode;
     if (ask.courseID=='') {
-        courseCode='Other';
+        courseCode='';
     }
     else {
         var course=await Course.findById(Objectid(ask.courseID));
@@ -115,17 +117,32 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
 
 }
 
-exports.searchFAQ = async function(detail,page){
+exports.searchFAQ = async function(detail,courseCode,page){
     
     var result;
 
     if (isNaN(detail))
-        result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]});
+        result = await FAQ.find({askContent:{$regex:detail,$options:"i"}}).lean();
     else
         result = await FAQ.find({$or:[{number:detail}
-                                ,{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]});
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).lean();
+
+    if (courseCode!='') result=result.filter(function(value){
+        return value.courseCode==courseCode;
+    });
+
     return getResultOfPage(result,page);
 
+}
+
+exports.getCourseForFAQ = async function(){
+
+    var courses=await Course.find().lean();
+
+    var all = {
+        courseCode: ''
+    }
+    courses.push(all);
+
+    return courses;
 }
