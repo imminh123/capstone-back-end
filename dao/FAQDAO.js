@@ -103,7 +103,8 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
         var teacher = await Teacher.findById(Objectid(teacherID));
         if (teacher==null||teacher=='') return {error:'Teacher not found'};
         result=faqs.filter(function(value){
-            return value.teacherID==teacherID;
+            console.log('Compare '+teacherID+' with '+value.teacherID);
+            return value.teacherID._id==teacherID;
         });
     }
 
