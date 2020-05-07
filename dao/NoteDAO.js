@@ -48,7 +48,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 }
 
 //changenote
-exports.updateNote = async function(scannedContent,description,url,isPinned){
+exports.updateNote = async function(noteID,scannedContent,description,url,isPinned){
 
     if (getFunction.isEmpty(scannedContent,url,isPinned,description)) return {error:'All field must be filled'}
 
