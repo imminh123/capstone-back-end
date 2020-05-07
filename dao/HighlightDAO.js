@@ -20,13 +20,13 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
         if (folder==null||folder=='') return {error:'Folder not found'};
     }
     else {
-        var folder=await Folder.findOne({studentID:studentID,courseName:'',courseCode:''});
+        var folder=await Folder.findOne({studentID:studentID,courseName:'',courseCode:'Default'});
         if (folder==null||folder=='') {
             var folder=new Folder({
                 studentID:studentID,
                 courseID:'',
                 courseCode:'',
-                courseName:''
+                courseName:'Default'
             });
             await folder.save();
         }
