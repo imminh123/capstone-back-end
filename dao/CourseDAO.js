@@ -106,7 +106,7 @@ exports.deleteCourse = async function(id){
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
     await Ask.updateMany({courseID:course._id},{courseID:''});
-    await FAQ.updateMany({courseCode:course.courseCode},{courseCode:''});
+    await FAQ.updateMany({courseCode:course.courseCode},{courseCode:'Other'});
 
     await Course.deleteOne({_id:id});
 
