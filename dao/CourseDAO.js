@@ -81,6 +81,13 @@ async function addCourseToTeacher(courseid,teachers){
 //return all course
 exports.getAllCourse = async function () {
 
+    //delete all note highlight and folder of empty course
+    // const Note = require('../models/Note');
+    // const Highlight = require('../models/Highlight');
+    // await Folder.deleteMany({courseID:''});
+    // await Highlight.deleteMany({courseID:''});
+    // await Note.deleteMany({courseID:''});
+
     return await Course.find({}).populate('teachers').sort({_id:-1});;
 
 };
