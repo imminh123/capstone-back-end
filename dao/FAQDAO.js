@@ -19,7 +19,7 @@ function getResultOfPage(result,page){
 
     return {
         totalPage:size,
-        result:result
+        result:result.splice((page-1)*PERPAGE,(page*PERPAGE))
     }
 
 }
