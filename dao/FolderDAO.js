@@ -28,10 +28,7 @@ exports.getFolderByStudentID = async function(studentID){
         if (folder.courseID!='')
             {if (student.courses.includes(folder.courseID))
                 folder.isStudying=true;}
-        else {
-            if (folder.courseCode=='') folder.courseCode='';
-            if (folder.courseName=='') folder.courseName='';
-        }
+
         result.push(folder);
 
     }
@@ -100,7 +97,7 @@ exports.createFolder=async function(studentID,courseCode,courseName){
     var folder=new Folder({
         studentID:studentID,
         courseID:'',
-        courseCode:'',
+        courseCode:courseCode,
         courseName:courseName
     });
     await folder.save();

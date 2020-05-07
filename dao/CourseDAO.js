@@ -122,6 +122,8 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 
+    if (code=='Other') return {error:'Course code should not be Other'}
+
     if (await existed(0,code,url)) {
         return {error:'New code or url already existed'};
     }

@@ -25,7 +25,7 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
             var folder=new Folder({
                 studentID:studentID,
                 courseID:'',
-                courseCode:'',
+                courseCode:'Other',
                 courseName:'Default'
             });
             await folder.save();
