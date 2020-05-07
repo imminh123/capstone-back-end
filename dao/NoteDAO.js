@@ -20,13 +20,13 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
         if (folder==null||folder=='') return {error:'Folder not found'};
     }
     else {
-        var folder=await Folder.findOne({studentID:studentID,courseCode:'',courseName:'Default'});
+        var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
         if (folder==null||folder=='') {
             folder=new Folder({
                 studentID:studentID,
                 courseID:'',
                 courseCode:'Other',
-                courseName:'Default'
+                courseName:'Other'
             });
             await folder.save();
         }
