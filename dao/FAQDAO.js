@@ -107,7 +107,7 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
         });
     }
 
-    if (courseCode!='')
+    if (courseCode!='All FAQ')
     {
         result=result.filter(function(value){
             return value.courseCode==courseCode;
@@ -130,7 +130,7 @@ exports.searchFAQ = async function(detail,courseCode,page){
         result = await FAQ.find({$or:[{number:detail}
                                 ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID').lean();
 
-    if (courseCode!='') result=result.filter(function(value){
+    if (courseCode!='All FAQ') result=result.filter(function(value){
         return value.courseCode==courseCode;
     });
 
@@ -143,10 +143,10 @@ exports.getCourseForFAQ = async function(){
     var courses=await Course.find().lean();
 
     var all = {
-        courseCode: '',
-        courseName: 'All'
+        courseCode: 'All FAQ',
+        courseName: 'All FAQ'
     }
-    courses.push(all);
+    courses.unshift(all);
 
     return courses;
 }
