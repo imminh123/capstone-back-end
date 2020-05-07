@@ -79,7 +79,7 @@ exports.removeFAQ = async function (faqID) {
 
 exports.getFAQ = async function(id){
 
-    var faq = await FAQ.findById(Objectid(id));
+    var faq = await FAQ.findById(Objectid(id)).populate('teacherID');
     if (faq==null||faq=='') return {error:'FAQ not found'};
 
     return faq;
@@ -88,7 +88,7 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(page){
 
-    return getResultOfPage(await FAQ.find(),page);
+    return getResultOfPage(await FAQ.find().populate('teacherID'),page);
 
 }
 
@@ -96,7 +96,7 @@ exports.getFAQByFilter = async function(teacherID,courseCode,page){
    
     if (getFunction.isEmpty(page)) return {error:'All field must be filled'}
 
-    var faqs=await FAQ.find(),result=faqs;
+    var faqs=await FAQ.find().populate('teacherID'),result=faqs;
 
     if (teacherID!='')
     {
@@ -125,10 +125,10 @@ exports.searchFAQ = async function(detail,courseCode,page){
     var result;
 
     if (isNaN(detail))
-        result = await FAQ.find({askContent:{$regex:detail,$options:"i"}}).lean();
+        result = await FAQ.find({askContent:{$regex:detail,$options:"i"}}).populate('teacherID').lean();
     else
         result = await FAQ.find({$or:[{number:detail}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).lean();
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID').lean();
 
     if (courseCode!='') result=result.filter(function(value){
         return value.courseCode==courseCode;
