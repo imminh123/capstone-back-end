@@ -29,6 +29,7 @@ exports.getFolderByStudentID = async function(studentID){
             {if (student.courses.includes(folder.courseID))
                 folder.isStudying=true;}
         else {
+            if (folder.courseCode=='') folder.courseCode='Other';
             if (folder.courseName=='') folder.courseName='Other';
         }
         result.push(folder);
