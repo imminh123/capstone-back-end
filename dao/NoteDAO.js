@@ -50,7 +50,7 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 //changenote
 exports.updateNote = async function(noteID,scannedContent,description,url,isPinned){
 
-    if (getFunction.isEmpty(scannedContent,url,isPinned,description)) return {error:'All field must be filled'}
+    if (getFunction.isEmpty(scannedContent,url,description)) return {error:'All field must be filled'}
 
     noteID=Objectid(noteID);
     var note=await Note.findById(noteID);
@@ -86,7 +86,7 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
 //change active of teacher
 exports.changeIsPinned = async function(id,isPinned){
 
-    if (getFunction.isEmpty(id,isPinned)) return {error:'All field must be filled'}
+    if (getFunction.isEmpty(id)) return {error:'All field must be filled'}
 
     id=Objectid(id);
     var note=await Note.find({_id:id});

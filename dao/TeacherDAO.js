@@ -95,8 +95,6 @@ exports.updateTeacher = async function(id,name,email,isActive){
 
 exports.changeteacherisactive = async function(id,isActive){
 
-    if (getFunction.isEmpty(isActive)) return {error:'All field must be filled'}
-
     id=Objectid(id);
     var teacher=await Teacher.find({_id:id});
     if (teacher==null||teacher=='') return {error:'Teacher not found'};
