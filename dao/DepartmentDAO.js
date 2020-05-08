@@ -3,16 +3,15 @@ const Course = require('../models/Course');
 const Department = require('../models/Department');
 const getFunction = require('./getFunction');
 
-exports.createDepartment = async function(name,description){
+exports.createDepartment = async function(name){
 
-    if (getFunction.isEmpty(name,description)) return {error:'All field must be filled'}
+    if (getFunction.isEmpty(name)) return {error:'All field must be filled'}
 
     var department = await Department.findOne({name:name});
     if (!(department==null||department=='')) return {error:'Department name already existed'};
 
     department = new Department({
-        name: name,
-        description: description,
+        name: name
     });
     await department.save();
 
@@ -52,9 +51,9 @@ exports.deleteDepartmentByID = async function(id){
     return {success:'Delete successfully'};
 }
 
-exports.updateDepartment = async function(id,name,description){
+exports.updateDepartment = async function(id,name){
 
-    if (getFunction.isEmpty(name,description)) return {error:'All field must be filled'}
+    if (getFunction.isEmpty(name)) return {error:'All field must be filled'}
 
     id=Objectid(id);
     var department=await Department.findById(id);
@@ -70,7 +69,7 @@ exports.updateDepartment = async function(id,name,description){
         await Course.updateMany({departments:oldName},{$set:{'departments.$':name}});
     }
     
-    department=await Department.findOneAndUpdate({_id:id},{name:name,description:description}
+    department=await Department.findOneAndUpdate({_id:id},{name:name}
         ,{returnOriginal: false});
 
     return {
@@ -98,7 +97,6 @@ departmentDetail = async function(departments){
         newOb = {
             _id:department._id,
             name:department.name,
-            description:department.description,
             courses:course
         }
         result.push(newOb);
@@ -118,8 +116,7 @@ exports.getAllDepartment = async function(){
 
 exports.searchDepartment = async function(text){
 
-    var departments = await Department.find({$or:[{name:{$regex:text,$options:"i"}}
-    ,{description:{$regex:text,$options:"i"}}]});
+    var departments = await Department.find({name:{$regex:text,$options:"i"}});
 
     return await departmentDetail(departments);
 
