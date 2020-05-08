@@ -81,6 +81,13 @@ async function addCourseToTeacher(courseid,teachers){
 //return all course
 exports.getAllCourse = async function () {
 
+    //delete all note highlight and folder of empty course
+    // const Note = require('../models/Note');
+    // const Highlight = require('../models/Highlight');
+    // await Folder.deleteMany({courseID:''});
+    // await Highlight.deleteMany({courseID:''});
+    // await Note.deleteMany({courseID:''});
+
     return await Course.find({}).populate('teachers').sort({_id:-1});;
 
 };
@@ -90,7 +97,7 @@ exports.getCourseByID = async function(id){
 
     id=Objectid(id);
     var course = await Course.find({_id:id}).populate('teachers');
-    if (course==null||course=='') return getFunction.makeJson('error','Course ID not found');
+    if (course==null||course=='') return {error:'Course not found'}
 
     return course;
 
@@ -101,29 +108,33 @@ exports.deleteCourse = async function(id){
 
     id=Objectid(id);
     var course=await Course.findById(id);
-    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
+    if (course==null||course=='') return {error:'Course not found'}
 
     //when delete course. unlink every folder to this course
     await Folder.updateMany({courseID:course._id},{courseID:''});
     await Ask.updateMany({courseID:course._id},{courseID:''});
-    await FAQ.updateMany({courseCode:'Other'});
+    await FAQ.updateMany({courseCode:course.courseCode},{courseCode:'Other'});
 
     await Course.deleteOne({_id:id});
 
     await removeCourseFromTeacher(id);
     await removeCourseFromStudent(id);
 
-    return getFunction.makeJson('success','Delete successfully');
+    return {success:'Delete successfully'};
 
 };
 
 //create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
 
+    if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
+
+    if (code=='Other') return {error:'Course code cannot not be Other'}
+
     if (await existed(0,code,url)) {
-        return getFunction.makeJson('error','New code or url already existed');
+        return {error:'New code or url already existed'};
     }
-    if (await invalidDepartment(departments)) return getFunction.makeJson('error','Department not found');
+    if (await invalidDepartment(departments)) return {error:'Department not found'};
 
     var course = new Course({
         courseName: name,
@@ -138,23 +149,26 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
     await course.save();
 
     await addCourseToTeacher(course._id,teachers);
-    var result = {
+
+    return {
         'success':'Create successfully',
         course
     }
-
-    return result;
 
 };
 
 //update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
 
+    if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
+
+    if (code=='Other') return {error:'Course code cannot not be Other'}
+
     if (await existed(id,code,url)) {
-        return getFunction.makeJson('error','New code or url already existed');
+        return {error:'New code or url already existed'};
     }
 
-    if (await invalidDepartment(departments)) return getFunction.makeJson('error','Department not found');
+    if (await invalidDepartment(departments)) return {error:'Department not found'};
     id=Objectid(id);
     var course=await Course.findById(id);
 
@@ -164,31 +178,27 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
         await FAQ.updateMany({courseCode:course.courseCode},{courseCode:code});
     }
         
-    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
+    if (course==null||course=='') return {error:'Course not found'}
 
-    await Course.findOneAndUpdate({_id:id}
+    course=await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}
-        ,{returnOriginal: false}
-        ,function(err,doc){
-            if (err) return err;
-            course=doc;
-        });
+        ,{returnOriginal: false});
     
     await removeCourseFromTeacher(id);
     await addCourseToTeacher(id,teachers);
 
     // course=await Course.findById(id);
-    var result = {
+    return {
         'success':'Update successfully',
         course
     }
-
-    return result;
 
 };
 
 //seach for course
 exports.searchCourse = async function(page,perPage,detail){
+
+    if (getFunction.isEmpty(page,perPage)) return {error:'All field must be filled'}
 
     var result,size;
     
@@ -203,9 +213,9 @@ exports.searchCourse = async function(page,perPage,detail){
                                 .limit(Number(perPage));
     }
 
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-
-    return result;
+    return {
+        totalPage:size,
+        result:result
+    };
 
 }

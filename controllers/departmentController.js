@@ -1,21 +1,8 @@
 const departmentDAO = require('../dao/DepartmentDAO');
 
-function isEmpty(str){
-    if (str==null||str==undefined||str=='') return 1;
-    return 0;
-}
-
-function msgEmpty(){
-    var newObject = '{"error":"All field must be filled"}';
-    return JSON.parse(newObject);
-}
-
 exports.createDepartment = async (req, res, next) => {
     var name=req.body.name;
     var description=req.body.description;
-    //check if all fields are filled
-    if (isEmpty(name)||isEmpty(description))
-                res.send(msgEmpty());
     res.send(await departmentDAO.createDepartment(name,description));               
 };
 
@@ -37,7 +24,6 @@ exports.updateDepartment = async (req,res) => {
     var id=req.params['id'];
     var name=req.body.name;
     var description=req.body.description;
-    if (isEmpty(name)||isEmpty(description));
     res.send(await departmentDAO.updateDepartment(id,name,description));
 }
 
@@ -50,11 +36,3 @@ exports.searchDepartment=async(req,res)=>{
     var text=req.query.text;
     res.send(await departmentDAO.searchDepartment(text));
 }
-
-// exports.searchDepartments = async(req,res) => {
-//     var page=req.query.page;
-//     var perPage=req.query.limit;
-//     var detail=req.query.detail;
-//     if (isEmpty(page)||isEmpty(perPage)) res.send(msgEmpty());
-//     res.send(await CourseDAO.searchDepartments(page,perPage,detail));
-// }

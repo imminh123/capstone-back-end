@@ -1,15 +1,5 @@
 const userDAO = require('../dao/UserDAO');
 
-function isEmpty(str){
-    if (str==null||str==undefined||str=='') return 1;
-    return 0;
-}
-
-function msgEmpty(){
-    var newObject = '{"error":"All field must be filled"}';
-    return JSON.parse(newObject);
-}
-
 exports.createUser = async (req, res, next) => {
     var email=req.body.email;
     var password=req.body.password;

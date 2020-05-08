@@ -10,26 +10,42 @@ const getFunction = require('./getFunction');
 const PERPAGE=10;
 const FAQCOUNTERID = '5e9d6e33e7179a52a7619edd';
 
-function getResultWithTotalPage(result,page){
+function getResultOfPage(result,page){
     var size=Math.ceil(result.length/PERPAGE);
-    result=JSON.stringify(result.slice((page-1)*PERPAGE,page*PERPAGE));
 
-    return JSON.parse('{"totalPage":'+size+',"result":'+result+'}');
+    result.sort(function(a,b){
+        return a.courseCode.localeCompare(b.courseCode);
+    });
+
+    return {
+        totalPage:size,
+        result:result.splice((page-1)*PERPAGE,(page*PERPAGE))
+    }
+
 }
 
 exports.createFAQ = async function (askID,answer) {
 
+    if (getFunction.isEmpty(askID,answer)) return {error:'All field must be filled'}
+
+    var existedFAQ=await FAQ.findOne({askID:askID});
+    //find no faq of this ask
+    if (existedFAQ!=null && existedFAQ!='') 
+        return {error:'This question has been added to FAQ already'};
+
     var ask= await Ask.findById(Objectid(askID));
 
+    //check if faq.course was deleted
     var courseCode;
     if (ask.courseID=='') {
-        courseCode='Other';
+        courseCode='';
     }
     else {
         var course=await Course.findById(Objectid(ask.courseID));
         courseCode=course.courseCode;
     }
 
+    //update faq counter
     var faqcounter=await FAQCounter.findById(FAQCOUNTERID);;
     await FAQCounter.updateOne({_id:FAQCOUNTERID},{number:faqcounter.number+1});
 
@@ -46,7 +62,7 @@ exports.createFAQ = async function (askID,answer) {
 
     await faq.save();
 
-    return getFunction.makeJson('success','Create successfully');
+    return {success:'Create successfully'};
 
 }
 
@@ -54,17 +70,17 @@ exports.removeFAQ = async function (faqID) {
 
     faqID=Objectid(faqID);
     var faq = await FAQ.findById(faqID);
-    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return {error:'FAQ not found'};
     await FAQ.deleteOne({_id:faqID});
 
-    return getFunction.makeJson('success','Remove FAQ successfully');
+    return {success:'Remove FAQ successfully'};
 
 }
 
 exports.getFAQ = async function(id){
 
     var faq = await FAQ.findById(Objectid(id)).populate('teacherID');
-    if (faq==null||faq=='') return getFunction.makeJson('error','FAQ not found');
+    if (faq==null||faq=='') return {error:'FAQ not found'};
 
     return faq;
 
@@ -72,43 +88,65 @@ exports.getFAQ = async function(id){
 
 exports.getAllFAQ = async function(page){
 
-    return getResultWithTotalPage(await FAQ.find().populate('teacherID'),page);
+    return getResultOfPage(await FAQ.find().populate('teacherID'),page);
 
 }
 
-exports.getFAQByTeacherID = async function(teacherID,page){
+exports.getFAQByFilter = async function(teacherID,courseCode,page){
+   
+    if (getFunction.isEmpty(page)) return {error:'All field must be filled'}
 
-    var teacher = await Teacher.findById(Objectid(teacherID));
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','teacherID not found');
+    var faqs=await FAQ.find().populate('teacherID'),result=faqs;
 
-    return getResultWithTotalPage(await FAQ.find({teacherID:teacherID}).populate('teacherID'),page);
+    if (teacherID!='')
+    {
+        var teacher = await Teacher.findById(Objectid(teacherID));
+        if (teacher==null||teacher=='') return {error:'Teacher not found'};
+        result=faqs.filter(function(value){
+            return value.teacherID._id==teacherID;
+        });
+    }
+
+    if (courseCode!='All FAQ')
+    {
+        result=result.filter(function(value){
+            return value.courseCode==courseCode;
+        });
+    }
+
+    return getResultOfPage(result,page);
 
 }
 
-exports.getFAQByCourse = async function(courseCode,page){
-
-    return getResultWithTotalPage(await FAQ.find({courseCode:courseCode}).populate('teacherID'),page);
-                    
-
-}
-
-exports.getFAQByNumber = async function(number){
-
-    return await FAQ.findOne({number:number}).populate('teacherID');
-
-}
-
-exports.searchFAQ = async function(detail,page){
+exports.searchFAQ = async function(detail,courseCode,page){
     
+    if (getFunction.isEmpty(page)) return {error:'All field must be filled'}
+
     var result;
 
     if (isNaN(detail))
-        result = await FAQ.find({$or:[{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
+        result = await FAQ.find({askContent:{$regex:detail,$options:"i"}}).populate('teacherID').lean();
     else
         result = await FAQ.find({$or:[{number:detail}
-                                ,{courseCode:{$regex:detail,$options:"i"}}
-                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID');
-    return getResultWithTotalPage(result,page);
+                                ,{askContent:{$regex:detail,$options:"i"}}]}).populate('teacherID').lean();
 
+    if (courseCode!='All FAQ') result=result.filter(function(value){
+        return value.courseCode==courseCode;
+    });
+
+    return getResultOfPage(result,page);
+
+}
+
+exports.getCourseForFAQ = async function(){
+
+    var courses=await Course.find().lean();
+
+    var all = {
+        courseCode: 'All FAQ',
+        courseName: 'All FAQ'
+    }
+    courses.unshift(all);
+
+    return courses;
 }

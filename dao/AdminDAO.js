@@ -7,7 +7,7 @@ const getFunction = require('./getFunction');
 exports.createAdmin = async function(adminName,email,gender,avatar){
 
     var admin=await Admin.findOne({email:email});
-    if (!(admin==null||admin=='')) return getFunction.makeJson('error','Email already existed');
+    if (!(admin==null||admin=='')) return {error:'Email already existed'};
 
     admin = new Admin({
         name:adminName,
@@ -35,13 +35,12 @@ exports.getAllNumber = async function () {
 function getOneReport(teacher,course,asks){
 
     var rating=0,answered=0,count=0,haveRate=0;
-
     //get average rating of this course
     for (ask of asks) {
         if (ask.courseID==course._id && ask.teacher.toString()==teacher._id) {
             count++;
             if (ask.isClosed) {
-                if (rating!=0) {
+                if (ask.rating!=0) {
                     rating+=ask.rating;
                     haveRate++;
                 }
@@ -85,7 +84,7 @@ async function getCourseOfReport(courseID){
     }
     else {
         var courses=await Course.find({_id:courseID}).lean();
-        if (courses=='') return getFunction.makeJson('error','Course not found');
+        if (courses=='') return {error:'Course not found'};
     }
 
     return courses;
@@ -113,9 +112,9 @@ function getCourseIDList(courseID,courses){
 function getReportStartDate(from){
 
     if (from=='') {
-        from = 'Thu Jan 01 1970 00:00:00';
+        from = 'Wednesday, 1 January 2020 00:00:00 GMT+07:00';
     } else {
-        from=from+' 00:00:00';
+        from=from+' 00:00:00 GMT+0700';
     }
     return from;
 
@@ -127,7 +126,7 @@ function getReportEndDate(to){
         to=new Date();
         to.setHours(23,59,59);
     } else {
-        to=to+' 23:59:59';
+        to=to+' 23:59:59 GMT+0700';
     }
     return to;
 
@@ -140,6 +139,7 @@ exports.getReport = async function(teacherID,courseID,from,to){
     var teachers=await getTeacherOfReport(teacherID);
 
     var courses=await getCourseOfReport(courseID);
+    if (courses.error=='Course not found') return courses;
 
     var courseIDlist=getCourseIDList(courseID,courses);
 
@@ -150,12 +150,16 @@ exports.getReport = async function(teacherID,courseID,from,to){
     //filter ask only of all chosen teachers
     var asks=await Ask.find({teacher:teachers,courseID:courseIDlist});
 
+    //filter by created date
     asks = asks.filter(function(value, index, arr){
         return Date.parse(value.dateCreated)>=Date.parse(from)
                 && Date.parse(value.dateCreated)<=Date.parse(to);
     });
 
+    //get report of each teacher
     for (teacher of teachers) {
+
+        //ger report of each course of teacher
         for (course of courses) {
             if (teacher.courses.includes(course._id))
                 result.push(getOneReport(teacher,course,asks));

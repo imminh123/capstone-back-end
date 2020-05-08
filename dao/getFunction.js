@@ -1,3 +1,6 @@
+var nodemailer = require('nodemailer');
+
+//get UTC time
 exports.today = function(){
 
     var today = new Date();
@@ -7,30 +10,44 @@ exports.today = function(){
 
 }
 
-exports.makeJson = function(type,msg){
-
-    var newObject = '{"'+type+'":"'+msg+'"}';
-    return JSON.parse(newObject);
-
+exports.isEmpty=function(...args){
+  for (value of args) {
+    if (value==null||value==undefined||value=='') return true;
+  }
+  return false;
 }
 
-exports.change_alias = function(alias) {
+//send email
+exports.sendEmail = function(from,to,subject,id){
 
-    var str = alias;
+    const USER='icebolt1996@gmail.com';
+    const PASSWORD='hovatenTQT001';
 
-    str = str.toLowerCase();
+    if (from=='student') text = 'http://noteitfu.herokuapp.com/tutor/compose/'+id;
+    else
+      text = 'http://noteitfu.herokuapp.com/ask/compose/'+id;
+      
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: USER,
+          pass: PASSWORD
+        }
+    });
 
-    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
-    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
-    str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
-    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); 
-    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); 
-    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); 
-    str = str.replace(/đ/g,"d");
-    str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g," ");
-    str = str.replace(/ + /g," ");
-    str = str.trim(); 
-
-    return str;
-
+    var mailOptions = {
+        from: USER,
+        to: to.email,
+        subject: subject,
+        html: 'Click on this link read more: '+text
+    };
+      
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent to:' + to.email + ' with info '+info.response);
+        }
+    });
+    
 }

@@ -1,13 +1,35 @@
 var Objectid = require('mongodb').ObjectID;
+const Ask = require('../models/Ask');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
 const getFunction = require('./getFunction');
+
+exports.getTeacherDashboard=async function(teacherID){
+
+    var teacher = await Teacher.findOne({_id:teacherID}).populate('courses');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
+
+    var courses=teacher.courses;
+
+    var asks=await Ask.find({teacher:teacherID});
+    var total=asks.length,closed=0;
+    for (ask of asks) if (ask.isClosed) closed++;
+    var open=total-closed;
+
+    return {
+        totalQuestion: total,
+        openQuestion: open,
+        closedQuestion: closed,
+        courses: courses
+    }
+
+}
 
 exports.allTeacherByCourse=async function(courseID){
 
     courseID=Objectid(courseID);
     var course=await Course.findById(courseID);
-    if (course==null||course=='') return getFunction.makeJson('error','ID not found');
+    if (course==null||course=='') return {error:'Teacher not found'};
 
     return await Teacher.find({courses:courseID});
 
@@ -17,7 +39,7 @@ exports.allTeacherByCourse=async function(courseID){
 exports.createTeacher = async function(name,email,gender,avatar){
 
     var teacher=await Teacher.findOne({email:email});
-    if (!(teacher==null||teacher=='')) return getFunction.makeJson('error','Email already existed');
+    if (!(teacher==null||teacher=='')) return {error:'Email already existed'};
     
     teacher = new Teacher({
         name:name,
@@ -52,7 +74,7 @@ exports.getTeacherByID = async function(id){
 
     id = Objectid(id);
     var teacher = await Teacher.findOne({_id:id}).populate('courses');
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     return teacher;
 
@@ -63,11 +85,11 @@ exports.updateTeacher = async function(id,name,email,isActive){
 
     id=Objectid(id);
     var teacher = await Teacher.find({_id:id});
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     await Teacher.updateOne({_id:id},{name:name,email:email,isActive:isActive});
 
-    return getFunction.makeJson('success','Update successfully');
+    return {success:'Update successfully'};
 
 };
 
@@ -75,15 +97,17 @@ exports.changeteacherisactive = async function(id,isActive){
 
     id=Objectid(id);
     var teacher=await Teacher.find({_id:id});
-    if (teacher==null||teacher=='') return getFunction.makeJson('error','Teacher ID not found');
+    if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     await Teacher.updateOne({_id:id},{isActive:isActive});
 
-    return getFunction.makeJson('success','Update successfully');
+    return {success:'Update successfully'};
 }
 
 //search teacher name and email
 exports.searchTeacher = async function(page,perPage,detail){
+
+    if (getFunction.isEmpty(page,perPage)) return {error:'All field must be filled'}
 
     var result,size;
     result = await Teacher.find({$or:[{name:{$regex:detail,$options:"i"}},{email:{$regex:detail,$options:"i"}}]}).populate('courses');
@@ -97,9 +121,9 @@ exports.searchTeacher = async function(page,perPage,detail){
                                 .limit(Number(perPage));
     }
 
-    result=JSON.stringify(result);
-    result='{"totalPage":'+size+',"result":'+result+'}';
-
-    return result;
+    return {
+        totalPage:size,
+        result:result
+    };
     
 }
