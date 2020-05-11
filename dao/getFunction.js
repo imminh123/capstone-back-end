@@ -23,7 +23,9 @@ exports.sendEmail = function(from,to,subject,id){
     const USER='noteit.fpt@gmail.com';
     const PASSWORD='matkhaucuaNoteIT';
 
-    if (from=='student') text = 'https://noteitfu.herokuapp.com/tutor/compose/'+id;
+    if (from=='student') 
+      // text = 'https://noteitfu.herokuapp.com/tutor/compose/'+id;
+      return;
     else
       text = 'https://noteitfu.herokuapp.com/ask/compose/'+id;
       
