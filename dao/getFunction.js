@@ -20,7 +20,7 @@ exports.isEmpty=function(...args){
 //send email
 exports.sendEmail = function(from,to,subject,id){
 
-    const USER='NoteITFU@gmail.com';
+    const USER='noteit.fpt@gmail.com';
     const PASSWORD='matkhaucuaNoteIT';
 
     if (from=='student') text = 'https://noteitfu.herokuapp.com/tutor/compose/'+id;
