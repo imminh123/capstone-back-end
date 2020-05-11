@@ -144,7 +144,7 @@ exports.getCourseForFAQ = async function(){
 
     var all = {
         courseCode: 'All FAQ',
-        courseName: 'All FAQ'
+        courseName: 'FAQ of all courses'
     }
     courses.unshift(all);
 
