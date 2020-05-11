@@ -20,12 +20,12 @@ exports.isEmpty=function(...args){
 //send email
 exports.sendEmail = function(from,to,subject,id){
 
-    const USER='icebolt1996@gmail.com';
-    const PASSWORD='hovatenTQT001';
+    const USER='NoteITFU@gmail.com';
+    const PASSWORD='matkhaucuaNoteIT';
 
-    if (from=='student') text = 'http://noteitfu.herokuapp.com/tutor/compose/'+id;
+    if (from=='student') text = 'https://noteitfu.herokuapp.com/tutor/compose/'+id;
     else
-      text = 'http://noteitfu.herokuapp.com/ask/compose/'+id;
+      text = 'https://noteitfu.herokuapp.com/ask/compose/'+id;
       
     var transporter = nodemailer.createTransport({
         service: 'gmail',
