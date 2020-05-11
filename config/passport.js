@@ -12,7 +12,7 @@ const UserDAO = require('../dao/UserDAO');
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  console.log(user) 
+  // console.log(user) 
   done(null, user.id);
 });    
 
@@ -101,20 +101,18 @@ const googleStrategyConfig = new GoogleStrategy({
             accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
             refreshToken,
           };
-          let role = 'student';
+          let role = 'tempuser';
           let profileForParam = {};
           profileForParam.name = profile.displayName;
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
 
           const user = await UserDAO.createUser(email, google, tokens, role, profileForParam, null);
-
           if(user) {
             return done(null, user);
           }else {
             done(err);
           }
-          // console.log(user);
         }
       });
     });

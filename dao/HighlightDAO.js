@@ -1,11 +1,22 @@
 var Objectid = require('mongodb').ObjectID;
 const Folder = require('../models/Folder');
+const Course = require('../models/Course');
 const Student = require('../models/Student');
 const Highlight = require('../models/Highlight');
 const getFunction = require('./getFunction');
 
+async function newFolder(studentID,courseID,courseName,courseCode){
+    var folder=new Folder({
+        studentID:studentID,
+        courseID:courseID,
+        courseCode:courseCode,
+        courseName:courseName
+    });
+    return await folder.save();
+}
+
 //create a highlight
-exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID,startOffSet,endOffSet){
+exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID,startOffSet,endOffSet,courseID){
 
     if (getFunction.isEmpty(studentID,scannedContent,index,color,url)) return {error:'All field must be filled'}
 
@@ -13,25 +24,37 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
 
-    //if has folder then check. if not then create new or get default folder
-    if (folderID!=''){
-        folderID=Objectid(folderID);
-        var folder=await Folder.findById(folderID);
-        if (folder==null||folder=='') return {error:'Folder not found'};
+    //has course but not folder
+    if (courseID!='' && folderID=='') {
+        console.log('Co course ma ko co folder');
+        var course=await Course.findById(courseID);
+        if (course==null||course=='') return {error:'Course not found'}
+        console.log(course);
+        var folder=await Folder.findOne({studentID:studentID,courseCode:course.courseCode});
+        console.log(folder);
+        if (folder==null||folder=='') 
+            var folder=await newFolder(studentID,courseID,course.courseName,course.courseCode);
+
     }
+    else
+    //has folder but not course
+    if (courseID=='' && folderID!='') {
+        console.log('ko co course nhung co folder');
+        var folder=await Folder.findById(folderID);
+        console.log(folder);
+        if (folder==null||folder=='') return {error:'Folder not found'}
+    } 
+    //has none means default folder
     else {
+        console.log('ko co ca course va folder');
         var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
+        console.log(folder);
         if (folder==null||folder=='') {
-            var folder=new Folder({
-                studentID:studentID,
-                courseID:'',
-                courseCode:'Other',
-                courseName:'Other'
-            });
-            await folder.save();
+            var folder=await newFolder(studentID,'','Other','Other');
         }
-        folderID=folder._id;
-    }    
+    }
+    folderID=folder._id;
+    console.log(folderID);
     
     var highlight = new Highlight({
         studentID: studentID,

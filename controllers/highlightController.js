@@ -9,7 +9,8 @@ exports.createHighlight = async (req, res, next) => {
     var folderID=req.body.folderID;
     var startOffSet=req.body.startOffSet;
     var endOffSet=req.body.endOffSet;
-    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,folderID,startOffSet,endOffSet));               
+    var courseID=req.body.courseID;
+    res.send(await hlDAO.createHighlight(studentid,scannedContent,index,color,url,folderID,startOffSet,endOffSet,courseID));               
 };
 
 exports.getHighlightByID = async (req,res) => {

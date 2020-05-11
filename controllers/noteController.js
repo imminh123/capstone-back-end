@@ -6,7 +6,8 @@ exports.createNote = async (req,res) => {
     var scannedContent=req.body.scannedContent;
     var description=req.body.description;
     var url=req.body.url;
-    res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url));                    
+    var courseID=req.body.courseID;
+    res.send(await NoteDAO.createNote(studentID,folderID,scannedContent,description,url,courseID));                    
 }
 
 exports.updateNoteByID = async (req,res) => {

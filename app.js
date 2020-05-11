@@ -396,5 +396,8 @@ app.put('/exitCourse/:studentID/:courseID', studentController.exitCourse);
  */
 app.get('/getUserByID/:id', myUserController.getUserByID);
 app.post('/createUser', myUserController.createUser);
+app.post('/chooseRole/', myUserController.chooseRole);
+app.get('/getAllUser', myUserController.getAllUser);
+app.delete('/deleteUser/:id', myUserController.deleteUser);
 
 module.exports = app;

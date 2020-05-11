@@ -14,3 +14,18 @@ exports.getUserByID = async (req,res) => {
     var id=req.params['id'];
     res.send(await userDAO.getUserByID(id));
 }
+
+exports.chooseRole = async (req,res) => {
+    var email=req.query.email;
+    var role=req.query.role;
+    res.send(await userDAO.chooseRole(email,role));
+}
+
+exports.getAllUser = async (req,res) => {
+    res.send(await userDAO.getAllUser());
+}
+
+exports.deleteUser = async (req,res) => {
+    var id=req.params['id'];
+    res.send(await userDAO.deleteUser(id));
+}

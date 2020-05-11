@@ -145,12 +145,7 @@ exports.getFolderByURL=async function(studentID,url){
         }
     }
     if (courseOfURL==undefined) return {error:'Course not found'}
-    
-    var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
 
-    return {
-        courseOfURL,
-        folder
-    }
+    return courseOfURL;
     
 }

@@ -14,13 +14,15 @@ const userSchema = new mongoose.Schema({
   google: String,
   avatar: String,
   tokens: Array,
+  gender: String,
   role:{
     type:String,
-    enum:['admin','teacher','student']
+    enum:['admin','teacher','student','tempuser']
   },
   profile: {
     type: Schema.Types.ObjectId,
-    refPath: 'role'
+    refPath: 'role',
+    require:false
   }
 }, { timestamps: true });
 
