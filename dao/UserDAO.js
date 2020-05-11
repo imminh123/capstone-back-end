@@ -16,7 +16,7 @@ exports.createUser = async function(email,google,tokens,role,profile,password){
 
     var newProfile=new TempUser({
         name:profile.name,
-        email:profile.email,
+        email:email,
         gender:profile.gender,
         avatar:profile.avatar
     });
