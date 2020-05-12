@@ -88,8 +88,10 @@ const googleStrategyConfig = new GoogleStrategy({
 
       //check if there's an email duplicate with google email in DB
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
+        console.log(email+' dang nhap');
         if (err) { return done(err); }
         if (existingEmailUser) {
+          console.log(email+' da ton tai');
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
           done(err);
         } else {
@@ -101,13 +103,16 @@ const googleStrategyConfig = new GoogleStrategy({
             accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
             refreshToken,
           };
+          console.log('bien role thanh tempuser');
           let role = 'tempuser';
           let profileForParam = {};
           profileForParam.name = profile.displayName;
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
 
+          console.log('tao user');
           const user = await UserDAO.createUser(email, google, tokens, role, profileForParam, null);
+          console.log('user moi tao la '+user);
           if(user) {
             return done(null, user);
           }else {
