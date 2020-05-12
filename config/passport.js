@@ -87,7 +87,7 @@ const googleStrategyConfig = new GoogleStrategy({
         return done(null, existingUser);
       }
 
-      //check if there's an email duplicate with google email in DB
+      //create new user
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {

@@ -50,6 +50,9 @@ exports.createUser = async function(email,google,tokens,role,profile,password){
 
         return { status, user, error }
     });
+    
+    return newUser;
+
 }
 
 exports.getUserByID = async function(id){
