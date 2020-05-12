@@ -9,8 +9,6 @@ const _ = require('lodash');
 const moment = require('moment');
 const UserDAO = require('../dao/UserDAO');
 const User = require('../models/User');
-const Teacher = require('../models/Teacher');
-const Student = require('../models/Student');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -81,19 +79,6 @@ const googleStrategyConfig = new GoogleStrategy({
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
-
-      //try to update profile
-      User.updateOne({google: profile.id},{name:profile.displayName,avatar:profile._json.picture});
-      var oldU=User.findOne({google:profile.id});
-      console.log('old user la: '+oldU);
-      if (oldU.role=='student') {
-        console.log('student');
-        Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
-      }
-      else if (oldU.role=='teacher') {
-        console.log('teacher');
-        Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
-      }
 
       if (err) { return done(err); }
       if (existingUser) {
