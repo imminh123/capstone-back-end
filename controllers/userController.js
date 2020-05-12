@@ -24,7 +24,6 @@ exports.chooseRole = async (req,res) => {
     console.log('new user '+user);
     jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
         if(err) console.log(err)
-        console.log('token when choosing role: '+token);
         var url='https://noteitfu.herokuapp.com?token=' + token;
         var result = {success:url}
         res.send(result);

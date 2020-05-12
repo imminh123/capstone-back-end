@@ -10,9 +10,10 @@ const moment = require('moment');
 const UserDAO = require('../dao/UserDAO');
 
 const User = require('../models/User');
+const Student = require('../models/Student');
+const Teacher = require('../models/Teacher');
 
 passport.serializeUser((user, done) => {
-  // console.log(user) 
   done(null, user.id);
 });    
 
@@ -81,8 +82,11 @@ const googleStrategyConfig = new GoogleStrategy({
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
-      console.log('dang nhap '+profile.id);
-      console.log('old user: '+existingUser);
+
+      var oldU=await User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
+      if (oldU.role=='student') await Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+      else if (oldU.role=='teacher') await Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
@@ -92,11 +96,11 @@ const googleStrategyConfig = new GoogleStrategy({
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {
-          console.log(profile.emails[0].value+' da ton tai');
+ 
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
           done(err);
         } else {
-          console.log(profile);
+  
           let email = profile.emails[0].value;
           let google = profile.id;
           let tokens = {
@@ -105,16 +109,16 @@ const googleStrategyConfig = new GoogleStrategy({
             accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
             refreshToken,
           };
-          console.log('bien role thanh tempuser');
+ 
           let role = 'tempuser';
           let profileForParam = {};
           profileForParam.name = profile.displayName || email;
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
 
-          console.log('tao user');
+
           const user = await UserDAO.createUser(email, google, tokens, role, profileForParam, null);
-          console.log('user moi tao la '+user);
+
           if(user) {
             return done(null, user);
           }else {
