@@ -21,17 +21,15 @@ exports.chooseRole = async (req,res) => {
     var role=req.body.role;
     // res.send(await userDAO.chooseRole(email,role));
     var user=await userDAO.chooseRole(email,role);
-
-    // jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
-    //     if(err) console.log(err)
-        
-    //     // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    //     res.redirect('https://noteitfu.herokuapp.com?token=' + token);
-    
-    //   });
     if (user.error) res.send({error:user.error});
     console.log('new user '+user);
-    res.status(200).redirect('localhost:3001?token=' + token);
+    jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
+        if(err) console.log(err)
+        
+        // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+        res.status(200).redirect('https://noteitfu.herokuapp.com?token=' + token);
+    
+      });
 
 }
 
