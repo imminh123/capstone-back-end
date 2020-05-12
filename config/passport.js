@@ -8,10 +8,9 @@ const { OAuth2Strategy } = require('passport-oauth');
 const _ = require('lodash');
 const moment = require('moment');
 const UserDAO = require('../dao/UserDAO');
-
 const User = require('../models/User');
-const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -83,16 +82,22 @@ const googleStrategyConfig = new GoogleStrategy({
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
 
-      var oldU=User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
-      console.log(oldU);
-      if (oldU.role=='student') Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
-      else if (oldU.role=='teacher') Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
-
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
       }
 
+      var oldU=User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
+        console.log('old user la: '+oldU);
+        if (oldU.role=='student') {
+          console.log('student');
+          Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+        }
+        else if (oldU.role=='teacher') {
+          console.log('teacher');
+          Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+        }
+  
       //create new user
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
