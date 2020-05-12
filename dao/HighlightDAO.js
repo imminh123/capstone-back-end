@@ -172,7 +172,7 @@ exports.getHighlightByColor = async function(color,studentID,folderID){
     var folder=await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Highlight.find({studentID:studentID,folderID:folderID,color:color});
+    return await Highlight.find({studentID:studentID,folderID:folderID,color:color}).sort({_id:-1});
 }
 
 exports.getRecentHighlight = async function(studentID,limit){

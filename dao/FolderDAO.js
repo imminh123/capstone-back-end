@@ -43,7 +43,7 @@ exports.getHighlightByFolderID = async function(folderID){
     var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Highlight.find({folderID:folderID});
+    return await Highlight.find({folderID:folderID}).sort({_id:-1});
 
 }
 
@@ -66,7 +66,7 @@ exports.getNoteByFolderID = async function(folderID){
     var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Note.find({folderID:folderID});
+    return await Note.find({folderID:folderID}).sort({_id:-1});
 
 }
 
