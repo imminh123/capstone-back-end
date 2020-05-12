@@ -83,7 +83,8 @@ const googleStrategyConfig = new GoogleStrategy({
     User.findOne({ google: profile.id }, (err, existingUser) => {
 
       //try to update profile
-      var oldU=User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
+      User.updateOne({google: profile.id},{name:profile.displayName,avatar:profile._json.picture});
+      var oldU=User.findOne({google:profile.id});
       console.log('old user la: '+oldU);
       if (oldU.role=='student') {
         console.log('student');
