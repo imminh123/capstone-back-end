@@ -83,9 +83,9 @@ const googleStrategyConfig = new GoogleStrategy({
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
 
-      var oldU=await User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
-      if (oldU.role=='student') await Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
-      else if (oldU.role=='teacher') await Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+      var oldU=User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
+      if (oldU.role=='student') Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
+      else if (oldU.role=='teacher') Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
 
       if (err) { return done(err); }
       if (existingUser) {
