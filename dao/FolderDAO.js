@@ -136,7 +136,7 @@ exports.getFolderByURL=async function(studentID,url){
     var student=await Student.findById(Objectid(studentID));
     if (student==null||student=='') return {error:'Student not found'};
 
-    var courses = await Course.find().populate('teachers');
+    var courses = await Course.find().populate('teachers').lean();
     var courseOfURL;
     for (course of courses){
         if (url.includes(course.courseURL)) {
@@ -145,6 +145,9 @@ exports.getFolderByURL=async function(studentID,url){
         }
     }
     if (courseOfURL==undefined) return {error:'Course not found'}
+
+    if (student.courses.includes(courseOfURL._id)) courseOfURL.isStudying=true;
+    else courseOfURL.isStudying=false;
 
     return courseOfURL;
     
