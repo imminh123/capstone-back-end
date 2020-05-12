@@ -19,7 +19,6 @@ exports.getUserByID = async (req,res) => {
 exports.chooseRole = async (req,res) => {
     var email=req.body.email;
     var role=req.body.role;
-    // res.send(await userDAO.chooseRole(email,role));
     var user=await userDAO.chooseRole(email,role);
     if (user.error) res.send({error:user.error});
     console.log('new user '+user);
@@ -28,9 +27,7 @@ exports.chooseRole = async (req,res) => {
         console.log('token when choosing role: '+token);
         var url='https://noteitfu.herokuapp.com?token=' + token;
         var result = {success:url}
-        // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
         res.send(result);
-    
       });
 
 }
