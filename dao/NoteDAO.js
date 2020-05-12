@@ -26,12 +26,9 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
 
     //has course but not folder
     if (courseID!='' && folderID=='') {
-        console.log('Co course ma ko co folder');
         var course=await Course.findById(courseID);
         if (course==null||course=='') return {error:'Course not found'}
-        console.log(course);
         var folder=await Folder.findOne({studentID:studentID,courseCode:course.courseCode});
-        console.log(folder);
         if (folder==null||folder=='') 
             var folder=await newFolder(studentID,courseID,course.courseName,course.courseCode);
 
@@ -39,22 +36,17 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     else
     //has folder but not course
     if (courseID=='' && folderID!='') {
-        console.log('ko co course nhung co folder');
         var folder=await Folder.findById(folderID);
-        console.log(folder);
         if (folder==null||folder=='') return {error:'Folder not found'}
     } 
     //has none means default folder
     else {
-        console.log('ko co ca course va folder');
         var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
-        console.log(folder);
         if (folder==null||folder=='') {
             var folder=await newFolder(studentID,'','Other','Other');
         }
     }
     folderID=folder._id;
-    console.log(folderID);
     var note = new Note({
         studentID:studentID,
         folderID:folderID,
@@ -82,7 +74,6 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     note=await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
         ,{returnOriginal: false}, function(error){
             if (error) {
-                // console.log(error);
                 err=error;
             }
         });

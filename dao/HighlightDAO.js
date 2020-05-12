@@ -26,12 +26,9 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
 
     //has course but not folder
     if (courseID!='' && folderID=='') {
-        console.log('Co course ma ko co folder');
         var course=await Course.findById(courseID);
         if (course==null||course=='') return {error:'Course not found'}
-        console.log(course);
         var folder=await Folder.findOne({studentID:studentID,courseCode:course.courseCode});
-        console.log(folder);
         if (folder==null||folder=='') 
             var folder=await newFolder(studentID,courseID,course.courseName,course.courseCode);
 
@@ -39,22 +36,17 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     else
     //has folder but not course
     if (courseID=='' && folderID!='') {
-        console.log('ko co course nhung co folder');
         var folder=await Folder.findById(folderID);
-        console.log(folder);
         if (folder==null||folder=='') return {error:'Folder not found'}
     } 
     //has none means default folder
     else {
-        console.log('ko co ca course va folder');
         var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
-        console.log(folder);
         if (folder==null||folder=='') {
             var folder=await newFolder(studentID,'','Other','Other');
         }
     }
     folderID=folder._id;
-    console.log(folderID);
     
     var highlight = new Highlight({
         studentID: studentID,
