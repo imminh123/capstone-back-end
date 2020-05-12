@@ -29,9 +29,9 @@ exports.chooseRole = async (req,res) => {
     //     res.redirect('https://noteitfu.herokuapp.com?token=' + token);
     
     //   });
-
+    if (user.error) res.send({error:user.error});
     console.log('new user '+user);
-    res.status(200).send(user);
+    res.status(200).redirect('localhost:3001?token=' + token);
 
 }
 
