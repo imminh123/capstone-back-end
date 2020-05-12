@@ -26,8 +26,10 @@ exports.chooseRole = async (req,res) => {
     jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
         if(err) console.log(err)
         console.log('token when choosing role: '+token);
+        var url='https://noteitfu.herokuapp.com?token=' + token;
+        var result = {success:url}
         // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-        res.status(200).redirect('https://noteitfu.herokuapp.com?token=' + token);
+        res.status(200).send(result);
     
       });
 

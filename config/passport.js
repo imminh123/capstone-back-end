@@ -108,7 +108,7 @@ const googleStrategyConfig = new GoogleStrategy({
           console.log('bien role thanh tempuser');
           let role = 'tempuser';
           let profileForParam = {};
-          profileForParam.name = profile.displayName;
+          profileForParam.name = profile.displayName || email;
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
 
