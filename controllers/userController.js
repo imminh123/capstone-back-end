@@ -18,7 +18,17 @@ exports.getUserByID = async (req,res) => {
 exports.chooseRole = async (req,res) => {
     var email=req.query.email;
     var role=req.query.role;
-    res.send(await userDAO.chooseRole(email,role));
+    // res.send(await userDAO.chooseRole(email,role));
+    var user=await userDAO.chooseRole(email,role);
+    
+    jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
+        if(err) console.log(err)
+        
+        // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+        res.redirect('https://noteitfu.herokuapp.com?token=' + token);
+    
+      });
+
 }
 
 exports.getAllUser = async (req,res) => {
