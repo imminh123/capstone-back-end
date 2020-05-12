@@ -1,4 +1,5 @@
 const userDAO = require('../dao/UserDAO');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res, next) => {
     var email=req.body.email;
@@ -22,8 +23,13 @@ exports.chooseRole = async (req,res) => {
     var user=await userDAO.chooseRole(email,role);
     if (user.error) res.send({error:user.error});
     console.log('new user '+user);
+    jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
+        if(err) console.log(err)
+        
+        // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+        res.status(200).redirect('localhost:3001?token=' + token);
     
-    res.status(200).redirect('https://noteitfu.herokuapp.com');
+      });
 
 }
 
