@@ -23,7 +23,7 @@ exports.chooseRole = async (req,res) => {
     if (user.error) res.send({error:user.error});
     console.log('new user '+user);
     
-    res.status(200).send(user);
+    res.status(200).redirect('https://noteitfu.herokuapp.com');
 
 }
 
