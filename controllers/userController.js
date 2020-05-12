@@ -1,4 +1,5 @@
 const userDAO = require('../dao/UserDAO');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res, next) => {
     var email=req.body.email;
