@@ -16,11 +16,11 @@ exports.getUserByID = async (req,res) => {
 }
 
 exports.chooseRole = async (req,res) => {
-    var email=req.query.email;
-    var role=req.query.role;
+    var email=req.body.email;
+    var role=req.body.role;
     // res.send(await userDAO.chooseRole(email,role));
     var user=await userDAO.chooseRole(email,role);
-    
+
     jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
         if(err) console.log(err)
         
