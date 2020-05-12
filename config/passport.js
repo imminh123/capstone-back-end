@@ -81,7 +81,7 @@ const googleStrategyConfig = new GoogleStrategy({
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
-      console.log('dang nhap '+email);
+      console.log('dang nhap '+profile.id);
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
@@ -91,7 +91,7 @@ const googleStrategyConfig = new GoogleStrategy({
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {
-          console.log(email+' da ton tai');
+          console.log(profile.emails[0].value+' da ton tai');
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
           done(err);
         } else {
