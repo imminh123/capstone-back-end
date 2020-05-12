@@ -84,6 +84,7 @@ const googleStrategyConfig = new GoogleStrategy({
     User.findOne({ google: profile.id }, (err, existingUser) => {
 
       var oldU=User.findOneAndUpdate({google: profile.id},{name:profile.displayName,avatar:profile._json.picture},{returnOriginal: false});
+      console.log(oldU);
       if (oldU.role=='student') Student.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
       else if (oldU.role=='teacher') Teacher.updateOne({_id:oldU.profile},{name:oldU.name,avatar:oldU.avatar});
 
