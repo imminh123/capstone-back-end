@@ -201,7 +201,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   const user = res.req.user;
   jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
     if(err) console.log(err)
-    
+    console.log(token);
     // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
     res.redirect('https://noteitfu.herokuapp.com?token=' + token);
 
