@@ -81,6 +81,7 @@ const googleStrategyConfig = new GoogleStrategy({
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
+      console.log('dang nhap '+email);
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
@@ -88,7 +89,6 @@ const googleStrategyConfig = new GoogleStrategy({
 
       //check if there's an email duplicate with google email in DB
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
-        console.log(email+' dang nhap');
         if (err) { return done(err); }
         if (existingEmailUser) {
           console.log(email+' da ton tai');
