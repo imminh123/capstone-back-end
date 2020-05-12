@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const TempUser = require('../models/TempUser');
+const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 var Objectid = require('mongodb').ObjectID;
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
@@ -92,8 +94,12 @@ exports.deleteUser = async function(id){
 
     id=Objectid(id);
     
+    var user=await User.findById(id);
+    await Teacher.findOneAndDelete({_id:user.profile._id});
+    await TempUser.findOneAndDelete({_id:user.profile._id});
+    await Student.findOneAndDelete({_id:user.profile._id});
     await User.deleteOne({_id:id});
-
+    
     return {success:'Delete successfully'};
 
 }
