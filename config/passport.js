@@ -82,6 +82,7 @@ const googleStrategyConfig = new GoogleStrategy({
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
       console.log('dang nhap '+profile.id);
+      console.log(existingUser);
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
