@@ -127,6 +127,9 @@ exports.deleteCourse = async function(id){
 //create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
 
+    name=name.trim();
+    code=code.trim();
+
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 
     if (code=='Other') return {error:'Course code cannot not be Other'}
@@ -159,6 +162,9 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 
 //update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
+
+    name=name.trim();
+    code=code.trim();
 
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 

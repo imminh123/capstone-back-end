@@ -84,6 +84,9 @@ exports.deleteNoteByFolderID= async function(folderID){
 
 exports.createFolder=async function(studentID,courseCode,courseName){
 
+    courseCode=courseCode.trim();
+    courseName=courseName.trim();
+
     if (getFunction.isEmpty(studentID)) return {error:'All field must be filled'}
 
     studentID=Objectid(studentID);

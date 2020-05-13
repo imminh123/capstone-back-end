@@ -65,7 +65,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     await ask.save();
 
-    // getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
+    getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
 
     return {success:'Create successfully'};
 
@@ -212,7 +212,7 @@ exports.addComment = async function(askID,userID,message){
             teacherStatus:'new',
             studentLastCommentAt: now}
         );
-        // getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
+        getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
     } else {
         await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
