@@ -73,7 +73,7 @@ describe('5 Create /createDepartment', () => {
 });
 
 describe('6 GET /getDepartment/', () => {
-  it('should return department detail name=Test', (done) => {
+  it('Get department should return department detail name=Test', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -203,7 +203,7 @@ describe('10 Delete /deleteDepartment/', () => {
 });
 
 describe('11 GET /searchFAQ?detail=DBI&page=1', () => {
-  it('should return list of FAQ', (done) => {
+  it('Search FAQ should return list of FAQ', (done) => {
     request(app)
       .get('/searchFAQ?detail=DBI&page=1')
       .expect(200)
@@ -374,7 +374,7 @@ describe('19 Create /createcourse', () => {
 });
 
 describe('20 GET /searchcourse?page=1&limit=2&detail=test', () => {
-  it('should return search result contain course code = test', (done) => {
+  it('Search course should return search result contain course code = test', (done) => {
     request(app)
       .get('/searchcourse?page=1&limit=2&detail=test')
       .expect(200)
@@ -594,7 +594,7 @@ describe('29 GET /getteacher/111111111111111111111111', () => {
 });
 
 describe('30 GET /getteacher/', () => {
-  it('should return code 200', (done) => {
+  it('Get teacher should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -618,7 +618,7 @@ describe('30 GET /getteacher/', () => {
 });
 
 describe('31 GET /getTeacherDashboard/', () => {
-  it('should return code 200', (done) => {
+  it('Get teacher dashboard should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -702,7 +702,7 @@ describe('36 GET /allStudent', () => {
 });
 
 describe('37 GET /getFAQ/', () => {
-  it('getFAQ should return code 200', (done) => {
+  it('Get FAQ should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -742,7 +742,7 @@ describe('38 GET /getCourseForFAQ', () => {
 });
 
 describe('39 GET /getAllUser', () => {
-  it('getAllUser should return code 200', (done) => {
+  it('Get All User should return code 200', (done) => {
     request(app)
       .get('/getAllUser')
       .expect(200)
@@ -754,7 +754,7 @@ describe('39 GET /getAllUser', () => {
 });
 
 describe('40 GET /getUserByID/', () => {
-  it('getUserByID should return code 200', (done) => {
+  it('Get User By ID should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -778,7 +778,7 @@ describe('40 GET /getUserByID/', () => {
 });
 
 describe('41 GET /getUserByID/111111111111111111111111', () => {
-  it('getAllUser should return code 200', (done) => {
+  it('Get User should return error not found', (done) => {
     request(app)
       .get('/getUserByID/111111111111111111111111')
       .expect(200)
@@ -793,7 +793,7 @@ describe('41 GET /getUserByID/111111111111111111111111', () => {
 });
 
 describe('42 GET /getstudentbyid/', () => {
-  it('getstudentbyid should return code 200', (done) => {
+  it('Get Student By ID should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -817,7 +817,7 @@ describe('42 GET /getstudentbyid/', () => {
 });
 
 describe('43 GET /getStudentStatistic/', () => {
-  it('getStudentStatistic should return code 200', (done) => {
+  it('Get Student Dashboard should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -841,7 +841,7 @@ describe('43 GET /getStudentStatistic/', () => {
 });
 
 describe('44 GET /getCourseOfStudent/', () => {
-  it('getCourseOfStudent should return code 200', (done) => {
+  it('Get Course of Student should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
@@ -865,7 +865,7 @@ describe('44 GET /getCourseOfStudent/', () => {
 });
 
 describe('45 GET /exitCourse/', () => {
-  it('exitCourse should return code 200', (done) => {
+  it('Student exit course should return code 200', (done) => {
     async.series([
       function(fun){
         request(app)
