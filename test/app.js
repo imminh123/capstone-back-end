@@ -1,6 +1,6 @@
 const request = require('supertest');
+const async = require('async');
 const app = require('../app.js');
-var async = require("async");
 
 describe('1 GET /randomURL', () => {
   it('should return 404', (done) => {
