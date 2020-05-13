@@ -162,6 +162,10 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
 
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 
+    id=Objectid(id);
+    var course=await Course.findById(id);
+    if (course==null||course=='') return {error:'Course not found'}
+
     if (code=='Other') return {error:'Course code cannot not be Other'}
 
     if (await existed(id,code,url)) {
@@ -169,16 +173,12 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     }
 
     if (await invalidDepartment(departments)) return {error:'Department not found'};
-    id=Objectid(id);
-    var course=await Course.findById(id);
-
+    
     //update all folder name and code link to this course
     if (course.courseCode!=code||course.courseName!=name) {
         await Folder.updateMany({courseID:course._id},{courseCode:code,courseName:name});
         await FAQ.updateMany({courseCode:course.courseCode},{courseCode:code});
     }
-        
-    if (course==null||course=='') return {error:'Course not found'}
 
     course=await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}

@@ -2,8 +2,6 @@
  * Module dependencies.
  */
 const express = require('express');
-const http = require('http');
-const https = require('https');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
@@ -20,10 +18,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const multer = require('multer');
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const cors= require('cors');
-var nodemailer = require('nodemailer');
+
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -34,8 +30,6 @@ dotenv.config({ path: '.env' });
  */
 const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
-const apiController = require('./controllers/api');
-const contactController = require('./controllers/contact');
 const adminController = require('./controllers/adminController');
 const courseController = require('./controllers/courseController');
 const teacherController = require('./controllers/teacherController');
@@ -158,8 +152,6 @@ app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
 app.get('/account/verify', passportConfig.isAuthenticated, userController.getVerifyEmail);
 app.get('/account/verify/:token', passportConfig.isAuthenticated, userController.getVerifyEmailToken);
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
@@ -208,16 +200,6 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
 });   
 
-
-/**
- * OAuth authorization routes. (API examples)
- */
-app.get('/auth/foursquare', passport.authorize('foursquare'));
-app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect('/api/foursquare');
-});
-
-
 /**
  * Error Handler.
  */
@@ -235,8 +217,6 @@ if (process.env.NODE_ENV === 'development') {
 const { createServer } = require("http");
 const WebSocket = require("ws");
 const server = createServer(app);
-
-
 
 /**
  * Start Express server.
@@ -276,6 +256,7 @@ app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
 app.get('/searchDepartment/', departmentController.searchDepartment);
+app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 
 /**
  * Course
@@ -286,7 +267,6 @@ app.post('/createcourse/', courseController.createCourse);
 app.put('/updatecourse/:id',courseController.updateCourse);
 app.delete('/deletecourse/:id',courseController.deleteCourse);
 app.get('/searchcourse', courseController.searchCourse);
-app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 
 /**
  * Teacher
