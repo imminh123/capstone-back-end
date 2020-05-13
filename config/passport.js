@@ -45,13 +45,13 @@ passport.use('sign-in',new LocalStrategy(
       console.log(user.password);
       console.log(password);
       console.log(user.password==password);
-      if (user.password==password){
-      if (err) { return done(err); }
-      if (isMatch) {
+      if (user.password==password)
+      // if (err) { return done(err); }
+      // if (isMatch) {
         return done(null, user);
-      }
+
       return done(null, false, { msg: 'Invalid email or password.' });
-    };
+  
   });
 
 }));
