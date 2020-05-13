@@ -288,9 +288,10 @@ exports.openAsk=async function(askID){
     
 }
 
-function inCourse(courses,text) {
-    for (course of courses) 
-            if (course.courseCode.includes(text))
+function inCourse(courses,id,text) {
+    console.log(id);
+    for (course of courses)
+            if (course.courseCode.includes(text) && course._id==id.toString())
                 return true;
     return false;
 }
@@ -319,7 +320,7 @@ exports.searchAsk = async function(userID,text){
         var result = asks.filter(function(value, index, arr){
             return value.askContent.toLowerCase().includes(text)
                 || value.teacher.name.toLowerCase().includes(text)
-                || inCourse(courses,text);
+                || inCourse(courses,value.courseID,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.teacherLastCommentAt)-Date.parse(a.teacherLastCommentAt);
@@ -330,7 +331,7 @@ exports.searchAsk = async function(userID,text){
         var result = asks.filter(function(value, index, arr){
             return value.askContent.toLowerCase().includes(text)
             || value.student.name.toLowerCase().includes(text)
-            || inCourse(courses,text);
+            || inCourse(courses,value.courseID,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.studentLastCommentAt)-Date.parse(a.studentLastCommentAt);
