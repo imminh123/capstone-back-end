@@ -4,6 +4,7 @@ const FAQ = require('../models/FAQ');
 const Comment = require('../models/Comment');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
+const Course = require('../models/Course');
 const getFunction = require('./getFunction');
 
 //return ask with new status after user read an ask
@@ -33,6 +34,7 @@ function newAsk(ask,status,answer,faqid){
 //create new ask
 exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,courseID,url){
 
+    askContent=askContent.trim();
     if (getFunction.isEmpty(scannedContent,askContent,studentID,teacherID,courseID)) return {error:'All field must be filled'}
 
     studentID=Objectid(studentID);
@@ -301,9 +303,12 @@ exports.searchAsk = async function(userID,text){
         role='teacher';
     }
 
+
+
     if (role=='student'){
         var asks = await Ask.find({student:userID}).populate('student').populate('teacher').lean();
         var result = asks.filter(function(value, index, arr){
+            
             return value.askContent.toLowerCase().includes(text.toLowerCase())
                 || value.teacher.name.toLowerCase().includes(text.toLowerCase());
         });
