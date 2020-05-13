@@ -42,6 +42,9 @@ passport.use('sign-in',new LocalStrategy(
     }
 
     // user.comparePassword(password, (err, isMatch) => {
+      console.log(user.password);
+      console.log(password);
+      console.log(user.password==password);
       if (user.password==password){
       if (err) { return done(err); }
       if (isMatch) {
