@@ -183,7 +183,9 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
-    if (getFunction.isEmpty(askID,userID,message)) return {error:'Message cannot be empty'};
+    message=message.trim();
+
+    if (getFunction.isEmpty(message)) return {error:'Message cannot be empty'};
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
