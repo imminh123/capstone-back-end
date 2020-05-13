@@ -16,16 +16,9 @@ async function existed(id,code,url){
     var courseByCode=await Course.findOne({courseCode:code});
     var courseByUrl=await Course.findOne({courseURL:url});
 
-    console.log(id);
-    console.log(courseByCode);
-    console.log(courseByUrl);
-    console.log(courseByCode._id!=id);
-    console.log(courseByUrl._id!=id);
-    console.log(courseByUrl._id!=id || courseByCode._id!=id);
-
     //if no course was found. Or a course was found but code is unchanged
-    if ((courseByCode!=null && courseByCode._id!=id)
-       ||(courseByUrl!=null && courseByUrl._id!=id)) {
+    if ((courseByCode!=null && courseByCode._id!=id.toString())
+       ||(courseByUrl!=null && courseByUrl._id!=id.toString())) {
         existed=1;
     }
 
