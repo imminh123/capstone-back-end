@@ -2,6 +2,7 @@ const User = require('../models/User');
 const TempUser = require('../models/TempUser');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
+const AdminDAO = require('../dao/AdminDAO');
 var Objectid = require('mongodb').ObjectID;
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
@@ -69,7 +70,8 @@ exports.chooseRole= async function(email,role) {
 
     var user = await User.findOne({email:email});
     if (user==null||user=='') return {error:'Email not found'}
-
+    if (role=='admin') newProfile=await AdminDAO.createAdmin(user.name,email,user.gender,user.avatar);
+    else
     if (role=='teacher') {
         newProfile = await TeacherDAO.createTeacher(user.name,email,user.gender,user.avatar);
     }

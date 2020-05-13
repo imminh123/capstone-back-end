@@ -24,12 +24,13 @@ passport.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport.use('sign-in',new LocalStrategy(
+  
   { 
     usernameField: 'email', 
     passwordField: 'password' 
   }
   , (email, password, done) => {
-
+    console.log('email: '+email+' password '+password);
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
 
     if (err) { return done(err); }
