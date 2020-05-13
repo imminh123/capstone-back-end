@@ -140,12 +140,17 @@ exports.searchFAQ = async function(detail,courseCode,page){
 
 exports.getCourseForFAQ = async function(){
 
-    var courses=await Course.find().lean();
+    var courses=await Course.find().select('courseCode courseName').lean();
+
+    courses.sort(function(a,b){
+        return a.courseCode.localeCompare(b.courseCode);
+    })
 
     var all = {
         courseCode: 'All FAQ',
         courseName: 'FAQ of all courses'
     }
+
     courses.unshift(all);
 
     return courses;
