@@ -48,21 +48,31 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     }
     folderID=folder._id;
     
-    var highlight = new Highlight({
-        studentID: studentID,
-        scannedContent: scannedContent,
-        index: index,
-        color: color,
-        dateModified: getFunction.today(),
-        url : url,
-        folderID:folderID,
-        startOffSet:startOffSet,
-        endOffSet:endOffSet
-    });
+    var existedHL=await Highlight.findOne({studentID:studentID,scannedContent:scannedContent,index:index,url:url});
+    
+    if (existedHL==null||existedHL=='') {
+        var highlight = new Highlight({
+            studentID: studentID,
+            scannedContent: scannedContent,
+            index: index,
+            color: color,
+            dateModified: getFunction.today(),
+            url : url,
+            folderID:folderID,
+            startOffSet:startOffSet,
+            endOffSet:endOffSet
+        });
 
-    await highlight.save();
+        await highlight.save();
 
-    return {success:'Create successfully'};
+        return {success:'Create successfully'}
+    }
+    else {
+        await Highlight.updateOne({_id:existedHL._id},{color:color});
+
+        return {success:'Update successfully'}
+
+    }
 
 }
 
