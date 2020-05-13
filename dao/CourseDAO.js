@@ -16,6 +16,7 @@ async function existed(id,code,url){
     var courseByCode=await Course.findOne({courseCode:code});
     var courseByUrl=await Course.findOne({courseURL:url});
 
+    console.log(id);
     console.log(courseByCode);
     console.log(courseByUrl);
 
