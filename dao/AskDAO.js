@@ -288,6 +288,13 @@ exports.openAsk=async function(askID){
     
 }
 
+function inCourse(courses,text) {
+    for (course of courses) 
+            if (course.courseCode.includes(text))
+                return true;
+    return false;
+}
+
 exports.searchAsk = async function(userID,text){
 
     if (getFunction.isEmpty(userID)) return {error:'All field must be filled'}
@@ -303,14 +310,16 @@ exports.searchAsk = async function(userID,text){
         role='teacher';
     }
 
-
+    text=text.toLowerCase();
+    var courses=await Course.find().lean();
+    for (course of courses) course.courseCode=course.courseCode.toLowerCase();
 
     if (role=='student'){
         var asks = await Ask.find({student:userID}).populate('student').populate('teacher').lean();
         var result = asks.filter(function(value, index, arr){
-            
-            return value.askContent.toLowerCase().includes(text.toLowerCase())
-                || value.teacher.name.toLowerCase().includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text)
+                || value.teacher.name.toLowerCase().includes(text)
+                || inCourse(courses,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.teacherLastCommentAt)-Date.parse(a.teacherLastCommentAt);
@@ -319,8 +328,9 @@ exports.searchAsk = async function(userID,text){
         //teacher
         var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher').lean();
         var result = asks.filter(function(value, index, arr){
-            return value.askContent.toLowerCase().includes(text.toLowerCase())
-            || value.student.name.toLowerCase().includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text)
+            || value.student.name.toLowerCase().includes(text)
+            || inCourse(courses,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.studentLastCommentAt)-Date.parse(a.studentLastCommentAt);
