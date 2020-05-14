@@ -42,7 +42,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
     if (student==null||student=='') return {error:'Student not found'};
     
     teacherID=Objectid(teacherID);
-    var teacher=await Student.findById(studentID);
+    var teacher=await Teacher.findById(teacherID);
     if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     var today=getFunction.today();
