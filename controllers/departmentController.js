@@ -2,8 +2,7 @@ const departmentDAO = require('../dao/DepartmentDAO');
 
 exports.createDepartment = async (req, res, next) => {
     var name=req.body.name;
-    var description=req.body.description;
-    res.send(await departmentDAO.createDepartment(name,description));               
+    res.send(await departmentDAO.createDepartment(name));               
 };
 
 exports.getDepartment = async (req,res) => {
@@ -23,8 +22,7 @@ exports.deleteDepartment = async (req,res) => {
 exports.updateDepartment = async (req,res) => {
     var id=req.params['id'];
     var name=req.body.name;
-    var description=req.body.description;
-    res.send(await departmentDAO.updateDepartment(id,name,description));
+    res.send(await departmentDAO.updateDepartment(id,name));
 }
 
 exports.getCourseOfDepartment=async(req,res)=>{

@@ -2,7 +2,6 @@ const Ask = require('../models/Ask');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
-const getFunction = require('./getFunction');
 
 exports.createAdmin = async function(adminName,email,gender,avatar){
 
@@ -24,9 +23,9 @@ exports.createAdmin = async function(adminName,email,gender,avatar){
 //get number of teacher, course, and active teacher
 exports.getAllNumber = async function () {
 
-    var newObject = '{"numOfTeacher":'+await Teacher.count({})
-                        +',"numOfCourse":'+await Course.count({})
-                        +',"numOfActiveTeacher":'+await Teacher.count({isActive:true})+'}';
+    var newObject = '{"numOfTeacher":'+await Teacher.countDocuments({})
+                        +',"numOfCourse":'+await Course.countDocuments({})
+                        +',"numOfActiveTeacher":'+await Teacher.countDocuments({isActive:true})+'}';
 
     return JSON.parse(newObject);
 

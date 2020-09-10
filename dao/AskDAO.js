@@ -4,6 +4,7 @@ const FAQ = require('../models/FAQ');
 const Comment = require('../models/Comment');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
+const Course = require('../models/Course');
 const getFunction = require('./getFunction');
 
 //return ask with new status after user read an ask
@@ -33,6 +34,7 @@ function newAsk(ask,status,answer,faqid){
 //create new ask
 exports.createAsk = async function(scannedContent,askContent,studentID,teacherID,courseID,url){
 
+    askContent=askContent.trim();
     if (getFunction.isEmpty(scannedContent,askContent,studentID,teacherID,courseID)) return {error:'All field must be filled'}
 
     studentID=Objectid(studentID);
@@ -40,7 +42,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
     if (student==null||student=='') return {error:'Student not found'};
     
     teacherID=Objectid(teacherID);
-    var teacher=await Student.findById(studentID);
+    var teacher=await Teacher.findById(teacherID);
     if (teacher==null||teacher=='') return {error:'Teacher not found'};
 
     var today=getFunction.today();
@@ -65,7 +67,7 @@ exports.createAsk = async function(scannedContent,askContent,studentID,teacherID
 
     await ask.save();
 
-    // getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
+    getFunction.sendEmail('student',teacher,'You got a new question',ask._id);
 
     return {success:'Create successfully'};
 
@@ -183,7 +185,9 @@ exports.allAsk = async function(){
 //add a new comment to ask
 exports.addComment = async function(askID,userID,message){
 
-    if (getFunction.isEmpty(askID,userID,message)) return {error:'Message cannot be empty'};
+    message=message.trim();
+
+    if (getFunction.isEmpty(message)) return {error:'Message cannot be empty'};
 
     askID=Objectid(askID);
     var ask=await Ask.findById(askID).populate('student').populate('teacher').populate('comments');
@@ -212,7 +216,7 @@ exports.addComment = async function(askID,userID,message){
             teacherStatus:'new',
             studentLastCommentAt: now}
         );
-        // getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
+        getFunction.sendEmail('student',ask.teacher,'Student has replied to your answer',askID);   
     } else {
         await Ask.findOneAndUpdate({_id: askID}, 
             {$addToSet:{comments:comment._id},
@@ -284,6 +288,14 @@ exports.openAsk=async function(askID){
     
 }
 
+function inCourse(courses,id,text) {
+    console.log(id);
+    for (course of courses)
+            if (course.courseCode.includes(text) && course._id==id.toString())
+                return true;
+    return false;
+}
+
 exports.searchAsk = async function(userID,text){
 
     if (getFunction.isEmpty(userID)) return {error:'All field must be filled'}
@@ -299,11 +311,16 @@ exports.searchAsk = async function(userID,text){
         role='teacher';
     }
 
+    text=text.toLowerCase();
+    var courses=await Course.find().lean();
+    for (course of courses) course.courseCode=course.courseCode.toLowerCase();
+
     if (role=='student'){
         var asks = await Ask.find({student:userID}).populate('student').populate('teacher').lean();
         var result = asks.filter(function(value, index, arr){
-            return value.askContent.toLowerCase().includes(text.toLowerCase())
-                || value.teacher.name.toLowerCase().includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text)
+                || value.teacher.name.toLowerCase().includes(text)
+                || inCourse(courses,value.courseID,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.teacherLastCommentAt)-Date.parse(a.teacherLastCommentAt);
@@ -312,8 +329,9 @@ exports.searchAsk = async function(userID,text){
         //teacher
         var asks = await Ask.find({teacher:userID}).populate('student').populate('teacher').lean();
         var result = asks.filter(function(value, index, arr){
-            return value.askContent.toLowerCase().includes(text.toLowerCase())
-            || value.student.name.toLowerCase().includes(text.toLowerCase());
+            return value.askContent.toLowerCase().includes(text)
+            || value.student.name.toLowerCase().includes(text)
+            || inCourse(courses,value.courseID,text);
         });
         result.sort(function(a,b){
             return Date.parse(b.studentLastCommentAt)-Date.parse(a.studentLastCommentAt);

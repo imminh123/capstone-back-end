@@ -8,11 +8,9 @@ const { OAuth2Strategy } = require('passport-oauth');
 const _ = require('lodash');
 const moment = require('moment');
 const UserDAO = require('../dao/UserDAO');
-
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  console.log(user) 
   done(null, user.id);
 });    
 
@@ -26,12 +24,13 @@ passport.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport.use('sign-in',new LocalStrategy(
+  
   { 
     usernameField: 'email', 
     passwordField: 'password' 
   }
   , (email, password, done) => {
-
+    console.log('email: '+email+' password '+password);
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) { return done(err); }
     if (!user) {
@@ -42,15 +41,17 @@ passport.use('sign-in',new LocalStrategy(
     }
 
     user.comparePassword(password, (err, isMatch) => {
+      
       if (err) { return done(err); }
       if(user.role == 'admin' && user.password == password) {
         return done(null, user);
       }
       if (isMatch) {
+      // if (user.password==password)
         return done(null, user);
-      }
+  }});
       return done(null, false, { msg: 'Invalid email or password.' });
-    });
+  
   });
 
 }));
@@ -83,18 +84,21 @@ const googleStrategyConfig = new GoogleStrategy({
   passReqToCallback: true
 }, (req, accessToken, refreshToken, params, profile, done) => {
     User.findOne({ google: profile.id }, (err, existingUser) => {
+
       if (err) { return done(err); }
       if (existingUser) {
         return done(null, existingUser);
-      }
-
-      //check if there's an email duplicate with google email in DB
+      }      
+  
+      //create new user
       User.findOne({ email: profile.emails[0].value }, async (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {
+ 
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
           done(err);
         } else {
+  
           let email = profile.emails[0].value;
           let google = profile.id;
           let tokens = {
@@ -103,11 +107,13 @@ const googleStrategyConfig = new GoogleStrategy({
             accessTokenExpires: moment().add(params.expires_in, 'seconds').format(),
             refreshToken,
           };
-          let role = 'student';
+ 
+          let role = 'tempuser';
           let profileForParam = {};
-          profileForParam.name = profile.displayName;
+          profileForParam.name = profile.displayName || email;
           profileForParam.gender = profile._json.gender || 'other';
           profileForParam.avatar = profile._json.picture;
+
 
           const user = await UserDAO.createUser(email, google, tokens, role, profileForParam, null);
 
@@ -116,7 +122,6 @@ const googleStrategyConfig = new GoogleStrategy({
           }else {
             done(err);
           }
-          // console.log(user);
         }
       });
     });

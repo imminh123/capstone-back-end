@@ -2,8 +2,6 @@
  * Module dependencies.
  */
 const express = require('express');
-const http = require('http');
-const https = require('https');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const session = require('express-session');
@@ -20,10 +18,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const multer = require('multer');
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const cors= require('cors');
-var nodemailer = require('nodemailer');
+
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -34,8 +30,6 @@ dotenv.config({ path: '.env' });
  */
 const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
-const apiController = require('./controllers/api');
-const contactController = require('./controllers/contact');
 const adminController = require('./controllers/adminController');
 const courseController = require('./controllers/courseController');
 const teacherController = require('./controllers/teacherController');
@@ -158,8 +152,6 @@ app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
 app.get('/account/verify', passportConfig.isAuthenticated, userController.getVerifyEmail);
 app.get('/account/verify/:token', passportConfig.isAuthenticated, userController.getVerifyEmailToken);
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
@@ -167,22 +159,6 @@ app.post('/account/profile', passportConfig.isAuthenticated, userController.post
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
-
-// /**
-//  * API examples routes.
-//  */
-app.get('/api', apiController.getApi);
-app.get('/api/lastfm', apiController.getLastfm);
-app.get('/api/nyt', apiController.getNewYorkTimes);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
-app.get('/api/github', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGithub);
-app.get('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTwitter);
-app.get('/api/paypal', apiController.getPayPal);
-app.get('/api/paypal/success', apiController.getPayPalSuccess);
-app.get('/api/paypal/cancel', apiController.getPayPalCancel);
-app.get('/api/upload', lusca({ csrf: true }), apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiController.postFileUpload);
-
 
 //Login routes
 app.post('/login', (req, res, next) => {
@@ -217,25 +193,12 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   const user = res.req.user;
   jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
     if(err) console.log(err)
-    
-    // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
-    res.redirect('https://noteitfu.herokuapp.com?token=' + token);
 
+      // res.cookie('user', token , { domain: 'http://192.168.1.205:3000', maxAge: 900000})
+    res.redirect('https://noteitfu.herokuapp.com?token=' + token);
   })
 
-  // res.redirect('/');
-
 });   
-
-
-/**
- * OAuth authorization routes. (API examples)
- */
-app.get('/auth/foursquare', passport.authorize('foursquare'));
-app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect('/api/foursquare');
-});
-
 
 /**
  * Error Handler.
@@ -254,8 +217,6 @@ if (process.env.NODE_ENV === 'development') {
 const { createServer } = require("http");
 const WebSocket = require("ws");
 const server = createServer(app);
-
-
 
 /**
  * Start Express server.
@@ -295,6 +256,7 @@ app.post('/createDepartment', departmentController.createDepartment);
 app.put('/updateDepartment/:id', departmentController.updateDepartment);
 app.delete('/deleteDepartment/:id', departmentController.deleteDepartment);
 app.get('/searchDepartment/', departmentController.searchDepartment);
+app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 
 /**
  * Course
@@ -305,7 +267,6 @@ app.post('/createcourse/', courseController.createCourse);
 app.put('/updatecourse/:id',courseController.updateCourse);
 app.delete('/deletecourse/:id',courseController.deleteCourse);
 app.get('/searchcourse', courseController.searchCourse);
-app.get('/getCourseOfDepartment/:id', departmentController.getCourseOfDepartment);
 
 /**
  * Teacher
@@ -396,5 +357,8 @@ app.put('/exitCourse/:studentID/:courseID', studentController.exitCourse);
  */
 app.get('/getUserByID/:id', myUserController.getUserByID);
 app.post('/createUser', myUserController.createUser);
+app.post('/chooseRole/', myUserController.chooseRole);
+app.get('/getAllUser', myUserController.getAllUser);
+app.delete('/deleteUser/:id', myUserController.deleteUser);
 
 module.exports = app;

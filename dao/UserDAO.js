@@ -1,38 +1,30 @@
 const User = require('../models/User');
-var Objectid = require('mongodb').ObjectID;
+const TempUser = require('../models/TempUser');
+const Teacher = require('../models/Teacher');
+const Student = require('../models/Student');
 const AdminDAO = require('../dao/AdminDAO');
+var Objectid = require('mongodb').ObjectID;
 const TeacherDAO = require('../dao/TeacherDAO');
 const StudentDAO = require('../dao/StudentDAO');
-const getFunction = require('./getFunction');
 var bcrypt = require('bcrypt');
-
 
 const saltRounds = 10;
 
-exports.createUser = async function(email,google,tokens,role,profile, password){
+exports.createUser = async function(email,google,tokens,role,profile,password){
     var user = await User.findOne({email:email});
     var newProfile = null;
     var error,status;
     
     if (!(user==null||user=='')) return {error:'User Email already existed'};
 
-    if (role=='admin') {
-        newProfile = await AdminDAO.createAdmin(profile.name,email,profile.gender,profile.avatar);
-    }
-    else if (role=='teacher') {
-        newProfile = await TeacherDAO.createTeacher(profile.name,email,profile.gender,profile.avatar);
-    }
-    else if (role=='student') {
-        newProfile = await StudentDAO.createStudent(profile.name,email,profile.gender,profile.avatar);
+    var newProfile=new TempUser({
+        name:profile.name,
+        email:email,
+        gender:profile.gender,
+        avatar:profile.avatar
+    });
 
-    }
-    else
-        return {error:'Role not correct [admin,teacher,student]'};
-        
-
-    if (newProfile.error) return {error:newProfile.error};
-
-
+    await newProfile.save();
 
     const newUser = new User({
         email:email,
@@ -42,6 +34,7 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
         tokens:tokens,
         role:role,
         avatar: profile.avatar,
+        gender: profile.gender,
         profile: {...profile, ...newProfile}
     });
 
@@ -58,6 +51,9 @@ exports.createUser = async function(email,google,tokens,role,profile, password){
 
         return { status, user, error }
     });
+    
+    return newUser;
+
 }
 
 exports.getUserByID = async function(id){
@@ -67,5 +63,48 @@ exports.getUserByID = async function(id){
     if (user==null||user=='') return {error:'User not found'};
 
     return user;
+
+}
+
+exports.chooseRole= async function(email,role) {
+
+    var user = await User.findOne({email:email});
+    if (user==null||user=='') return {error:'Email not found'}
+    if (role=='admin') newProfile=await AdminDAO.createAdmin(user.name,email,user.gender,user.avatar);
+    else
+    if (role=='teacher') {
+        newProfile = await TeacherDAO.createTeacher(user.name,email,user.gender,user.avatar);
+    }
+    else if (role=='student') {
+        newProfile = await StudentDAO.createStudent(user.name,email,user.gender,user.avatar);
+    }
+    else
+        return {error:'Role not correct [teacher,student]'};
+
+    if (newProfile.error) return {error:newProfile.error};
+
+    await TempUser.deleteOne({email:email});
+
+    return await User.findOneAndUpdate({email:email},{profile:newProfile._id,role:role},{returnOriginal: false});
+
+}
+
+exports.getAllUser = async function(id){
+
+    return await User.find();
+
+}
+
+exports.deleteUser = async function(id){
+
+    id=Objectid(id);
+    
+    var user=await User.findById(id);
+    await Teacher.findOneAndDelete({_id:user.profile._id});
+    await TempUser.findOneAndDelete({_id:user.profile._id});
+    await Student.findOneAndDelete({_id:user.profile._id});
+    await User.deleteOne({_id:id});
+    
+    return {success:'Delete successfully'};
 
 }

@@ -43,7 +43,7 @@ exports.getHighlightByFolderID = async function(folderID){
     var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Highlight.find({folderID:folderID});
+    return await Highlight.find({folderID:folderID}).sort({_id:-1});
 
 }
 
@@ -66,7 +66,7 @@ exports.getNoteByFolderID = async function(folderID){
     var folder = await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Note.find({folderID:folderID});
+    return await Note.find({folderID:folderID}).sort({_id:-1});
 
 }
 
@@ -83,6 +83,9 @@ exports.deleteNoteByFolderID= async function(folderID){
 }
 
 exports.createFolder=async function(studentID,courseCode,courseName){
+
+    courseCode=courseCode.trim();
+    courseName=courseName.trim();
 
     if (getFunction.isEmpty(studentID)) return {error:'All field must be filled'}
 
@@ -136,7 +139,7 @@ exports.getFolderByURL=async function(studentID,url){
     var student=await Student.findById(Objectid(studentID));
     if (student==null||student=='') return {error:'Student not found'};
 
-    var courses = await Course.find().populate('teachers');
+    var courses = await Course.find().populate('teachers').lean();
     var courseOfURL;
     for (course of courses){
         if (url.includes(course.courseURL)) {
@@ -145,12 +148,10 @@ exports.getFolderByURL=async function(studentID,url){
         }
     }
     if (courseOfURL==undefined) return {error:'Course not found'}
-    
-    var folder = await Folder.findOne({studentID:studentID,courseID:courseOfURL._id});
 
-    return {
-        courseOfURL,
-        folder
-    }
+    if (student.courses.includes(courseOfURL._id)) courseOfURL.isStudying=true;
+    else courseOfURL.isStudying=false;
+
+    return courseOfURL;
     
 }

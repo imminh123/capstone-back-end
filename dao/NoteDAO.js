@@ -1,11 +1,22 @@
 var Objectid = require('mongodb').ObjectID;
 const Note = require('../models/Note');
 const Folder = require('../models/Folder');
+const Course = require('../models/Course');
 const Student = require('../models/Student');
 const getFunction = require('./getFunction');
 
+async function newFolder(studentID,courseID,courseName,courseCode){
+    var folder=new Folder({
+        studentID:studentID,
+        courseID:courseID,
+        courseCode:courseCode,
+        courseName:courseName
+    });
+    return await folder.save();
+}
+
 //create a note
-exports.createNote = async function(studentID,folderID,scannedContent,description,url){
+exports.createNote = async function(studentID,folderID,scannedContent,description,url,courseID){
 
     if (getFunction.isEmpty(studentID,scannedContent,url)) return {error:'All field must be filled'}
 
@@ -13,26 +24,29 @@ exports.createNote = async function(studentID,folderID,scannedContent,descriptio
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
 
-    //if has folder then check. if not then create new or get default folder
-    if (folderID!=''){
-        folderID=Objectid(folderID);
-        var folder = await Folder.findOne({_id:folderID});
-        if (folder==null||folder=='') return {error:'Folder not found'};
+    //has course but not folder
+    if (courseID!='' && folderID=='') {
+        var course=await Course.findById(courseID);
+        if (course==null||course=='') return {error:'Course not found'}
+        var folder=await Folder.findOne({studentID:studentID,courseCode:course.courseCode});
+        if (folder==null||folder=='') 
+            var folder=await newFolder(studentID,courseID,course.courseName,course.courseCode);
+
     }
+    else
+    //has folder but not course
+    if (courseID=='' && folderID!='') {
+        var folder=await Folder.findById(folderID);
+        if (folder==null||folder=='') return {error:'Folder not found'}
+    } 
+    //has none means default folder
     else {
         var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
         if (folder==null||folder=='') {
-            folder=new Folder({
-                studentID:studentID,
-                courseID:'',
-                courseCode:'Other',
-                courseName:'Other'
-            });
-            await folder.save();
+            var folder=await newFolder(studentID,'','Other','Other');
         }
-        folderID=folder._id;
     }
-
+    folderID=folder._id;
     var note = new Note({
         studentID:studentID,
         folderID:folderID,
@@ -60,7 +74,6 @@ exports.updateNote = async function(noteID,scannedContent,description,url,isPinn
     note=await Note.findOneAndUpdate({_id:noteID},{scannedContent:scannedContent,description:description,url:url,isPinned:isPinned,dateModified:getFunction.today()}
         ,{returnOriginal: false}, function(error){
             if (error) {
-                // console.log(error);
                 err=error;
             }
         });

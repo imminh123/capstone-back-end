@@ -1,11 +1,22 @@
 var Objectid = require('mongodb').ObjectID;
 const Folder = require('../models/Folder');
+const Course = require('../models/Course');
 const Student = require('../models/Student');
 const Highlight = require('../models/Highlight');
 const getFunction = require('./getFunction');
 
+async function newFolder(studentID,courseID,courseName,courseCode){
+    var folder=new Folder({
+        studentID:studentID,
+        courseID:courseID,
+        courseCode:courseCode,
+        courseName:courseName
+    });
+    return await folder.save();
+}
+
 //create a highlight
-exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID,startOffSet,endOffSet){
+exports.createHighlight = async function(studentID,scannedContent,index,color,url,folderID,startOffSet,endOffSet,courseID){
 
     if (getFunction.isEmpty(studentID,scannedContent,index,color,url)) return {error:'All field must be filled'}
 
@@ -13,41 +24,55 @@ exports.createHighlight = async function(studentID,scannedContent,index,color,ur
     var student=await Student.findById(studentID);
     if (student==null||student=='') return {error:'Student not found'};
 
-    //if has folder then check. if not then create new or get default folder
-    if (folderID!=''){
-        folderID=Objectid(folderID);
-        var folder=await Folder.findById(folderID);
-        if (folder==null||folder=='') return {error:'Folder not found'};
+    //has course but not folder
+    if (courseID!='' && folderID=='') {
+        var course=await Course.findById(courseID);
+        if (course==null||course=='') return {error:'Course not found'}
+        var folder=await Folder.findOne({studentID:studentID,courseCode:course.courseCode});
+        if (folder==null||folder=='') 
+            var folder=await newFolder(studentID,courseID,course.courseName,course.courseCode);
+
     }
+    else
+    //has folder but not course
+    if (courseID=='' && folderID!='') {
+        var folder=await Folder.findById(folderID);
+        if (folder==null||folder=='') return {error:'Folder not found'}
+    } 
+    //has none means default folder
     else {
         var folder=await Folder.findOne({studentID:studentID,courseCode:'Other',courseName:'Other'});
         if (folder==null||folder=='') {
-            var folder=new Folder({
-                studentID:studentID,
-                courseID:'',
-                courseCode:'Other',
-                courseName:'Other'
-            });
-            await folder.save();
+            var folder=await newFolder(studentID,'','Other','Other');
         }
-        folderID=folder._id;
-    }    
+    }
+    folderID=folder._id;
     
-    var highlight = new Highlight({
-        studentID: studentID,
-        scannedContent: scannedContent,
-        index: index,
-        color: color,
-        dateModified: getFunction.today(),
-        url : url,
-        folderID:folderID,
-        startOffSet:startOffSet,
-        endOffSet:endOffSet
-    });
+    var existedHL=await Highlight.findOne({studentID:studentID,scannedContent:scannedContent,index:index,url:url});
+    
+    if (existedHL==null||existedHL=='') {
+        var highlight = new Highlight({
+            studentID: studentID,
+            scannedContent: scannedContent,
+            index: index,
+            color: color,
+            dateModified: getFunction.today(),
+            url : url,
+            folderID:folderID,
+            startOffSet:startOffSet,
+            endOffSet:endOffSet
+        });
 
-    await highlight.save();
+        await highlight.save();
 
-    return {success:'Create successfully'};
+        return {success:'Create successfully'}
+    }
+    else {
+        await Highlight.updateOne({_id:existedHL._id},{color:color});
+
+        return {success:'Update successfully'}
+
+    }
 
 }
 
@@ -149,7 +174,7 @@ exports.getHighlightByColor = async function(color,studentID,folderID){
     var folder=await Folder.findById(folderID);
     if (folder==null||folder=='') return {error:'Folder not found'};
 
-    return await Highlight.find({studentID:studentID,folderID:folderID,color:color});
+    return await Highlight.find({studentID:studentID,folderID:folderID,color:color}).sort({_id:-1});
 }
 
 exports.getRecentHighlight = async function(studentID,limit){

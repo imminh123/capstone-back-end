@@ -17,8 +17,8 @@ async function existed(id,code,url){
     var courseByUrl=await Course.findOne({courseURL:url});
 
     //if no course was found. Or a course was found but code is unchanged
-    if ((courseByCode!=null && courseByCode._id!=id)
-       ||(courseByUrl!=null && courseByUrl._id!=id)) {
+    if ((courseByCode!=null && courseByCode._id!=id.toString())
+       ||(courseByUrl!=null && courseByUrl._id!=id.toString())) {
         existed=1;
     }
 
@@ -127,6 +127,9 @@ exports.deleteCourse = async function(id){
 //create a new course
 exports.createCourse = async function(name,code,departments,short,full,url,teachers){
 
+    name=name.trim();
+    code=code.trim();
+
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
 
     if (code=='Other') return {error:'Course code cannot not be Other'}
@@ -160,7 +163,14 @@ exports.createCourse = async function(name,code,departments,short,full,url,teach
 //update a course
 exports.updateCourse = async function(id,name,code,departments,short,full,url,teachers){
 
+    name=name.trim();
+    code=code.trim();
+
     if (getFunction.isEmpty(name,code,short,full,url)) return {error:'All field must be filled'}
+
+    id=Objectid(id);
+    var course=await Course.findById(id);
+    if (course==null||course=='') return {error:'Course not found'}
 
     if (code=='Other') return {error:'Course code cannot not be Other'}
 
@@ -169,16 +179,12 @@ exports.updateCourse = async function(id,name,code,departments,short,full,url,te
     }
 
     if (await invalidDepartment(departments)) return {error:'Department not found'};
-    id=Objectid(id);
-    var course=await Course.findById(id);
-
+    
     //update all folder name and code link to this course
     if (course.courseCode!=code||course.courseName!=name) {
         await Folder.updateMany({courseID:course._id},{courseCode:code,courseName:name});
         await FAQ.updateMany({courseCode:course.courseCode},{courseCode:code});
     }
-        
-    if (course==null||course=='') return {error:'Course not found'}
 
     course=await Course.findOneAndUpdate({_id:id}
         ,{courseName:name,courseCode:code,departments:departments,shortDes:short,fullDes:full,courseURL:url,teachers:teachers}

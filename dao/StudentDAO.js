@@ -55,21 +55,6 @@ exports.updateCourseOfStudent = async function(id,courses){
 
     await Student.updateOne({_id:id},{courses:courses});
 
-    //create new folder
-    for (courseID of courses){
-        var folder=await Folder.findOne({studentID:id,courseID:courseID});
-        if (folder==null) {
-            var course=await Course.findById(courseID);
-            var newFolder= new Folder({
-                studentID:id,
-                courseID:courseID,
-                courseName:course.courseName,
-                courseCode:course.courseCode
-            });
-            newFolder.save();
-        }
-    }
-
     return {success:'Update successfuly'};
 
 }

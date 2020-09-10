@@ -1,4 +1,5 @@
 const userDAO = require('../dao/UserDAO');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res, next) => {
     var email=req.body.email;
@@ -13,4 +14,28 @@ exports.createUser = async (req, res, next) => {
 exports.getUserByID = async (req,res) => {
     var id=req.params['id'];
     res.send(await userDAO.getUserByID(id));
+}
+
+exports.chooseRole = async (req,res) => {
+    var email=req.body.email;
+    var role=req.body.role;
+    var user=await userDAO.chooseRole(email,role);
+    if (user.error) res.send({error:user.error});
+    console.log('new user '+user);
+    jwt.sign({user: user}, 'tinhanhem', (err, token) => { 
+        if(err) console.log(err)
+        var url='https://noteitfu.herokuapp.com?token=' + token;
+        var result = {success:url}
+        res.send(result);
+      });
+
+}
+
+exports.getAllUser = async (req,res) => {
+    res.send(await userDAO.getAllUser());
+}
+
+exports.deleteUser = async (req,res) => {
+    var id=req.params['id'];
+    res.send(await userDAO.deleteUser(id));
 }
