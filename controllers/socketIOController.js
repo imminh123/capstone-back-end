@@ -2,6 +2,7 @@ const AskDAO = require('../dao/AskDAO');
 
 module.exports = function(wss, websocket) { 
     wss.on('connection', function connection(ws) {
+        console.log('New connection');
         ws.on('message', async function incoming(data) {
             const {message, user, askID } = JSON.parse(data);
             const messageCreate = await AskDAO.addComment(askID,user.profile,message);
@@ -10,7 +11,7 @@ module.exports = function(wss, websocket) {
                     console.log(messageCreate);
                     client.send(JSON.stringify(messageCreate));
                 } 
-            });
+            });       
         });
       });
 
